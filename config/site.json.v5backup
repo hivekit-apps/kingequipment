@@ -1,0 +1,537 @@
+{
+  "business": {
+    "name": "King Equipment Rental",
+    "tagline": "Skid-steer & track loader rental in the north GTA — delivered.",
+    "shortDescription": "Local skid-steer rental, owner-operated. Full-size CAT 259B3 compact track loader for site prep, grading, and serious material handling. Daily, weekly, and monthly rates. Free delivery within King Township; flat-rate delivery across the GTA.",
+    "phoneFallback": "647-555-5555",
+    "emailFallback": "constructionequipmentrent@gmail.com",
+    "siteUrlFallback": "https://kingequipmentrental.ca",
+    "hours": "Mon-Sat 7am-7pm; Sun by appointment"
+  },
+  "partner": {
+    "name": "Valdas Jakimavicius",
+    "business": "Amber Castle",
+    "url": "https://ambercastle.ca",
+    "credentials": "10+ years construction industry experience; owner of Amber Castle"
+  },
+  "pricing": {
+    "displayRate": "Call for daily rate",
+    "deliveryNote": "Delivery included within our service area. Outside the area? Call us — we may still be able to help.",
+    "multiDayNote": "Multi-day, weekly, and weekend rates available — call to quote.",
+    "comparisonNote": "Local owner-operated rates — typically less than national chains. Call for a same-day quote."
+  },
+  "heroPhoto": {
+    "src": "/images/cat-259b3-front-snow.webp",
+    "alt": "Our CAT 259B3 compact track loader on a King Township site — full-size machine, ready to deliver.",
+    "width": 960,
+    "height": 1280
+  },
+  "equipment": [
+    {
+      "id": "cat-259b3",
+      "class": "heavy-duty",
+      "visible": true,
+      "name": "CAT 259B3 Compact Track Loader",
+      "shortName": "CAT 259B3",
+      "tagline": "Full-size compact track loader for site prep, grading, and serious material handling.",
+      "displayRate": "$249.99 / day",
+      "bookable": true,
+      "specs": {
+        "operatingWeightLbs": "~7,700",
+        "ratedOperatingCapacityLbs": "~2,000",
+        "engineHp": "~74",
+        "liftHeightIn": "~120",
+        "gateWidthIn": null
+      },
+      "attachmentsIncluded": [
+        "Standard bucket",
+        "Forks (on request)"
+      ],
+      "idealFor": [
+        "Site prep and grading",
+        "Material handling on commercial jobs",
+        "Heavy-duty digging and pushing",
+        "Snow clearing for larger lots"
+      ],
+      "photos": [
+        { "src": "/images/cat-259b3-front-snow.webp", "alt": "Our CAT 259B3 compact track loader photographed from the rear, with the CAT badge clearly visible on the back panel." },
+        { "src": "/images/mini-pushing-bricks.webp", "alt": "Our CAT 259B3 compact track loader photographed from the side — the 259B3 model badge and CAT branding are visible on the engine cowl." }
+      ],
+      "operatorNote": "Renter operates. Operator must be experienced on full-size compact track loaders; we can recommend a trained operator if needed.",
+      "photoNote": "Photos are of our actual CAT 259B3 unit."
+    },
+    {
+      "id": "mini-stand-on",
+      "class": "mini",
+      "visible": false,
+      "name": "Mini stand-on track loader",
+      "shortName": "Mini stand-on loader",
+      "tagline": "Stand-on platform that fits through a standard 36-inch gate — ideal for backyards and tight access.",
+      "displayRate": "Call for daily rate",
+      "bookable": false,
+      "specs": {
+        "operatingWeightLbs": "~1,200-1,800",
+        "ratedOperatingCapacityLbs": "~500-700",
+        "engineHp": "~13-23",
+        "liftHeightIn": null,
+        "gateWidthIn": "~36"
+      },
+      "attachmentsIncluded": [
+        "Standard bucket"
+      ],
+      "idealFor": [
+        "Residential and backyard work",
+        "Tight-access jobs (fits through 36-inch gates)",
+        "Light material handling and landscaping",
+        "Small demolition and cleanup"
+      ],
+      "photos": [
+        { "src": "/images/mini-loading-bin-residential.webp", "alt": "Our mini stand-on track loader loading bricks into a disposal bin on a residential GTA street." },
+        { "src": "/images/mini-demo-bricks.webp", "alt": "Our mini stand-on track loader carrying bricks on a residential demolition job in the GTA." },
+        { "src": "/images/cat-259b3-side-badge.webp", "alt": "Our mini stand-on track loader at a brick-removal job site in the GTA." },
+        { "src": "/images/mini-scooping-debris.webp", "alt": "Our mini stand-on track loader scooping debris onto a pile during a residential cleanup job." }
+      ],
+      "operatorNote": "Stand-on platform. Experienced operator recommended; lighter learning curve than a full-size loader.",
+      "photoNote": "Photos are of our actual mini stand-on loader on recent jobs in the GTA."
+    }
+  ],
+  "serviceAreas": [
+    "King City",
+    "Aurora",
+    "Newmarket",
+    "Richmond Hill",
+    "Vaughan",
+    "North Toronto",
+    "Bradford"
+  ],
+  "serviceAreaTagline": "We serve the north GTA halo. Outside this zone? Give us a call — delivery quotes are case by case.",
+  "cityPages": {
+    "basePath": "/skid-steer-rental",
+    "coreCities": [
+      "king-city",
+      "aurora",
+      "newmarket",
+      "richmond-hill",
+      "vaughan",
+      "bradford"
+    ],
+    "cities": [
+      {
+        "slug": "king-city",
+        "name": "King City",
+        "region": "York",
+        "coverage": "core",
+        "neighborhoods": ["King City village", "Kingscross Estates", "King Heights", "Eversley"],
+        "typicalJobs": [
+          "Estate landscaping and grading on large King City lots",
+          "Driveway prep and resurfacing",
+          "Backyard build-outs (pool prep, patio sub-base, retaining walls)",
+          "Heavy snow clearing on long rural driveways"
+        ],
+        "localContext": "King City is our home base. Most of our King City work runs on large lots — estates, ravine properties, and the rural residential strip along Dufferin and Bathurst. The CAT 259B3 handles the bigger grading and driveway jobs; the mini stand-on loader is the right pick for tight-access backyards behind King City village. Same-day delivery on most King City jobs.",
+        "driveTime": "Local — same day delivery"
+      },
+      {
+        "slug": "aurora",
+        "name": "Aurora",
+        "region": "York",
+        "coverage": "core",
+        "neighborhoods": ["Aurora Highlands", "Aurora Village", "Bayview Wellington", "Hills of St. Andrew"],
+        "typicalJobs": [
+          "Backyard landscaping and grading in Aurora Highlands and Bayview Wellington",
+          "Foundation prep on residential infill builds",
+          "Material handling on home renovations",
+          "Driveway and walkway prep"
+        ],
+        "localContext": "Aurora is the heart of our core service area. We deliver across Aurora — from the older lots in Aurora Village to the newer Bayview Wellington and St. Andrew sub-divisions. The mini stand-on fits through almost every Aurora backyard gate (most are built to the standard 36-inch spec). The CAT 259B3 handles the larger lots up by Wellington and St. John's.",
+        "driveTime": "~10-15 min from King City"
+      },
+      {
+        "slug": "newmarket",
+        "name": "Newmarket",
+        "region": "York",
+        "coverage": "core",
+        "neighborhoods": ["Stonehaven", "Glenway", "Summerhill Estates", "Woodland Hill"],
+        "typicalJobs": [
+          "Residential landscaping in Stonehaven and Woodland Hill",
+          "Foundation digging for additions and accessory dwellings",
+          "Pool and patio sub-base prep",
+          "Snow clearing for residential and small commercial lots"
+        ],
+        "localContext": "Newmarket has a mix of older town-centre lots and newer suburban developments — the mini stand-on loader is essential for the older streets where lot lines are tight. We deliver across Newmarket including the south end near Davis Drive and the newer builds in Stonehaven and Summerhill.",
+        "driveTime": "~15-20 min from King City"
+      },
+      {
+        "slug": "richmond-hill",
+        "name": "Richmond Hill",
+        "region": "York",
+        "coverage": "core",
+        "neighborhoods": ["Oak Ridges", "Mill Pond", "Bayview Hill", "Jefferson"],
+        "typicalJobs": [
+          "Backyard build-outs in Oak Ridges and Jefferson",
+          "Grading and topsoil placement for landscape installs",
+          "Foundation prep on infill and addition jobs",
+          "Material handling for home renovations"
+        ],
+        "localContext": "Richmond Hill jobs range from estate properties up in Oak Ridges to denser lots around Mill Pond and Bayview Hill. The mini stand-on loader fits through most Richmond Hill gates; for the larger Oak Ridges estate jobs the CAT 259B3 is the right call. We deliver across Richmond Hill.",
+        "driveTime": "~20-30 min from King City"
+      },
+      {
+        "slug": "vaughan",
+        "name": "Vaughan",
+        "region": "York",
+        "coverage": "core",
+        "neighborhoods": ["Maple", "Kleinburg", "Woodbridge", "Thornhill", "Vellore Village"],
+        "typicalJobs": [
+          "Backyard landscaping in Maple, Vellore, and Woodbridge",
+          "Foundation and footing prep on residential builds",
+          "Driveway sub-base and grading",
+          "Snow clearing on commercial and residential lots"
+        ],
+        "localContext": "Vaughan is one of the busiest parts of our service area — a wide mix of new developments (Vellore, Maple) and older established neighbourhoods (Thornhill, Woodbridge, Kleinburg). The CAT 259B3 covers most commercial and bigger residential jobs; the mini is for the older streets where access is tight.",
+        "driveTime": "~25-35 min from King City"
+      },
+      {
+        "slug": "bradford",
+        "name": "Bradford",
+        "region": "Simcoe",
+        "coverage": "core",
+        "neighborhoods": ["Bond Head", "Bradford West Gwillimbury", "Holland Marsh"],
+        "typicalJobs": [
+          "Agricultural and rural property grading",
+          "Driveway prep on rural and large residential lots",
+          "Landscaping for new sub-divisions in Bradford West Gwillimbury",
+          "Snow clearing on long rural driveways"
+        ],
+        "localContext": "Bradford and the Holland Marsh corridor are on our regular route. Most Bradford work is on larger rural and semi-rural lots where the CAT 259B3 earns its keep, but the mini handles the newer in-town sub-divisions. We're familiar with the Holland Marsh soil — bring boards if you're crossing soft ground.",
+        "driveTime": "~25-30 min from King City"
+      },
+      {
+        "slug": "toronto",
+        "name": "Toronto",
+        "region": "Toronto",
+        "coverage": "extended",
+        "neighborhoods": ["Forest Hill", "Leaside", "Riverdale", "The Beaches", "High Park"],
+        "typicalJobs": [
+          "Backyard grading and topsoil placement on midtown infill lots",
+          "Foundation digging on residential additions",
+          "Demolition cleanup for home renovations",
+          "Snow clearing on commercial lots"
+        ],
+        "localContext": "Toronto jobs are almost always tight-access — older lots with mature trees, narrow side yards, and standard backyard gates. The mini stand-on loader is the workhorse here; it fits through 36-inch gates that the full-size machine can't approach. For downtown jobs, call ahead so we can confirm parking, unloading, and any street-occupancy permits needed. Delivery fee applies on Toronto jobs (we'll quote up-front).",
+        "driveTime": "~45-60 min from King City"
+      },
+      {
+        "slug": "north-york",
+        "name": "North York",
+        "region": "Toronto",
+        "coverage": "extended",
+        "neighborhoods": ["Willowdale", "Bayview Village", "Don Mills", "York Mills", "Lawrence Manor"],
+        "typicalJobs": [
+          "Backyard build-outs in Willowdale and Bayview Village",
+          "Foundation prep on residential infill builds",
+          "Grading for landscape and patio installs",
+          "Material handling on home renovations"
+        ],
+        "localContext": "North York is mostly older established neighbourhoods with deep lots — the mini stand-on loader is the right fit for the tight access typical along Yonge, Bayview, and Leslie. Larger jobs in the wider lots near Don Mills or Bridle Path can take the CAT 259B3. We deliver across North York.",
+        "driveTime": "~35-45 min from King City"
+      },
+      {
+        "slug": "scarborough",
+        "name": "Scarborough",
+        "region": "Toronto",
+        "coverage": "extended",
+        "neighborhoods": ["Agincourt", "Wexford", "Cliffside", "Birch Cliff", "Rouge"],
+        "typicalJobs": [
+          "Residential landscaping and grading",
+          "Foundation and footing prep on additions",
+          "Material handling on renovation projects",
+          "Snow clearing on commercial lots"
+        ],
+        "localContext": "Scarborough has a wide mix of lot sizes — from the tighter older streets near Kingston Road to the larger newer builds out past Markham Road. The mini stand-on loader covers most residential work; the CAT 259B3 is for bigger commercial or estate jobs near Rouge. Delivery fee applies — call for a quote.",
+        "driveTime": "~50-60 min from King City"
+      },
+      {
+        "slug": "etobicoke",
+        "name": "Etobicoke",
+        "region": "Toronto",
+        "coverage": "extended",
+        "neighborhoods": ["Kingsway", "Humber Bay", "Long Branch", "Mimico", "Markland Wood"],
+        "typicalJobs": [
+          "Backyard landscaping on Kingsway and Markland Wood lots",
+          "Foundation prep on residential additions",
+          "Topsoil placement and grading for landscape installs",
+          "Material handling on home renovations"
+        ],
+        "localContext": "Etobicoke is mostly older established residential — narrower lots near the lake (Mimico, Long Branch) and wider mature lots in the Kingsway. The mini stand-on loader is the right call for most Etobicoke backyards. We deliver across Etobicoke; delivery fee applies.",
+        "driveTime": "~50-60 min from King City"
+      },
+      {
+        "slug": "mississauga",
+        "name": "Mississauga",
+        "region": "Peel",
+        "coverage": "extended",
+        "neighborhoods": ["Streetsville", "Port Credit", "Erin Mills", "Meadowvale", "Lorne Park"],
+        "typicalJobs": [
+          "Residential landscaping in Erin Mills and Meadowvale",
+          "Foundation prep on infill and addition jobs",
+          "Backyard grading for patio and pool builds",
+          "Snow clearing on commercial and large residential lots"
+        ],
+        "localContext": "Mississauga has a wide range — from estate properties in Lorne Park to denser modern sub-divisions in Erin Mills and Meadowvale. The CAT 259B3 handles the larger lots and commercial work; the mini is for tighter access near Port Credit and Streetsville. Delivery fee applies — quoted up-front.",
+        "driveTime": "~45-55 min from King City"
+      },
+      {
+        "slug": "brampton",
+        "name": "Brampton",
+        "region": "Peel",
+        "coverage": "extended",
+        "neighborhoods": ["Mount Pleasant", "Bram East", "Heart Lake", "Springdale", "Castlemore"],
+        "typicalJobs": [
+          "Residential backyard build-outs in Mount Pleasant and Castlemore",
+          "Foundation digging on new builds and additions",
+          "Driveway prep and grading",
+          "Material handling on construction sites"
+        ],
+        "localContext": "Brampton is mostly newer sub-divisions with standard 36-inch gates — both machines work well. The CAT 259B3 covers the larger commercial jobs and bigger residential lots; the mini handles backyard work behind the typical two-storey detached. Delivery fee applies — call for a quote.",
+        "driveTime": "~40-50 min from King City"
+      },
+      {
+        "slug": "caledon",
+        "name": "Caledon",
+        "region": "Peel",
+        "coverage": "extended",
+        "neighborhoods": ["Bolton", "Caledon East", "Inglewood", "Palgrave", "Cheltenham"],
+        "typicalJobs": [
+          "Rural property grading and landscaping",
+          "Long driveway prep and resurfacing",
+          "Estate landscaping in Caledon East and Palgrave",
+          "Snow clearing on rural driveways"
+        ],
+        "localContext": "Caledon is mostly large rural and estate lots — the CAT 259B3 is the natural fit for the long driveways, equestrian property work, and bigger landscape installs typical here. Mini stand-on works for the smaller in-town jobs around Bolton and Caledon East. We're comfortable on the gravel roads up past Highway 9.",
+        "driveTime": "~35-45 min from King City"
+      },
+      {
+        "slug": "markham",
+        "name": "Markham",
+        "region": "York",
+        "coverage": "extended",
+        "neighborhoods": ["Unionville", "Cathedraltown", "Cornell", "Berczy Village", "Box Grove"],
+        "typicalJobs": [
+          "Backyard landscaping in Unionville and Berczy",
+          "Foundation and footing prep on additions",
+          "Grading for new landscape installs",
+          "Snow clearing on commercial lots"
+        ],
+        "localContext": "Markham is a mix of modern sub-divisions (Cornell, Cathedraltown, Box Grove) and older village cores (Unionville, Thornhill, Markham village). The mini stand-on loader is the right pick for the older village backyards; the CAT 259B3 covers the larger modern lots and commercial work. We deliver across Markham.",
+        "driveTime": "~30-40 min from King City"
+      },
+      {
+        "slug": "stouffville",
+        "name": "Stouffville",
+        "region": "York",
+        "coverage": "extended",
+        "neighborhoods": ["Stouffville village", "Ballantrae", "Musselman's Lake", "Wheler's Mill"],
+        "typicalJobs": [
+          "Rural residential landscaping",
+          "Driveway prep on larger lots",
+          "Backyard build-outs in newer Stouffville sub-divisions",
+          "Snow clearing on rural and semi-rural driveways"
+        ],
+        "localContext": "Stouffville has a strong mix of old-village in-town lots and newer estate-style builds north along Highway 48. We cover both — the mini fits the older streets, the CAT 259B3 handles the longer driveway and estate-grading work toward Ballantrae and Musselman's Lake.",
+        "driveTime": "~30-35 min from King City"
+      },
+      {
+        "slug": "uxbridge",
+        "name": "Uxbridge",
+        "region": "Durham",
+        "coverage": "extended",
+        "neighborhoods": ["Uxbridge village", "Goodwood", "Sandford", "Coppin's Corners"],
+        "typicalJobs": [
+          "Rural property grading and driveway work",
+          "Estate landscaping",
+          "Long-driveway snow clearing",
+          "Foundation prep on rural residential builds"
+        ],
+        "localContext": "Uxbridge is rural and semi-rural — long driveways, larger residential lots, and a fair amount of equestrian property. The CAT 259B3 is the right fit for most Uxbridge work; the mini is for tighter in-village jobs. We're comfortable with the gravel and rolling terrain typical north of the village.",
+        "driveTime": "~40-50 min from King City"
+      },
+      {
+        "slug": "ajax",
+        "name": "Ajax",
+        "region": "Durham",
+        "coverage": "extended",
+        "neighborhoods": ["Pickering Village (Ajax)", "Riverside", "Discovery Bay", "Audley"],
+        "typicalJobs": [
+          "Residential backyard build-outs and landscaping",
+          "Foundation prep on additions and accessory dwellings",
+          "Grading for patio and pool installs",
+          "Material handling on renovations"
+        ],
+        "localContext": "Ajax is mostly newer sub-divisions with standard gate widths — both machines work. The mini handles backyard build-outs behind the typical two-storey; the CAT 259B3 covers commercial work and larger landscape installs. Delivery fee applies on Ajax jobs — quoted before we book.",
+        "driveTime": "~60-75 min from King City"
+      },
+      {
+        "slug": "pickering",
+        "name": "Pickering",
+        "region": "Durham",
+        "coverage": "extended",
+        "neighborhoods": ["Bay Ridges", "Liverpool", "West Shore", "Brock Ridge", "Seaton"],
+        "typicalJobs": [
+          "Residential landscaping and grading",
+          "Foundation digging on additions",
+          "Backyard build-outs",
+          "Material handling on renovations"
+        ],
+        "localContext": "Pickering covers a wide area from the lake-side neighbourhoods (Bay Ridges, West Shore) through to the newer Seaton developments. The mini stand-on loader is the workhorse for most residential work; the CAT 259B3 is the call for larger lots and commercial jobs. Delivery fee applies — call to quote.",
+        "driveTime": "~60-75 min from King City"
+      },
+      {
+        "slug": "whitby",
+        "name": "Whitby",
+        "region": "Durham",
+        "coverage": "extended",
+        "neighborhoods": ["Downtown Whitby", "Brooklin", "Rolling Acres", "Pringle Creek"],
+        "typicalJobs": [
+          "Backyard build-outs in Brooklin and Rolling Acres",
+          "Foundation and footing prep on residential builds",
+          "Grading for landscape installs",
+          "Driveway prep on larger lots"
+        ],
+        "localContext": "Whitby has a wide spread — older lots in Pringle Creek and downtown, newer sub-divisions in Brooklin and Rolling Acres. Both machines work depending on the job; we'll recommend the right pick when you call with the address and what needs doing. Delivery fee applies on Whitby jobs.",
+        "driveTime": "~65-80 min from King City"
+      },
+      {
+        "slug": "oshawa",
+        "name": "Oshawa",
+        "region": "Durham",
+        "coverage": "extended",
+        "neighborhoods": ["Eastdale", "Lakeview", "Taunton", "Windfields", "Donevan"],
+        "typicalJobs": [
+          "Residential landscaping and grading",
+          "Foundation prep on additions",
+          "Backyard build-outs",
+          "Material handling on commercial and residential jobs"
+        ],
+        "localContext": "Oshawa runs from the older lake-side neighbourhoods through the newer Windfields and Taunton developments. The mini stand-on loader covers most residential backyard work; the CAT 259B3 is for the larger commercial and industrial jobs near Highway 401. Delivery fee applies — call to confirm.",
+        "driveTime": "~75-90 min from King City"
+      },
+      {
+        "slug": "bowmanville",
+        "name": "Bowmanville",
+        "region": "Durham",
+        "coverage": "extended",
+        "neighborhoods": ["Bowmanville Heritage", "Liberty Crossing", "Northglen", "Aspen Springs"],
+        "typicalJobs": [
+          "Residential landscaping in newer sub-divisions",
+          "Driveway prep and grading",
+          "Backyard build-outs",
+          "Snow clearing on residential and commercial lots"
+        ],
+        "localContext": "Bowmanville is mostly newer Northglen and Aspen Springs sub-divisions plus the older heritage core downtown. The mini stand-on loader handles backyard work behind newer two-storeys; the CAT 259B3 covers commercial and larger residential. Delivery fee applies on Bowmanville jobs.",
+        "driveTime": "~85-100 min from King City"
+      },
+      {
+        "slug": "clarington",
+        "name": "Clarington",
+        "region": "Durham",
+        "coverage": "extended",
+        "neighborhoods": ["Courtice", "Newcastle", "Orono", "Newtonville"],
+        "typicalJobs": [
+          "Rural property grading",
+          "Estate landscaping in Courtice and Newcastle",
+          "Long-driveway snow clearing",
+          "Foundation prep on rural residential builds"
+        ],
+        "localContext": "Clarington is mostly rural and semi-rural across Courtice, Newcastle, and Orono. The CAT 259B3 is the natural fit for the larger lots and longer driveways typical here. We'll travel for Clarington jobs — delivery fee applies and is quoted up-front.",
+        "driveTime": "~85-105 min from King City"
+      },
+      {
+        "slug": "oakville",
+        "name": "Oakville",
+        "region": "Halton",
+        "coverage": "extended",
+        "neighborhoods": ["Old Oakville", "Glen Abbey", "West Oak Trails", "Bronte", "Joshua Creek"],
+        "typicalJobs": [
+          "Backyard build-outs in Old Oakville and Bronte",
+          "Foundation prep on additions and infill builds",
+          "Estate-style landscaping in Joshua Creek",
+          "Driveway and patio sub-base prep"
+        ],
+        "localContext": "Oakville is a mix of older established lots (Old Oakville, Bronte) and larger estate-style modern builds (Glen Abbey, Joshua Creek). The mini stand-on loader is the right fit for the tight access typical in Old Oakville; the CAT 259B3 handles the larger lots further north. Delivery fee applies — quoted before we book.",
+        "driveTime": "~60-75 min from King City"
+      },
+      {
+        "slug": "burlington",
+        "name": "Burlington",
+        "region": "Halton",
+        "coverage": "extended",
+        "neighborhoods": ["Aldershot", "Roseland", "Tyandaga", "Headon Forest", "Alton Village"],
+        "typicalJobs": [
+          "Residential landscaping in Roseland and Headon Forest",
+          "Foundation and footing prep on additions",
+          "Backyard build-outs",
+          "Material handling on home renovations"
+        ],
+        "localContext": "Burlington runs from older lake-side neighbourhoods (Aldershot, Roseland) up through newer Alton Village. Both machines work depending on the lot — call us with the job and we'll recommend. Delivery fee applies on Burlington jobs.",
+        "driveTime": "~70-85 min from King City"
+      },
+      {
+        "slug": "milton",
+        "name": "Milton",
+        "region": "Halton",
+        "coverage": "extended",
+        "neighborhoods": ["Hawthorne Village", "Beaty", "Bronte Meadows", "Scott", "Old Milton"],
+        "typicalJobs": [
+          "Backyard build-outs in newer Milton sub-divisions",
+          "Foundation prep on residential builds",
+          "Grading for landscape installs",
+          "Snow clearing on commercial and residential lots"
+        ],
+        "localContext": "Milton is mostly newer sub-divisions (Hawthorne Village, Beaty, Scott) with standard gate widths — both machines work. The mini handles the typical backyard build-out; the CAT 259B3 is for larger commercial and the older Milton heritage lots. Delivery fee applies.",
+        "driveTime": "~65-80 min from King City"
+      }
+    ]
+  },
+  "trustPoints": [
+    "Local owner-operator — not a national chain",
+    "Full-size CAT 259B3 compact track loader, owner-maintained",
+    "Free delivery within King Township; flat-rate across the GTA",
+    "Backed by 10+ years construction industry experience"
+  ],
+  "faq": [
+    {
+      "q": "How much does the CAT 259B3 cost to rent?",
+      "a": "$249.99 per day, $1,049.93 per week, or $2,999.70 per month. Pricing is final after we confirm dates and delivery. You can request a booking right from this site."
+    },
+    {
+      "q": "How does delivery work?",
+      "a": "Free pickup at our King Township location. Free delivery within King Township. $99 flat delivery fee for the Greater Toronto Area. For other locations in Southern Ontario, call us for a quote."
+    },
+    {
+      "q": "Do you deliver to Aurora, Newmarket, or Richmond Hill?",
+      "a": "Yes — these are all part of our GTA flat-rate delivery zone. We serve the full north GTA halo including Aurora, Newmarket, Richmond Hill, Vaughan, north Toronto, and Bradford."
+    },
+    {
+      "q": "How many days can I rent for?",
+      "a": "Anywhere from a single day to multi-week or multi-month rentals. Rates are tiered: daily for short rentals, weekly when you cross 7 days, monthly when you cross 30 days."
+    },
+    {
+      "q": "Does the rental come with an operator?",
+      "a": "No — the renter operates. We recommend the operator be experienced on full-size compact track loaders; if you need a trained operator, let us know and we can refer one."
+    },
+    {
+      "q": "What attachments are included?",
+      "a": "The CAT 259B3 comes with a standard bucket. Forks are available on request — mention what you need when you book or call."
+    },
+    {
+      "q": "How do I book?",
+      "a": "Use the booking form on this site to pick your dates, delivery option, and contact details. We confirm dates and delivery within a few hours during business hours. You can also call us directly."
+    }
+  ],
+  "ctas": {
+    "primary": "Call to book",
+    "secondary": "Email for a quote",
+    "formSubmit": "Send request"
+  }
+}

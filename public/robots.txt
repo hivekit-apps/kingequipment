@@ -1,0 +1,11 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+
+# Host
+Host: https://kingequipmentrental.ca
+
+# Sitemaps
+Sitemap: https://kingequipmentrental.ca/sitemap.xml

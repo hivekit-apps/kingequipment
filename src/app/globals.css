@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply text-slate-950 bg-white;
+    font-feature-settings: 'kern', 'liga';
+  }
+  h1, h2, h3 {
+    @apply font-bold tracking-tight;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-4 min-h-[48px] rounded-md
+           bg-brand-orange text-white font-semibold text-base
+           hover:bg-brand-orange-dark transition-colors
+           focus:outline-none focus:ring-2 focus:ring-brand-orange focus:ring-offset-2;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-6 py-4 min-h-[48px] rounded-md
+           bg-white text-slate-950 border-2 border-slate-950 font-semibold text-base
+           hover:bg-slate-100 transition-colors
+           focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2;
+  }
+  .container-page {
+    @apply max-w-5xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}
