@@ -212,7 +212,7 @@ type EquipmentOverrideRow = {
   city_delivery?: Record<string, number> | null;
 };
 
-async function fetchEquipmentOverrides(): Promise<Map<string, EquipmentOverrideRow>> {
+async function fetchEquipmentOverrides(mode: 'cached' | 'live' = 'cached'): Promise<Map<string, EquipmentOverrideRow>> {
   const map = new Map<string, EquipmentOverrideRow>();
   // Soft-fail: if envs unset or Supabase unreachable, return empty map (site.json wins).
   let url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -222,15 +222,19 @@ async function fetchEquipmentOverrides(): Promise<Map<string, EquipmentOverrideR
   key = sanitize(key);
   if (!url || !key) return map;
   try {
+    // Cached mode: ISR revalidate 60s (public pages). Live mode: no-store (critical
+    // server ops like orders API that must see admin edits immediately).
+    const fetchInit: RequestInit =
+      mode === 'live'
+        ? { cache: 'no-store' }
+        : ({ next: { revalidate: 60 } } as unknown as RequestInit);
     const res = await fetch(`${url}/rest/v1/equipment_overrides?select=*`, {
       headers: {
         apikey: key,
         Authorization: `Bearer ${key}`,
         Accept: 'application/json',
       },
-      // Allow Next to cache for 60s so public pages are fast but admin edits
-      // propagate within a minute.
-      next: { revalidate: 60 },
+      ...fetchInit,
     });
     if (!res.ok) return map;
     const rows = (await res.json()) as EquipmentOverrideRow[];
@@ -274,9 +278,9 @@ function applyCityDeliveryOverrides(
   return cities;
 }
 
-export async function getSiteConfigDynamic(): Promise<SiteConfig> {
+export async function getSiteConfigDynamic(mode: 'cached' | 'live' = 'cached'): Promise<SiteConfig> {
   const seed = getSiteConfig();
-  const overrides = await fetchEquipmentOverrides();
+  const overrides = await fetchEquipmentOverrides(mode);
   if (overrides.size === 0) return seed;
   const mergedEquipment = seed.equipment.map((e) => {
     const ovr = overrides.get(e.id);
@@ -290,6 +294,12 @@ export async function getSiteConfigDynamic(): Promise<SiteConfig> {
       cities: applyCityDeliveryOverrides(seed.cityPages.cities, overrides),
     },
   };
+}
+
+// Convenience alias for server-side code that must see admin edits immediately
+// (orders API, admin pages). Bypasses the 60s ISR cache.
+export function getSiteConfigLive(): Promise<SiteConfig> {
+  return getSiteConfigDynamic('live');
 }
 
 // Per-equipment × per-city delivery price. Falls back to the city's base price
