@@ -112,6 +112,14 @@ export type SiteConfig = {
   };
 };
 
+function sanitize(v: string | undefined): string {
+  if (!v) return '';
+  let out = v.trim();
+  while (out.startsWith('"') || out.startsWith("'")) out = out.slice(1);
+  while (out.endsWith('"') || out.endsWith("'")) out = out.slice(0, -1);
+  return out.trim();
+}
+
 export function getSiteConfig(): SiteConfig {
   const r = rawConfig as typeof rawConfig;
   return {
@@ -119,11 +127,11 @@ export function getSiteConfig(): SiteConfig {
       name: r.business.name,
       tagline: r.business.tagline,
       shortDescription: r.business.shortDescription,
-      phone: process.env.NEXT_PUBLIC_PHONE || r.business.phoneFallback,
-      email: process.env.NEXT_PUBLIC_EMAIL || r.business.emailFallback,
-      siteUrl: process.env.NEXT_PUBLIC_SITE_URL || r.business.siteUrlFallback,
-      gbpUrl: process.env.NEXT_PUBLIC_GBP_URL || '',
-      ga4Id: process.env.NEXT_PUBLIC_GA4_ID || '',
+      phone: sanitize(process.env.NEXT_PUBLIC_PHONE) || r.business.phoneFallback,
+      email: sanitize(process.env.NEXT_PUBLIC_EMAIL) || r.business.emailFallback,
+      siteUrl: sanitize(process.env.NEXT_PUBLIC_SITE_URL) || r.business.siteUrlFallback,
+      gbpUrl: sanitize(process.env.NEXT_PUBLIC_GBP_URL),
+      ga4Id: sanitize(process.env.NEXT_PUBLIC_GA4_ID),
       hours: r.business.hours,
     },
     partner: r.partner,
