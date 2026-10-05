@@ -36,14 +36,20 @@ export default async function AdminChromeLayout({ children }: { children: React.
         <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <Link href="/admin" className="font-semibold text-gray-900 whitespace-nowrap">
-              King Equipment Rental — admin
+              King Equipment — admin
             </Link>
             <nav className="hidden sm:flex items-center gap-4 text-sm">
               <Link href="/admin" className="text-gray-700 hover:text-orange-700">
                 Dashboard
               </Link>
+              <Link href="/admin/orders" className="text-gray-700 hover:text-orange-700">
+                Orders
+              </Link>
+              <Link href="/admin/equipment" className="text-gray-700 hover:text-orange-700">
+                Equipment
+              </Link>
               <Link href="/admin/bookings" className="text-gray-700 hover:text-orange-700">
-                Bookings
+                Legacy bookings
               </Link>
               {admin.role === 'admin' && (
                 <>

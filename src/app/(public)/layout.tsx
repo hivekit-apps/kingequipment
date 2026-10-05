@@ -4,6 +4,7 @@ import { getSiteConfig } from '@/lib/config';
 import { localBusinessJsonLd } from '@/lib/jsonld';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
+import { CartProvider } from '@/components/CartContext';
 
 const cfg = getSiteConfig();
 
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <CartProvider>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: localBusinessJsonLd(cfg) }}
@@ -52,6 +53,6 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       <SiteHeader />
       <main>{children}</main>
       <SiteFooter />
-    </>
+    </CartProvider>
   );
 }

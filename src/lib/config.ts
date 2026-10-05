@@ -2,20 +2,40 @@
 // LOAD-BEARING: do NOT hardcode phone, email, business name, partner name,
 // or domain anywhere in JSX. Every literal goes through this module.
 // (Per owner-inputs wall 2026-05-20 — configurable-by-design is LOAD_BEARING.)
+//
+// Catalog storage architecture (cycle 7 overhaul 2026-10-04):
+// site.json is the SEED catalog. Admin edits via /admin/equipment are stored in
+// a Supabase `equipment_overrides` table and MERGED at read-time (Option A per spec).
+// This keeps the file-based scaffold for public rendering while allowing admin
+// edits without redeploy.
 
 import rawConfig from '../../config/site.json';
 
-export type EquipmentClass = 'heavy-duty' | 'mini';
+export type EquipmentClass = 'drying' | 'power' | 'climate' | 'heavy-duty' | 'mini' | string;
+export type EquipmentAvailability = 'rent' | 'buy';
+
+export type EquipmentPricing = {
+  daily: number | null;
+  weekly: number | null;
+  monthly: number | null;
+  buyNew: number | null;
+  buyUsed: number | null;
+  deposit: number;
+};
+
+export type EquipmentPhoto = { src: string; alt: string };
 
 export type EquipmentItem = {
   id: string;
   class: EquipmentClass;
   visible?: boolean;
   bookable?: boolean;
+  availability: EquipmentAvailability[];
   name: string;
   shortName: string;
   tagline: string;
   displayRate: string;
+  pricing: EquipmentPricing;
   specs: {
     operatingWeightLbs: string;
     ratedOperatingCapacityLbs: string;
@@ -26,7 +46,7 @@ export type EquipmentItem = {
   };
   attachmentsIncluded: string[];
   idealFor: string[];
-  photos: { src: string; alt: string }[];
+  photos: EquipmentPhoto[];
   operatorNote: string;
   photoNote: string;
 };
@@ -40,6 +60,7 @@ export type CityPage = {
   typicalJobs: string[];
   localContext: string;
   driveTime: string;
+  deliveryPrice: number;
 };
 
 export type CityPagesConfig = {
@@ -108,10 +129,10 @@ export function getSiteConfig(): SiteConfig {
     partner: r.partner,
     pricing: r.pricing,
     heroPhoto: r.heroPhoto,
-    equipment: r.equipment as EquipmentItem[],
+    equipment: r.equipment as unknown as EquipmentItem[],
     serviceAreas: r.serviceAreas,
     serviceAreaTagline: r.serviceAreaTagline,
-    cityPages: r.cityPages as CityPagesConfig,
+    cityPages: r.cityPages as unknown as CityPagesConfig,
     trustPoints: r.trustPoints,
     faq: r.faq,
     ctas: r.ctas,
@@ -130,10 +151,39 @@ export function mailtoHref(email: string, subject = 'Equipment rental inquiry'):
   return `mailto:${email}?subject=${encodeURIComponent(subject)}`;
 }
 
-export function allPhotos(cfg: SiteConfig): { src: string; alt: string }[] {
+export function allPhotos(cfg: SiteConfig): EquipmentPhoto[] {
   return visibleEquipment(cfg).flatMap((e) => e.photos);
 }
 
 export function visibleEquipment(cfg: SiteConfig): EquipmentItem[] {
   return cfg.equipment.filter((e) => e.visible !== false);
+}
+
+export function getEquipmentById(id: string, cfg: SiteConfig): EquipmentItem | undefined {
+  return cfg.equipment.find((e) => e.id === id);
+}
+
+export function rentableEquipment(cfg: SiteConfig): EquipmentItem[] {
+  return visibleEquipment(cfg).filter((e) => e.availability.includes('rent'));
+}
+
+export function buyableEquipment(cfg: SiteConfig): EquipmentItem[] {
+  return visibleEquipment(cfg).filter((e) => e.availability.includes('buy'));
+}
+
+export function classLabel(c: EquipmentClass): string {
+  switch (c) {
+    case 'drying':
+      return 'Drying';
+    case 'power':
+      return 'Power';
+    case 'climate':
+      return 'Climate';
+    case 'heavy-duty':
+      return 'Heavy-duty';
+    case 'mini':
+      return 'Mini';
+    default:
+      return String(c).charAt(0).toUpperCase() + String(c).slice(1);
+  }
 }

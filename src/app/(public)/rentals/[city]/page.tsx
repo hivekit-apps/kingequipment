@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getSiteConfig, cityPageUrl, visibleEquipment, type CityPage } from '@/lib/config';
 import { cityLocalBusinessJsonLd, cityBreadcrumbsJsonLd } from '@/lib/jsonld';
-import { PhotoStrip } from '@/components/PhotoStrip';
 
 export const dynamicParams = false;
 
@@ -16,8 +15,8 @@ export function generateMetadata({ params }: { params: { city: string } }): Meta
   const cfg = getSiteConfig();
   const city = cfg.cityPages.cities.find((c) => c.slug === params.city);
   if (!city) return {};
-  const title = `Skid-steer rental in ${city.name} — mini stand-on track loader`;
-  const description = `${cfg.business.name} delivers mini stand-on track loader rental to ${city.name}. ${city.coverage === 'core' ? 'Delivery included.' : 'Delivery quoted up-front.'} Send a request and we'll email you back.`.trim();
+  const title = `Equipment rental in ${city.name} — ${cfg.business.name}`;
+  const description = `${cfg.business.name} delivers equipment rental to ${city.name} — dehumidifiers, air scrubbers, carpet extractors, air movers, generators, and heaters. Daily, weekly, and monthly rates.`.trim();
   return {
     title,
     description,
@@ -45,10 +44,8 @@ export default function CityPageRoute({ params }: { params: { city: string } }) 
   const city = cfg.cityPages.cities.find((c) => c.slug === params.city);
   if (!city) notFound();
   const siblings = siblingCities(city, cfg.cityPages.cities);
-  const coverageNote =
-    city.coverage === 'core'
-      ? `${city.name} is in our core service area — delivery is included.`
-      : `We deliver to ${city.name} — a delivery fee applies and is quoted up-front before we book.`;
+  const equipment = visibleEquipment(cfg);
+  const deliveryPrice = (city as unknown as { deliveryPrice?: number }).deliveryPrice;
 
   return (
     <>
@@ -68,7 +65,7 @@ export default function CityPageRoute({ params }: { params: { city: string } }) 
           <li aria-hidden="true">/</li>
           <li><Link href="/service-area" className="hover:text-brand-orange">Service area</Link></li>
           <li aria-hidden="true">/</li>
-          <li className="font-semibold text-slate-950">Skid-steer rental in {city.name}</li>
+          <li className="font-semibold text-slate-950">Equipment rental in {city.name}</li>
         </ol>
       </nav>
 
@@ -79,21 +76,22 @@ export default function CityPageRoute({ params }: { params: { city: string } }) 
             {city.region} region · {cfg.business.name}
           </p>
           <h1 className="mt-2 text-3xl md:text-5xl leading-tight">
-            Skid-steer rental in {city.name} — mini stand-on track loader
+            Equipment rental in {city.name}
           </h1>
           <p className="mt-4 text-lg text-slate-200 max-w-3xl">
-            {coverageNote} One local owner-operator. {cfg.pricing.deliveryNote.replace(/^Delivery included within our service area\.\s*/, '')}
+            Dehumidifiers, air scrubbers, carpet extractors, air movers, generators, and heaters — delivered to {city.name}.
+            {deliveryPrice ? ` Delivery to ${city.name}: $${deliveryPrice} per order.` : ''}
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3">
             <Link
-              href="/book"
+              href="/equipment"
               className="btn-primary text-lg"
-              data-event={`city_hero_book_${city.slug}`}
+              data-event={`city_hero_rent_${city.slug}`}
             >
-              Request the loader
+              Browse rental catalog
             </Link>
-            <Link href="/equipment" className="btn-secondary text-lg bg-transparent text-white border-white hover:bg-slate-800">
-              See specs &amp; photos
+            <Link href="/equipment?view=buy" className="btn-secondary text-lg bg-transparent text-white border-white hover:bg-slate-800">
+              Shop for sale
             </Link>
           </div>
         </div>
@@ -106,8 +104,8 @@ export default function CityPageRoute({ params }: { params: { city: string } }) 
           <p className="mt-4 text-base text-slate-700 max-w-3xl leading-relaxed">{city.localContext}</p>
           {city.neighborhoods.length > 0 && (
             <p className="mt-4 text-base text-slate-700 max-w-3xl">
-              <span className="font-semibold">Areas we deliver in {city.name}:</span>{' '}
-              {city.neighborhoods.join(' · ')} and surrounding.
+              <span className="font-semibold">Neighbourhoods we deliver in {city.name}:</span>{' '}
+              {city.neighborhoods.join(' · ')}.
             </p>
           )}
           <p className="mt-2 text-sm text-slate-600">{city.driveTime}.</p>
@@ -129,15 +127,15 @@ export default function CityPageRoute({ params }: { params: { city: string } }) 
         </div>
       </section>
 
-      {/* Machine */}
+      {/* Equipment catalog */}
       <section className="bg-white">
         <div className="container-page py-12">
-          <h2 className="text-2xl md:text-3xl">The machine for {city.name} work</h2>
+          <h2 className="text-2xl md:text-3xl">What we deliver to {city.name}</h2>
           <div className="mt-8 grid md:grid-cols-2 gap-6">
-            {visibleEquipment(cfg).map((item) => (
+            {equipment.map((item) => (
               <div key={item.id} className="rounded-lg border border-slate-200 p-6">
                 <p className="text-xs uppercase tracking-wide text-brand-orange font-bold">
-                  {item.class === 'heavy-duty' ? 'Heavy-duty option' : 'Mini option'}
+                  {item.class}
                 </p>
                 <h3 className="mt-1 text-xl font-bold text-slate-950">{item.shortName}</h3>
                 <p className="mt-3 text-base text-slate-700">{item.tagline}</p>
@@ -155,22 +153,9 @@ export default function CityPageRoute({ params }: { params: { city: string } }) 
           </div>
           <p className="mt-6 text-sm text-slate-700">
             <Link href="/equipment" className="underline font-semibold">
-              See full specs &amp; photos
+              See full catalog &amp; place a rental
             </Link>
           </p>
-        </div>
-      </section>
-
-      {/* Recent jobs photos */}
-      <section className="bg-slate-50">
-        <div className="container-page py-12">
-          <h2 className="text-2xl md:text-3xl">Recent jobs</h2>
-          <p className="mt-3 text-base text-slate-700 max-w-3xl">
-            Photos from recent jobs around the GTA. Same machines that come to your {city.name} site.
-          </p>
-          <div className="mt-6">
-            <PhotoStrip limit={4} />
-          </div>
         </div>
       </section>
 
@@ -186,7 +171,7 @@ export default function CityPageRoute({ params }: { params: { city: string } }) 
                     href={cityPageUrl(s.slug, cfg)}
                     className="block px-4 py-3 rounded-md bg-slate-50 border border-slate-200 font-semibold hover:bg-slate-100 hover:border-slate-300"
                   >
-                    Skid-steer rental in {s.name}
+                    Equipment rental in {s.name}
                   </Link>
                 </li>
               ))}
@@ -200,18 +185,16 @@ export default function CityPageRoute({ params }: { params: { city: string } }) 
         </section>
       )}
 
-      {/* CTA — link to /book (single request form) */}
+      {/* CTA */}
       <section id="cta" className="bg-slate-950 text-white scroll-mt-16">
         <div className="container-page py-12 md:py-16 text-center">
-          <h2 className="text-2xl md:text-3xl">Need a machine in {city.name}?</h2>
+          <h2 className="text-2xl md:text-3xl">Need equipment in {city.name}?</h2>
           <p className="mt-4 text-slate-200 max-w-2xl mx-auto">
-            Pick your dates, choose your delivery zone, and tell us where to
-            send it. We&apos;ll email you back to confirm availability and
-            quote delivery within a few hours during business hours.
+            Add what you need to the cart, pick your dates, and we&apos;ll confirm delivery within a few hours during business hours.
           </p>
           <div className="mt-8">
-            <Link href="/book" className="btn-primary text-lg" data-event={`city_cta_book_${city.slug}`}>
-              Request the loader
+            <Link href="/equipment" className="btn-primary text-lg" data-event={`city_cta_rent_${city.slug}`}>
+              Browse equipment
             </Link>
           </div>
         </div>

@@ -1,694 +1,523 @@
 {
   "business": {
-    "name": "King Equipment Rental",
-    "tagline": "Skid-steer & track loader rental in the north GTA \u2014 delivered.",
-    "shortDescription": "Local skid-steer rental, owner-operated. Mini stand-on track loader that fits through a standard 36-inch gate \u2014 ideal for backyards, tight-access jobs, residential landscaping, and small demolition. Daily, weekly, and monthly rates. Free delivery within King Township; flat-rate delivery across the GTA.",
+    "name": "King Equipment",
+    "tagline": "Equipment rental & sales for Toronto, Markham & Durham Region — delivered.",
+    "shortDescription": "Local equipment rental and sales — serving Toronto, Markham, and the Durham Region (Pickering, Ajax, Whitby, Oshawa, Uxbridge, Clarington, Scugog, Brock). Dehumidifiers, air scrubbers, carpet water extractors, air movers, generators, and heaters. Daily, weekly, and monthly rental rates, or buy new and used. Delivery across the service area.",
     "phoneFallback": "647-555-5555",
-    "emailFallback": "kingequipmentrental.ca@gmail.com",
-    "siteUrlFallback": "https://kingequipmentrental.ca",
+    "emailFallback": "kingequipment.ca@gmail.com",
+    "siteUrlFallback": "https://kingequipment.ca",
     "hours": "Mon-Sat 7am-7pm; Sun by appointment"
   },
   "partner": {
-    "name": "Valdas Jakimavicius",
-    "business": "Amber Castle",
-    "url": "https://ambercastle.ca",
-    "credentials": "10+ years construction industry experience; owner of Amber Castle"
+    "name": "Onder Kaban",
+    "business": "",
+    "url": "",
+    "credentials": ""
   },
   "pricing": {
-    "displayRate": "Call for daily rate",
-    "deliveryNote": "Free delivery within King Township. $99.99 flat across the GTA \u2014 includes drop-off AND pickup. Other Southern Ontario by request.",
-    "multiDayNote": "Daily, weekly, and monthly rates. Trained operator add-on available.",
-    "comparisonNote": "Local owner-operated rates with the cheapest delivery in the industry."
+    "displayRate": "Daily, weekly, and monthly rates",
+    "deliveryNote": "Delivery across Toronto, Markham, and the Durham Region. Delivery pricing varies by city — see each equipment page for a quote.",
+    "multiDayNote": "Weekly rate kicks in automatically once it's cheaper than per-day. Monthly rate kicks in automatically once it's cheaper than per-week.",
+    "comparisonNote": "Owner-operated. Honest pricing. Clean, well-maintained equipment."
   },
   "heroPhoto": {
     "src": "/images/mini-loading-bin-residential.webp",
-    "alt": "Our mini stand-on track loader loading bricks into a disposal bin on a residential GTA street \u2014 fits through a standard 36-inch gate.",
+    "alt": "King Equipment — rental and sales for Toronto, Markham, and Durham Region.",
     "width": 960,
     "height": 1280
   },
   "equipment": [
     {
-      "id": "cat-259b3",
-      "class": "heavy-duty",
-      "visible": false,
-      "name": "CAT 259B3 Compact Track Loader",
-      "shortName": "CAT 259B3",
-      "tagline": "Full-size compact track loader for site prep, grading, and serious material handling.",
-      "displayRate": "$249.99 / day",
-      "bookable": false,
+      "id": "dehumidifier-lgr-7000",
+      "class": "drying",
+      "visible": true,
+      "bookable": true,
+      "availability": ["rent", "buy"],
+      "name": "Dri-Eaz LGR 7000 XLi Dehumidifier",
+      "shortName": "LGR 7000 XLi Dehumidifier",
+      "tagline": "Low-grain refrigerant dehumidifier — the industry standard for water damage drying.",
+      "displayRate": "From $85 / day · $340 / week · $980 / month",
+      "pricing": {
+        "daily": 85,
+        "weekly": 340,
+        "monthly": 980,
+        "buyNew": 3200,
+        "buyUsed": null,
+        "deposit": 500
+      },
       "specs": {
-        "operatingWeightLbs": "~7,700",
-        "ratedOperatingCapacityLbs": "~2,000",
-        "engineHp": "~74",
-        "liftHeightIn": "~120",
+        "operatingWeightLbs": "~105",
+        "ratedOperatingCapacityLbs": "~130 pints/day at saturation",
+        "engineHp": "N/A",
+        "liftHeightIn": null,
         "gateWidthIn": null
       },
       "attachmentsIncluded": [
-        "Standard bucket",
-        "Forks (on request)"
+        "Drain hose",
+        "Air filter"
       ],
       "idealFor": [
-        "Site prep and grading",
-        "Material handling on commercial jobs",
-        "Heavy-duty digging and pushing",
-        "Snow clearing for larger lots"
+        "Water damage restoration drying",
+        "Flooded basements",
+        "Post-leak room drying",
+        "Humidity control on construction sites"
       ],
       "photos": [
         {
-          "src": "/images/cat-259b3-front-snow.webp",
-          "alt": "Our CAT 259B3 compact track loader photographed from the rear, with the CAT badge clearly visible on the back panel."
-        },
-        {
-          "src": "/images/mini-pushing-bricks.webp",
-          "alt": "Our CAT 259B3 compact track loader photographed from the side \u2014 the 259B3 model badge and CAT branding are visible on the engine cowl."
+          "src": "/images/equipment-dehumidifier-placeholder.webp",
+          "alt": "Dri-Eaz LGR 7000 XLi dehumidifier."
         }
       ],
-      "operatorNote": "Renter operates. Operator must be experienced on full-size compact track loaders; we can recommend a trained operator if needed.",
-      "photoNote": "Photos are of our actual CAT 259B3 unit."
+      "operatorNote": "Renter operates — plug in, set humidity target, let it run.",
+      "photoNote": "Representative photo — equipment is clean and well-maintained."
     },
     {
-      "id": "mini-stand-on",
-      "class": "mini",
+      "id": "air-scrubber",
+      "class": "drying",
       "visible": true,
-      "name": "Mini stand-on track loader",
-      "shortName": "Mini stand-on loader",
-      "tagline": "Stand-on platform that fits through a standard 36-inch gate \u2014 ideal for backyards and tight access.",
-      "displayRate": "$249.99 / day",
       "bookable": true,
+      "availability": ["rent", "buy"],
+      "name": "Air Scrubber / Air Purifier (HEPA)",
+      "shortName": "Air Scrubber",
+      "tagline": "HEPA air scrubber for construction dust, mold remediation, and smoke damage.",
+      "displayRate": "From $55 / day · $220 / week · $650 / month",
+      "pricing": {
+        "daily": 55,
+        "weekly": 220,
+        "monthly": 650,
+        "buyNew": 1600,
+        "buyUsed": null,
+        "deposit": 300
+      },
       "specs": {
-        "operatingWeightLbs": "~1,200-1,800",
-        "ratedOperatingCapacityLbs": "~500-700",
-        "engineHp": "15",
+        "operatingWeightLbs": "~55",
+        "ratedOperatingCapacityLbs": "~500 CFM",
+        "engineHp": "N/A",
         "liftHeightIn": null,
-        "gateWidthIn": "~36",
-        "bucketWidthIn": "38"
+        "gateWidthIn": null
       },
       "attachmentsIncluded": [
-        "Standard bucket"
+        "HEPA filter",
+        "Pre-filter"
       ],
       "idealFor": [
-        "Residential and backyard work",
-        "Tight-access jobs (fits through 36-inch gates)",
-        "Light material handling and landscaping",
-        "Small demolition and cleanup"
+        "Mold remediation",
+        "Construction dust control",
+        "Smoke damage",
+        "Post-reno air cleanup"
       ],
       "photos": [
         {
-          "src": "/images/mini-loading-bin-residential.webp",
-          "alt": "Our mini stand-on track loader loading bricks into a disposal bin on a residential GTA street."
-        },
-        {
-          "src": "/images/mini-demo-bricks.webp",
-          "alt": "Our mini stand-on track loader carrying bricks on a residential demolition job in the GTA."
-        },
-        {
-          "src": "/images/cat-259b3-side-badge.webp",
-          "alt": "Our mini stand-on track loader at a brick-removal job site in the GTA."
-        },
-        {
-          "src": "/images/mini-scooping-debris.webp",
-          "alt": "Our mini stand-on track loader scooping debris onto a pile during a residential cleanup job."
+          "src": "/images/equipment-airscrubber-placeholder.webp",
+          "alt": "HEPA air scrubber."
         }
       ],
-      "operatorNote": "Stand-on platform. Experienced operator recommended; lighter learning curve than a full-size loader.",
-      "photoNote": "Photos are of our actual mini stand-on loader on recent jobs in the GTA."
+      "operatorNote": "Renter operates — place in the affected area, plug in, run continuously.",
+      "photoNote": "Representative photo — equipment is clean and well-maintained."
+    },
+    {
+      "id": "carpet-water-extractor",
+      "class": "drying",
+      "visible": true,
+      "bookable": true,
+      "availability": ["rent", "buy"],
+      "name": "Carpet Water Extractor",
+      "shortName": "Carpet Extractor",
+      "tagline": "Portable carpet and upholstery water extractor for flooded floors.",
+      "displayRate": "From $75 / day · $300 / week · $880 / month",
+      "pricing": {
+        "daily": 75,
+        "weekly": 300,
+        "monthly": 880,
+        "buyNew": 2400,
+        "buyUsed": null,
+        "deposit": 400
+      },
+      "specs": {
+        "operatingWeightLbs": "~65",
+        "ratedOperatingCapacityLbs": "~10 gal tank",
+        "engineHp": "N/A",
+        "liftHeightIn": null,
+        "gateWidthIn": null
+      },
+      "attachmentsIncluded": [
+        "Floor wand",
+        "Upholstery tool",
+        "Hoses"
+      ],
+      "idealFor": [
+        "Flooded carpets",
+        "Water removal after burst pipes",
+        "Deep carpet cleaning",
+        "Upholstery extraction"
+      ],
+      "photos": [
+        {
+          "src": "/images/equipment-extractor-placeholder.webp",
+          "alt": "Portable carpet water extractor."
+        }
+      ],
+      "operatorNote": "Renter operates — fill clean tank, extract, empty waste tank.",
+      "photoNote": "Representative photo — equipment is clean and well-maintained."
+    },
+    {
+      "id": "air-mover",
+      "class": "drying",
+      "visible": true,
+      "bookable": true,
+      "availability": ["rent", "buy"],
+      "name": "Air Mover / Floor Dryer",
+      "shortName": "Air Mover",
+      "tagline": "High-velocity air mover for drying carpets, floors, and walls.",
+      "displayRate": "From $25 / day · $100 / week · $280 / month",
+      "pricing": {
+        "daily": 25,
+        "weekly": 100,
+        "monthly": 280,
+        "buyNew": 450,
+        "buyUsed": null,
+        "deposit": 100
+      },
+      "specs": {
+        "operatingWeightLbs": "~35",
+        "ratedOperatingCapacityLbs": "~3000 CFM",
+        "engineHp": "N/A",
+        "liftHeightIn": null,
+        "gateWidthIn": null
+      },
+      "attachmentsIncluded": [
+        "Daisy-chain power outlet"
+      ],
+      "idealFor": [
+        "Drying wet carpets",
+        "Drying walls after water damage",
+        "Floor drying",
+        "General ventilation"
+      ],
+      "photos": [
+        {
+          "src": "/images/equipment-airmover-placeholder.webp",
+          "alt": "Centrifugal air mover / floor dryer."
+        }
+      ],
+      "operatorNote": "Renter operates — position, plug in, let run.",
+      "photoNote": "Representative photo — equipment is clean and well-maintained."
+    },
+    {
+      "id": "generator-portable",
+      "class": "power",
+      "visible": true,
+      "bookable": true,
+      "availability": ["rent", "buy"],
+      "name": "Portable Generator",
+      "shortName": "Generator",
+      "tagline": "Portable gasoline generator for site power, outages, and events.",
+      "displayRate": "From $70 / day · $280 / week · $820 / month",
+      "pricing": {
+        "daily": 70,
+        "weekly": 280,
+        "monthly": 820,
+        "buyNew": 1800,
+        "buyUsed": null,
+        "deposit": 350
+      },
+      "specs": {
+        "operatingWeightLbs": "~140",
+        "ratedOperatingCapacityLbs": "~6500W peak / 5500W running",
+        "engineHp": "~10",
+        "liftHeightIn": null,
+        "gateWidthIn": null
+      },
+      "attachmentsIncluded": [
+        "Standard outlets",
+        "Starting fuel"
+      ],
+      "idealFor": [
+        "Job site power",
+        "Backup power during outages",
+        "Outdoor events",
+        "Running air movers off-grid"
+      ],
+      "photos": [
+        {
+          "src": "/images/equipment-generator-placeholder.webp",
+          "alt": "Portable gasoline generator."
+        }
+      ],
+      "operatorNote": "Renter operates — fuel up, plug in, follow included safety guide.",
+      "photoNote": "Representative photo — equipment is clean and well-maintained."
+    },
+    {
+      "id": "heater-propane",
+      "class": "climate",
+      "visible": true,
+      "bookable": true,
+      "availability": ["rent", "buy"],
+      "name": "Portable Propane Heater",
+      "shortName": "Propane Heater",
+      "tagline": "Portable propane heater for construction site warming and cold-weather drying.",
+      "displayRate": "From $50 / day · $200 / week · $580 / month",
+      "pricing": {
+        "daily": 50,
+        "weekly": 200,
+        "monthly": 580,
+        "buyNew": 850,
+        "buyUsed": null,
+        "deposit": 200
+      },
+      "specs": {
+        "operatingWeightLbs": "~45",
+        "ratedOperatingCapacityLbs": "~80,000 BTU/hr",
+        "engineHp": "N/A",
+        "liftHeightIn": null,
+        "gateWidthIn": null
+      },
+      "attachmentsIncluded": [
+        "Propane regulator + hose"
+      ],
+      "idealFor": [
+        "Cold-weather job site warming",
+        "Cold-weather drying assist",
+        "Garage and workshop heating",
+        "Outdoor event warming"
+      ],
+      "photos": [
+        {
+          "src": "/images/equipment-heater-placeholder.webp",
+          "alt": "Portable propane heater."
+        }
+      ],
+      "operatorNote": "Renter operates — connect propane, light per included instructions, use with ventilation.",
+      "photoNote": "Representative photo — equipment is clean and well-maintained."
     }
   ],
   "serviceAreas": [
-    "King City",
-    "Aurora",
-    "Newmarket",
-    "Richmond Hill",
-    "Vaughan",
-    "North Toronto",
-    "Bradford"
+    "Toronto",
+    "Markham",
+    "Pickering",
+    "Ajax",
+    "Whitby",
+    "Oshawa",
+    "Uxbridge",
+    "Clarington",
+    "Scugog",
+    "Brock"
   ],
-  "serviceAreaTagline": "We serve the north GTA halo. Outside this zone? Send us a request \u2014 delivery quotes are case by case.",
+  "serviceAreaTagline": "We deliver across Toronto, Markham, and the full Durham Region. Delivery price varies by city — see each equipment page for the quote to your door.",
   "cityPages": {
-    "basePath": "/skid-steer-rental",
+    "basePath": "/rentals",
     "coreCities": [
-      "king-city",
-      "aurora",
-      "newmarket",
-      "richmond-hill",
-      "vaughan",
-      "bradford"
+      "toronto",
+      "markham",
+      "pickering",
+      "ajax",
+      "whitby",
+      "oshawa",
+      "uxbridge",
+      "clarington",
+      "scugog",
+      "brock"
     ],
     "cities": [
-      {
-        "slug": "king-city",
-        "name": "King City",
-        "region": "York",
-        "coverage": "core",
-        "neighborhoods": [
-          "King City village",
-          "Kingscross Estates",
-          "King Heights",
-          "Eversley"
-        ],
-        "typicalJobs": [
-          "Estate landscaping and grading on large King City lots",
-          "Driveway prep and resurfacing",
-          "Backyard build-outs (pool prep, patio sub-base, retaining walls)",
-          "Heavy snow clearing on long rural driveways"
-        ],
-        "localContext": "King City is our home base. Most of our King City work runs on a mix of village lots, estates, and rural residential along Dufferin and Bathurst. The mini stand-on loader fits through standard 36-inch gates and handles backyard build-outs, driveway prep, and grading without tearing up access points. Same-day delivery on most King City jobs.",
-        "driveTime": "Local \u2014 same day delivery"
-      },
-      {
-        "slug": "aurora",
-        "name": "Aurora",
-        "region": "York",
-        "coverage": "core",
-        "neighborhoods": [
-          "Aurora Highlands",
-          "Aurora Village",
-          "Bayview Wellington",
-          "Hills of St. Andrew"
-        ],
-        "typicalJobs": [
-          "Backyard landscaping and grading in Aurora Highlands and Bayview Wellington",
-          "Foundation prep on residential infill builds",
-          "Material handling on home renovations",
-          "Driveway and walkway prep"
-        ],
-        "localContext": "Aurora is the heart of our core service area. We deliver across Aurora \u2014 from the older lots in Aurora Village to the newer Bayview Wellington and St. Andrew sub-divisions. The mini stand-on loader fits through almost every Aurora backyard gate (most are built to the standard 36-inch spec) and is the right pick for the typical backyard landscaping, foundation, and grading work in Aurora.",
-        "driveTime": "~10-15 min from King City"
-      },
-      {
-        "slug": "newmarket",
-        "name": "Newmarket",
-        "region": "York",
-        "coverage": "core",
-        "neighborhoods": [
-          "Stonehaven",
-          "Glenway",
-          "Summerhill Estates",
-          "Woodland Hill"
-        ],
-        "typicalJobs": [
-          "Residential landscaping in Stonehaven and Woodland Hill",
-          "Foundation digging for additions and accessory dwellings",
-          "Pool and patio sub-base prep",
-          "Snow clearing for residential and small commercial lots"
-        ],
-        "localContext": "Newmarket has a mix of older town-centre lots and newer suburban developments \u2014 the mini stand-on loader fits the older streets where lot lines are tight and works just as well on the newer Stonehaven and Summerhill builds. We deliver across Newmarket including the south end near Davis Drive.",
-        "driveTime": "~15-20 min from King City"
-      },
-      {
-        "slug": "richmond-hill",
-        "name": "Richmond Hill",
-        "region": "York",
-        "coverage": "core",
-        "neighborhoods": [
-          "Oak Ridges",
-          "Mill Pond",
-          "Bayview Hill",
-          "Jefferson"
-        ],
-        "typicalJobs": [
-          "Backyard build-outs in Oak Ridges and Jefferson",
-          "Grading and topsoil placement for landscape installs",
-          "Foundation prep on infill and addition jobs",
-          "Material handling for home renovations"
-        ],
-        "localContext": "Richmond Hill jobs range from estate properties up in Oak Ridges to denser lots around Mill Pond and Bayview Hill. The mini stand-on loader fits through most Richmond Hill gates and handles backyard build-outs, foundation prep, and grading on a typical Richmond Hill lot. We deliver across Richmond Hill.",
-        "driveTime": "~20-30 min from King City"
-      },
-      {
-        "slug": "vaughan",
-        "name": "Vaughan",
-        "region": "York",
-        "coverage": "core",
-        "neighborhoods": [
-          "Maple",
-          "Kleinburg",
-          "Woodbridge",
-          "Thornhill",
-          "Vellore Village"
-        ],
-        "typicalJobs": [
-          "Backyard landscaping in Maple, Vellore, and Woodbridge",
-          "Foundation and footing prep on residential builds",
-          "Driveway sub-base and grading",
-          "Snow clearing on commercial and residential lots"
-        ],
-        "localContext": "Vaughan is one of the busiest parts of our service area \u2014 a wide mix of new developments (Vellore, Maple) and older established neighbourhoods (Thornhill, Woodbridge, Kleinburg). The mini stand-on loader covers backyard landscaping, foundation prep, and the typical residential build-out across all of these areas.",
-        "driveTime": "~25-35 min from King City"
-      },
-      {
-        "slug": "bradford",
-        "name": "Bradford",
-        "region": "Simcoe",
-        "coverage": "core",
-        "neighborhoods": [
-          "Bond Head",
-          "Bradford West Gwillimbury",
-          "Holland Marsh"
-        ],
-        "typicalJobs": [
-          "Agricultural and rural property grading",
-          "Driveway prep on rural and large residential lots",
-          "Landscaping for new sub-divisions in Bradford West Gwillimbury",
-          "Snow clearing on long rural driveways"
-        ],
-        "localContext": "Bradford and the Holland Marsh corridor are on our regular route. The mini stand-on loader handles the in-town sub-divisions, backyard work, and smaller rural-property jobs around Bond Head and Bradford West Gwillimbury. We're familiar with the Holland Marsh soil \u2014 bring boards if you're crossing soft ground.",
-        "driveTime": "~25-30 min from King City"
-      },
       {
         "slug": "toronto",
         "name": "Toronto",
         "region": "Toronto",
-        "coverage": "extended",
-        "neighborhoods": [
-          "Forest Hill",
-          "Leaside",
-          "Riverdale",
-          "The Beaches",
-          "High Park"
-        ],
+        "coverage": "core",
+        "neighborhoods": ["Downtown", "North York", "Scarborough", "Etobicoke", "East York", "York"],
         "typicalJobs": [
-          "Backyard grading and topsoil placement on midtown infill lots",
-          "Foundation digging on residential additions",
-          "Demolition cleanup for home renovations",
-          "Snow clearing on commercial lots"
+          "Water damage drying in condos and homes",
+          "Mold remediation after basement leaks",
+          "Construction site dust control",
+          "Post-reno air cleanup"
         ],
-        "localContext": "Toronto jobs are almost always tight-access \u2014 older lots with mature trees, narrow side yards, and standard backyard gates. The mini stand-on loader is the workhorse here; it fits through 36-inch gates that bigger machines can't approach. For downtown jobs, mention parking, unloading, and any street-occupancy permit notes in your request. Delivery fee applies on Toronto jobs (we'll quote up-front).",
-        "driveTime": "~45-60 min from King City"
-      },
-      {
-        "slug": "north-york",
-        "name": "North York",
-        "region": "Toronto",
-        "coverage": "extended",
-        "neighborhoods": [
-          "Willowdale",
-          "Bayview Village",
-          "Don Mills",
-          "York Mills",
-          "Lawrence Manor"
-        ],
-        "typicalJobs": [
-          "Backyard build-outs in Willowdale and Bayview Village",
-          "Foundation prep on residential infill builds",
-          "Grading for landscape and patio installs",
-          "Material handling on home renovations"
-        ],
-        "localContext": "North York is mostly older established neighbourhoods with deep lots \u2014 the mini stand-on loader is the right fit for the tight access typical along Yonge, Bayview, and Leslie. Backyard build-outs and foundation prep on Willowdale and Bayview Village additions are routine work for us. We deliver across North York.",
-        "driveTime": "~35-45 min from King City"
-      },
-      {
-        "slug": "scarborough",
-        "name": "Scarborough",
-        "region": "Toronto",
-        "coverage": "extended",
-        "neighborhoods": [
-          "Agincourt",
-          "Wexford",
-          "Cliffside",
-          "Birch Cliff",
-          "Rouge"
-        ],
-        "typicalJobs": [
-          "Residential landscaping and grading",
-          "Foundation and footing prep on additions",
-          "Material handling on renovation projects",
-          "Snow clearing on commercial lots"
-        ],
-        "localContext": "Scarborough has a wide mix of lot sizes \u2014 from the tighter older streets near Kingston Road to the larger newer builds out past Markham Road. The mini stand-on loader covers most residential landscaping, grading, and foundation work across Scarborough. Delivery fee applies \u2014 quoted before we book.",
-        "driveTime": "~50-60 min from King City"
-      },
-      {
-        "slug": "etobicoke",
-        "name": "Etobicoke",
-        "region": "Toronto",
-        "coverage": "extended",
-        "neighborhoods": [
-          "Kingsway",
-          "Humber Bay",
-          "Long Branch",
-          "Mimico",
-          "Markland Wood"
-        ],
-        "typicalJobs": [
-          "Backyard landscaping on Kingsway and Markland Wood lots",
-          "Foundation prep on residential additions",
-          "Topsoil placement and grading for landscape installs",
-          "Material handling on home renovations"
-        ],
-        "localContext": "Etobicoke is mostly older established residential \u2014 narrower lots near the lake (Mimico, Long Branch) and wider mature lots in the Kingsway. The mini stand-on loader is the right call for most Etobicoke backyards and fits through the standard 36-inch gates typical here. We deliver across Etobicoke; delivery fee applies.",
-        "driveTime": "~50-60 min from King City"
-      },
-      {
-        "slug": "mississauga",
-        "name": "Mississauga",
-        "region": "Peel",
-        "coverage": "extended",
-        "neighborhoods": [
-          "Streetsville",
-          "Port Credit",
-          "Erin Mills",
-          "Meadowvale",
-          "Lorne Park"
-        ],
-        "typicalJobs": [
-          "Residential landscaping in Erin Mills and Meadowvale",
-          "Foundation prep on infill and addition jobs",
-          "Backyard grading for patio and pool builds",
-          "Snow clearing on commercial and large residential lots"
-        ],
-        "localContext": "Mississauga has a wide range \u2014 from estate properties in Lorne Park to denser modern sub-divisions in Erin Mills and Meadowvale. The mini stand-on loader handles backyard build-outs, landscaping, and grading on the typical Mississauga residential lot. Delivery fee applies \u2014 quoted up-front.",
-        "driveTime": "~45-55 min from King City"
-      },
-      {
-        "slug": "brampton",
-        "name": "Brampton",
-        "region": "Peel",
-        "coverage": "extended",
-        "neighborhoods": [
-          "Mount Pleasant",
-          "Bram East",
-          "Heart Lake",
-          "Springdale",
-          "Castlemore"
-        ],
-        "typicalJobs": [
-          "Residential backyard build-outs in Mount Pleasant and Castlemore",
-          "Foundation digging on new builds and additions",
-          "Driveway prep and grading",
-          "Material handling on construction sites"
-        ],
-        "localContext": "Brampton is mostly newer sub-divisions with standard 36-inch gates \u2014 the mini stand-on loader fits through almost every Brampton backyard. Backyard build-outs behind the typical two-storey detached, driveway prep, and foundation digging on new builds are routine work. Delivery fee applies \u2014 quoted up-front.",
-        "driveTime": "~40-50 min from King City"
-      },
-      {
-        "slug": "caledon",
-        "name": "Caledon",
-        "region": "Peel",
-        "coverage": "extended",
-        "neighborhoods": [
-          "Bolton",
-          "Caledon East",
-          "Inglewood",
-          "Palgrave",
-          "Cheltenham"
-        ],
-        "typicalJobs": [
-          "Rural property grading and landscaping",
-          "Long driveway prep and resurfacing",
-          "Estate landscaping in Caledon East and Palgrave",
-          "Snow clearing on rural driveways"
-        ],
-        "localContext": "Caledon is mostly large rural and estate lots. The mini stand-on loader handles the in-town jobs around Bolton and Caledon East and the more manageable rural property work where access is controlled. We're comfortable on the gravel roads up past Highway 9. Delivery fee applies.",
-        "driveTime": "~35-45 min from King City"
+        "localContext": "Downtown and all boroughs covered. Fast delivery across the city.",
+        "driveTime": "Same-day delivery available",
+        "deliveryPrice": 75
       },
       {
         "slug": "markham",
         "name": "Markham",
         "region": "York",
-        "coverage": "extended",
-        "neighborhoods": [
-          "Unionville",
-          "Cathedraltown",
-          "Cornell",
-          "Berczy Village",
-          "Box Grove"
-        ],
+        "coverage": "core",
+        "neighborhoods": ["Unionville", "Markham Village", "Thornhill", "Cornell", "Berczy Village"],
         "typicalJobs": [
-          "Backyard landscaping in Unionville and Berczy",
-          "Foundation and footing prep on additions",
-          "Grading for new landscape installs",
-          "Snow clearing on commercial lots"
+          "Water damage drying in residential homes",
+          "Mold remediation and crawl space drying",
+          "Construction dust control",
+          "Carpet water extraction"
         ],
-        "localContext": "Markham is a mix of modern sub-divisions (Cornell, Cathedraltown, Box Grove) and older village cores (Unionville, Thornhill, Markham village). The mini stand-on loader is the right pick for the older village backyards and the typical modern-lot backyard build-out. We deliver across Markham.",
-        "driveTime": "~30-40 min from King City"
-      },
-      {
-        "slug": "stouffville",
-        "name": "Stouffville",
-        "region": "York",
-        "coverage": "extended",
-        "neighborhoods": [
-          "Stouffville village",
-          "Ballantrae",
-          "Musselman's Lake",
-          "Wheler's Mill"
-        ],
-        "typicalJobs": [
-          "Rural residential landscaping",
-          "Driveway prep on larger lots",
-          "Backyard build-outs in newer Stouffville sub-divisions",
-          "Snow clearing on rural and semi-rural driveways"
-        ],
-        "localContext": "Stouffville has a strong mix of old-village in-town lots and newer estate-style builds north along Highway 48. The mini stand-on loader fits the older streets and the newer Ballantrae and Wheler's Mill backyards. We're on the route regularly.",
-        "driveTime": "~30-35 min from King City"
-      },
-      {
-        "slug": "uxbridge",
-        "name": "Uxbridge",
-        "region": "Durham",
-        "coverage": "extended",
-        "neighborhoods": [
-          "Uxbridge village",
-          "Goodwood",
-          "Sandford",
-          "Coppin's Corners"
-        ],
-        "typicalJobs": [
-          "Rural property grading and driveway work",
-          "Estate landscaping",
-          "Long-driveway snow clearing",
-          "Foundation prep on rural residential builds"
-        ],
-        "localContext": "Uxbridge is rural and semi-rural \u2014 long driveways, larger residential lots, and a fair amount of equestrian property. The mini stand-on loader handles in-village jobs and smaller rural-property work where access is controlled. We're comfortable with the gravel and rolling terrain typical north of the village.",
-        "driveTime": "~40-50 min from King City"
-      },
-      {
-        "slug": "ajax",
-        "name": "Ajax",
-        "region": "Durham",
-        "coverage": "extended",
-        "neighborhoods": [
-          "Pickering Village (Ajax)",
-          "Riverside",
-          "Discovery Bay",
-          "Audley"
-        ],
-        "typicalJobs": [
-          "Residential backyard build-outs and landscaping",
-          "Foundation prep on additions and accessory dwellings",
-          "Grading for patio and pool installs",
-          "Material handling on renovations"
-        ],
-        "localContext": "Ajax is mostly newer sub-divisions with standard gate widths \u2014 the mini stand-on loader fits through almost every Ajax backyard. Backyard build-outs behind the typical two-storey, foundation prep on additions, and grading for patio and pool installs are routine. Delivery fee applies on Ajax jobs \u2014 quoted before we book.",
-        "driveTime": "~60-75 min from King City"
+        "localContext": "York Region coverage with same-day delivery for most addresses.",
+        "driveTime": "Same-day delivery available",
+        "deliveryPrice": 70
       },
       {
         "slug": "pickering",
         "name": "Pickering",
         "region": "Durham",
-        "coverage": "extended",
-        "neighborhoods": [
-          "Bay Ridges",
-          "Liverpool",
-          "West Shore",
-          "Brock Ridge",
-          "Seaton"
-        ],
+        "coverage": "core",
+        "neighborhoods": ["Bay Ridges", "Rosebank", "Amberlea", "Liverpool", "West Shore"],
         "typicalJobs": [
-          "Residential landscaping and grading",
-          "Foundation digging on additions",
-          "Backyard build-outs",
-          "Material handling on renovations"
+          "Water damage drying after basement leaks",
+          "Carpet water extraction",
+          "Air mover rental for drying",
+          "Mold remediation"
         ],
-        "localContext": "Pickering covers a wide area from the lake-side neighbourhoods (Bay Ridges, West Shore) through to the newer Seaton developments. The mini stand-on loader is the workhorse for most residential landscaping and grading work across Pickering. Delivery fee applies \u2014 quoted before we book.",
-        "driveTime": "~60-75 min from King City"
+        "localContext": "First Durham Region stop — reliable same-day drop-off.",
+        "driveTime": "Same-day delivery available",
+        "deliveryPrice": 80
+      },
+      {
+        "slug": "ajax",
+        "name": "Ajax",
+        "region": "Durham",
+        "coverage": "core",
+        "neighborhoods": ["Pickering Village", "Westney Heights", "Audley", "Nottingham"],
+        "typicalJobs": [
+          "Water damage drying",
+          "Flood recovery",
+          "Construction dust control",
+          "Post-reno air scrubbing"
+        ],
+        "localContext": "Full Ajax coverage. Same-day drop-off and pickup available.",
+        "driveTime": "Same-day delivery available",
+        "deliveryPrice": 85
       },
       {
         "slug": "whitby",
         "name": "Whitby",
         "region": "Durham",
-        "coverage": "extended",
-        "neighborhoods": [
-          "Downtown Whitby",
-          "Brooklin",
-          "Rolling Acres",
-          "Pringle Creek"
-        ],
+        "coverage": "core",
+        "neighborhoods": ["Downtown Whitby", "Brooklin", "Rossland", "Pringle Creek"],
         "typicalJobs": [
-          "Backyard build-outs in Brooklin and Rolling Acres",
-          "Foundation and footing prep on residential builds",
-          "Grading for landscape installs",
-          "Driveway prep on larger lots"
+          "Water damage drying in Brooklin and downtown Whitby",
+          "Carpet water extraction",
+          "Air scrubber rental for mold work",
+          "Dehumidifier rental for basements"
         ],
-        "localContext": "Whitby has a wide spread \u2014 older lots in Pringle Creek and downtown, newer sub-divisions in Brooklin and Rolling Acres. The mini stand-on loader handles backyard build-outs, foundation prep, and grading on the typical Whitby residential lot. Delivery fee applies on Whitby jobs.",
-        "driveTime": "~65-80 min from King City"
+        "localContext": "Full Whitby coverage including Brooklin.",
+        "driveTime": "Same-day delivery available",
+        "deliveryPrice": 90
       },
       {
         "slug": "oshawa",
         "name": "Oshawa",
         "region": "Durham",
-        "coverage": "extended",
-        "neighborhoods": [
-          "Eastdale",
-          "Lakeview",
-          "Taunton",
-          "Windfields",
-          "Donevan"
-        ],
+        "coverage": "core",
+        "neighborhoods": ["Downtown Oshawa", "North Oshawa", "Donevan", "Lakeview", "Vanier"],
         "typicalJobs": [
-          "Residential landscaping and grading",
-          "Foundation prep on additions",
-          "Backyard build-outs",
-          "Material handling on commercial and residential jobs"
+          "Water damage drying",
+          "Flood recovery after basement leaks",
+          "Construction dust control",
+          "Mold remediation"
         ],
-        "localContext": "Oshawa runs from the older lake-side neighbourhoods through the newer Windfields and Taunton developments. The mini stand-on loader covers most residential backyard work, foundation prep on additions, and grading across Oshawa. Delivery fee applies \u2014 quoted before we book.",
-        "driveTime": "~75-90 min from King City"
+        "localContext": "Oshawa coverage from downtown to north end.",
+        "driveTime": "Same-day delivery available",
+        "deliveryPrice": 95
       },
       {
-        "slug": "bowmanville",
-        "name": "Bowmanville",
+        "slug": "uxbridge",
+        "name": "Uxbridge",
         "region": "Durham",
-        "coverage": "extended",
-        "neighborhoods": [
-          "Bowmanville Heritage",
-          "Liberty Crossing",
-          "Northglen",
-          "Aspen Springs"
-        ],
+        "coverage": "core",
+        "neighborhoods": ["Uxbridge Village", "Goodwood", "Zephyr"],
         "typicalJobs": [
-          "Residential landscaping in newer sub-divisions",
-          "Driveway prep and grading",
-          "Backyard build-outs",
-          "Snow clearing on residential and commercial lots"
+          "Rural property water damage",
+          "Barn and outbuilding dehumidification",
+          "Post-flood drying",
+          "Generator rental during outages"
         ],
-        "localContext": "Bowmanville is mostly newer Northglen and Aspen Springs sub-divisions plus the older heritage core downtown. The mini stand-on loader handles backyard work behind newer two-storeys and the typical residential landscape install. Delivery fee applies on Bowmanville jobs.",
-        "driveTime": "~85-100 min from King City"
+        "localContext": "North Durham coverage. Rural addresses welcome.",
+        "driveTime": "Same-day delivery (schedule ahead for rural addresses)",
+        "deliveryPrice": 120
       },
       {
         "slug": "clarington",
         "name": "Clarington",
         "region": "Durham",
-        "coverage": "extended",
-        "neighborhoods": [
-          "Courtice",
-          "Newcastle",
-          "Orono",
-          "Newtonville"
-        ],
+        "coverage": "core",
+        "neighborhoods": ["Bowmanville", "Courtice", "Newcastle", "Orono"],
         "typicalJobs": [
-          "Rural property grading",
-          "Estate landscaping in Courtice and Newcastle",
-          "Long-driveway snow clearing",
-          "Foundation prep on rural residential builds"
+          "Water damage drying in Bowmanville and Courtice",
+          "Rural property drying",
+          "Construction site power via generator",
+          "Carpet extraction"
         ],
-        "localContext": "Clarington is mostly rural and semi-rural across Courtice, Newcastle, and Orono. The mini stand-on loader handles in-town jobs and the more manageable rural-property work. We'll travel for Clarington jobs \u2014 delivery fee applies and is quoted up-front.",
-        "driveTime": "~85-105 min from King City"
+        "localContext": "Covers Bowmanville, Courtice, Newcastle, Orono, and all of Clarington.",
+        "driveTime": "Same-day delivery available",
+        "deliveryPrice": 110
       },
       {
-        "slug": "oakville",
-        "name": "Oakville",
-        "region": "Halton",
-        "coverage": "extended",
-        "neighborhoods": [
-          "Old Oakville",
-          "Glen Abbey",
-          "West Oak Trails",
-          "Bronte",
-          "Joshua Creek"
-        ],
+        "slug": "scugog",
+        "name": "Scugog",
+        "region": "Durham",
+        "coverage": "core",
+        "neighborhoods": ["Port Perry", "Prince Albert", "Blackstock", "Caesarea"],
         "typicalJobs": [
-          "Backyard build-outs in Old Oakville and Bronte",
-          "Foundation prep on additions and infill builds",
-          "Estate-style landscaping in Joshua Creek",
-          "Driveway and patio sub-base prep"
+          "Rural property water damage",
+          "Cottage dehumidification",
+          "Lake-adjacent property drying",
+          "Generator rental during outages"
         ],
-        "localContext": "Oakville is a mix of older established lots (Old Oakville, Bronte) and larger estate-style modern builds (Glen Abbey, Joshua Creek). The mini stand-on loader is the right fit for the tight access typical in Old Oakville and handles backyard work on the larger lots further north. Delivery fee applies \u2014 quoted before we book.",
-        "driveTime": "~60-75 min from King City"
+        "localContext": "North Durham including Port Perry and Lake Scugog area.",
+        "driveTime": "Next-day delivery (schedule ahead)",
+        "deliveryPrice": 140
       },
       {
-        "slug": "burlington",
-        "name": "Burlington",
-        "region": "Halton",
-        "coverage": "extended",
-        "neighborhoods": [
-          "Aldershot",
-          "Roseland",
-          "Tyandaga",
-          "Headon Forest",
-          "Alton Village"
-        ],
+        "slug": "brock",
+        "name": "Brock",
+        "region": "Durham",
+        "coverage": "core",
+        "neighborhoods": ["Beaverton", "Cannington", "Sunderland"],
         "typicalJobs": [
-          "Residential landscaping in Roseland and Headon Forest",
-          "Foundation and footing prep on additions",
-          "Backyard build-outs",
-          "Material handling on home renovations"
+          "Rural water damage",
+          "Lake Simcoe property drying",
+          "Cottage dehumidification",
+          "Generator rental"
         ],
-        "localContext": "Burlington runs from older lake-side neighbourhoods (Aldershot, Roseland) up through newer Alton Village. The mini stand-on loader handles backyard landscaping, foundation prep, and material-handling work on a typical Burlington residential lot. Delivery fee applies on Burlington jobs.",
-        "driveTime": "~70-85 min from King City"
-      },
-      {
-        "slug": "milton",
-        "name": "Milton",
-        "region": "Halton",
-        "coverage": "extended",
-        "neighborhoods": [
-          "Hawthorne Village",
-          "Beaty",
-          "Bronte Meadows",
-          "Scott",
-          "Old Milton"
-        ],
-        "typicalJobs": [
-          "Backyard build-outs in newer Milton sub-divisions",
-          "Foundation prep on residential builds",
-          "Grading for landscape installs",
-          "Snow clearing on commercial and residential lots"
-        ],
-        "localContext": "Milton is mostly newer sub-divisions (Hawthorne Village, Beaty, Scott) with standard gate widths \u2014 the mini stand-on loader fits through almost every Milton backyard. Backyard build-outs, foundation prep on residential builds, and grading for landscape installs are routine. Delivery fee applies.",
-        "driveTime": "~65-80 min from King City"
+        "localContext": "Township of Brock — Beaverton, Cannington, Sunderland.",
+        "driveTime": "Next-day delivery (schedule ahead)",
+        "deliveryPrice": 160
       }
     ]
   },
   "trustPoints": [
-    "Local owner-operator \u2014 not a national chain",
-    "Mini stand-on track loader \u2014 fits through 36-inch gates, owner-maintained",
-    "Free delivery within King Township; flat-rate across the GTA",
-    "Backed by 10+ years construction industry experience"
+    "Local owner-operator — not a national chain",
+    "Clean, well-maintained equipment",
+    "Transparent pricing — daily, weekly, and monthly rates visible on every item",
+    "Automatic rate tiering — you always get the cheapest applicable rate",
+    "Delivery across Toronto, Markham, and Durham Region",
+    "Buy new or used — the same catalog is available for sale"
   ],
   "faq": [
     {
-      "q": "How much does the mini stand-on loader cost to rent?",
-      "a": "$249.99 per day, $1,049.93 per week, or $2,999.70 per month. Pricing is final after we confirm dates and delivery. Request a booking right from this site."
+      "q": "How does rental pricing work?",
+      "a": "Every item has a daily, weekly, and monthly rate. We automatically charge whichever is cheapest for your rental length. For example, if 5 days at $85/day ($425) is more than our weekly rate ($340), you pay the weekly rate — so 5–7 days always costs $340. Same rule applies at the monthly tier."
     },
     {
-      "q": "How does delivery work?",
-      "a": "Free delivery within King Township. $99.99 flat delivery fee for the Greater Toronto Area \u2014 includes both drop-off AND pickup by King Equipment Rental. This is the cheapest delivery rate in the industry. For other locations in Southern Ontario, please request via the form and we'll quote delivery before we book."
+      "q": "Can I rent multiple items in one order?",
+      "a": "Yes — add everything you need to your cart and check out in one go. One delivery, one deposit, one pickup."
     },
     {
-      "q": "Do you deliver to Aurora, Newmarket, or Richmond Hill?",
-      "a": "Yes \u2014 these are all part of our GTA flat-rate delivery zone. We serve the full north GTA halo including Aurora, Newmarket, Richmond Hill, Vaughan, north Toronto, and Bradford."
+      "q": "What's the deposit?",
+      "a": "Each item has a deposit shown on its page. Deposit is returned on pickup once equipment is confirmed in working condition."
     },
     {
-      "q": "How many days can I rent for?",
-      "a": "Anywhere from a single day to multi-week or multi-month rentals. Rates are tiered: daily for short rentals, weekly when you cross 7 days, monthly when you cross 30 days."
+      "q": "Which cities do you deliver to?",
+      "a": "Toronto, Markham, Pickering, Ajax, Whitby, Oshawa, Uxbridge, Clarington, Scugog, and Brock. Delivery price shows on every equipment page by city."
     },
     {
-      "q": "Does the rental come with an operator?",
-      "a": "By default, no \u2014 the renter operates. Stand-on platform with a lighter learning curve than a full-size loader. If you'd like a trained operator on the job, we offer that as an add-on at $299.99 per day \u2014 just tick the box on the booking form."
+      "q": "Can I buy equipment instead of renting?",
+      "a": "Yes — most of our rental catalog is also available for sale, new or used. Switch to the Buy section on any equipment page."
     },
     {
-      "q": "What attachments are included?",
-      "a": "The mini stand-on loader comes with a standard bucket. If you need a specific attachment, mention it in your booking request."
-    },
-    {
-      "q": "How do I book?",
-      "a": "Use the booking form on this site to pick your dates, delivery option, and contact details. We confirm dates and delivery via email within a few hours during business hours."
+      "q": "How do I pick up or arrange delivery?",
+      "a": "Once you place a rental, we'll confirm delivery time within a few hours during business hours. We handle drop-off and pickup within the service area."
     }
   ],
   "ctas": {
-    "primary": "Call to book",
-    "secondary": "Email for a quote",
-    "formSubmit": "Send request"
+    "primary": "Rent now",
+    "secondary": "Buy now",
+    "formSubmit": "Place order"
   }
 }

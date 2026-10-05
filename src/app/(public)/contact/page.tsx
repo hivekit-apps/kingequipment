@@ -6,7 +6,7 @@ const cfg = getSiteConfig();
 
 export const metadata: Metadata = {
   title: 'Contact',
-  description: `Email ${cfg.business.email} or request a booking on ${cfg.business.name} for mini stand-on track loader rental in the north GTA.`,
+  description: `Email ${cfg.business.email} or browse ${cfg.business.name} to rent or buy equipment delivered across Toronto, Markham, and Durham Region.`,
 };
 
 export default function ContactPage() {
@@ -14,19 +14,20 @@ export default function ContactPage() {
     <section className="container-page py-12">
       <h1 className="text-3xl md:text-4xl">Contact</h1>
       <p className="mt-4 text-base text-slate-700 max-w-2xl">
-        The fastest way to get a quote is to send a booking request — we&apos;ll
-        email you back within a few hours during business hours.
+        The fastest way to get started is to add what you need to the cart and
+        check out — we&apos;ll email you back within a few hours during business
+        hours to confirm delivery.
       </p>
 
       <div className="mt-10 grid md:grid-cols-2 gap-10">
         <div className="space-y-6">
           <Link
-            href="/book"
+            href="/equipment"
             className="block bg-slate-950 text-white rounded-md p-6 hover:bg-slate-800 transition-colors"
-            data-event="contact_book_click"
+            data-event="contact_shop_click"
           >
-            <p className="text-sm uppercase tracking-wide opacity-80">Request a booking</p>
-            <p className="text-2xl md:text-3xl font-bold mt-1">Request the loader →</p>
+            <p className="text-sm uppercase tracking-wide opacity-80">Browse the catalog</p>
+            <p className="text-2xl md:text-3xl font-bold mt-1">See equipment →</p>
           </Link>
 
           <a
@@ -57,15 +58,14 @@ export default function ContactPage() {
         </div>
 
         <div className="bg-white border border-slate-200 rounded-md p-6">
-          <h2 className="text-xl font-bold">Want to lock in dates?</h2>
+          <h2 className="text-xl font-bold">Need something specific?</h2>
           <p className="mt-2 text-sm text-slate-700">
-            Use the booking form to pick your dates, choose your delivery zone,
-            and tell us where to send it. We&apos;ll email you back to confirm
-            availability and quote delivery before we book.
+            Reach out by email with details — SKU, dates, delivery address — and
+            we&apos;ll get back to you quickly with a quote and availability.
           </p>
           <div className="mt-6">
-            <Link href="/book" className="btn-primary inline-block" data-event="contact_book_secondary">
-              Go to the booking form
+            <Link href="/equipment" className="btn-primary inline-block" data-event="contact_shop_secondary">
+              Browse equipment
             </Link>
           </div>
         </div>

@@ -3,9 +3,12 @@ User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /admin/
+Disallow: /book
+Disallow: /cart
+Disallow: /checkout
 
 # Host
-Host: https://kingequipmentrental.ca
+Host: https://kingequipment.ca
 
 # Sitemaps
-Sitemap: https://kingequipmentrental.ca/sitemap.xml
+Sitemap: https://kingequipment.ca/sitemap.xml

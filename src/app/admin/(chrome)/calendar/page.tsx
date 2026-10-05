@@ -41,7 +41,7 @@ export default async function CalendarPage() {
             In Google Calendar &rarr; &ldquo;Other calendars&rdquo; &rarr; &ldquo;From URL&rdquo; &rarr; paste:
           </p>
           <code className="block bg-white p-2 rounded text-xs break-all border border-blue-100">
-            {`https://kiril-skidsteer.vercel.app${icalUrl}`}
+            {`${process.env.NEXT_PUBLIC_SITE_URL || 'https://kingequipment.vercel.app'}${icalUrl}`}
           </code>
           <p className="text-blue-800 mt-2 text-xs">
             One-way sync (view only in Google Calendar). Bookings and blocks flow from here to there; changes made in Google Calendar don&rsquo;t sync back.

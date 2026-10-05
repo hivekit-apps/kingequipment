@@ -1,12 +1,13 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { getSiteConfig } from '@/lib/config';
+import { CartBadge } from './CartBadge';
 
 export function SiteHeader() {
   const cfg = getSiteConfig();
   return (
     <header className="border-b border-slate-200 bg-white">
-      <div className="container-page flex items-center justify-between py-4">
+      <div className="container-page flex items-center justify-between py-4 gap-2">
         <Link href="/" className="flex items-center gap-2 sm:gap-3 text-slate-950" aria-label={`${cfg.business.name} home`}>
           <Image
             src="/logo.png"
@@ -25,13 +26,14 @@ export function SiteHeader() {
           <Link href="/service-area" className="hover:text-brand-orange">Service Area</Link>
           <Link href="/contact" className="hover:text-brand-orange">Contact</Link>
         </nav>
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <CartBadge />
           <Link
-            href="/book"
+            href="/equipment"
             className="btn-primary text-sm px-3 py-2 min-h-[44px]"
-            data-event="header_book_click"
+            data-event="header_shop_click"
           >
-            Book
+            Shop
           </Link>
         </div>
       </div>

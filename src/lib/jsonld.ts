@@ -18,12 +18,12 @@ export function localBusinessJsonLd(cfg: SiteConfig): string {
     openingHours: 'Mo-Sa 07:00-19:00',
     hasOfferCatalog: {
       '@type': 'OfferCatalog',
-      name: 'Equipment rentals',
+      name: 'Equipment rentals & sales',
       itemListElement: visibleEquipment(cfg).map((e) => ({
         '@type': 'Offer',
         name: e.name,
         description: e.tagline,
-        category: e.class === 'heavy-duty' ? 'Compact track loader rental' : 'Mini track loader rental',
+        category: 'Equipment rental and sales',
         priceSpecification: {
           '@type': 'UnitPriceSpecification',
           unitText: 'per day',
@@ -47,7 +47,7 @@ export function cityLocalBusinessJsonLd(cfg: SiteConfig, city: CityPage): string
     '@type': 'LocalBusiness',
     '@id': `${pageUrl}#localbusiness`,
     name: `${cfg.business.name} — ${city.name}`,
-    description: `${cfg.business.name} delivers mini stand-on track loader rental to ${city.name}, ${city.region}.`,
+    description: `${cfg.business.name} delivers equipment rental and sales to ${city.name}, ${city.region}.`,
     email: cfg.business.email,
     url: pageUrl,
     sameAs: cfg.business.gbpUrl ? [cfg.business.gbpUrl] : [],
@@ -58,12 +58,12 @@ export function cityLocalBusinessJsonLd(cfg: SiteConfig, city: CityPage): string
     openingHours: 'Mo-Sa 07:00-19:00',
     hasOfferCatalog: {
       '@type': 'OfferCatalog',
-      name: `Equipment rentals available in ${city.name}`,
+      name: `Equipment rentals & sales available in ${city.name}`,
       itemListElement: visibleEquipment(cfg).map((e) => ({
         '@type': 'Offer',
         name: e.name,
         description: e.tagline,
-        category: e.class === 'heavy-duty' ? 'Compact track loader rental' : 'Mini track loader rental',
+        category: 'Equipment rental and sales',
         priceSpecification: {
           '@type': 'UnitPriceSpecification',
           unitText: 'per day',
@@ -104,7 +104,7 @@ export function cityBreadcrumbsJsonLd(cfg: SiteConfig, city: CityPage): string {
       {
         '@type': 'ListItem',
         position: 3,
-        name: `Skid-steer rental in ${city.name}`,
+        name: `Equipment rental in ${city.name}`,
         item: `${cfg.business.siteUrl}${cityPageUrl(city.slug, cfg)}`,
       },
     ],

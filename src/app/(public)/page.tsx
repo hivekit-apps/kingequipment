@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { getSiteConfig, cityPageUrl, visibleEquipment } from '@/lib/config';
+import Image from 'next/image';
+import { getSiteConfig, cityPageUrl, visibleEquipment, classLabel } from '@/lib/config';
 import { PhotoStrip } from '@/components/PhotoStrip';
 import { HeroPhoto } from '@/components/HeroPhoto';
 
@@ -16,14 +17,14 @@ export default function HomePage() {
               {cfg.business.tagline}
             </h1>
             <p className="mt-4 text-lg text-slate-200">
-              One local owner-operator. {cfg.pricing.deliveryNote}
+              Local owner-operator. {cfg.pricing.deliveryNote}
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
-              <Link href="/book" className="btn-primary text-lg" data-event="hero_book_click">
-                Book the loader · from $249.99/day
+              <Link href="/equipment" className="btn-primary text-lg" data-event="hero_shop_click">
+                Browse equipment
               </Link>
-              <Link href="/equipment" className="btn-secondary text-lg bg-transparent text-white border-white hover:bg-slate-800" data-event="hero_specs_click">
-                See specs &amp; photos
+              <Link href="/service-area" className="btn-secondary text-lg bg-transparent text-white border-white hover:bg-slate-800" data-event="hero_area_click">
+                Delivery pricing by city
               </Link>
             </div>
           </div>
@@ -33,38 +34,59 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Equipment intro */}
+      {/* Equipment preview */}
       <section className="bg-white">
         <div className="container-page py-12">
-          <h2 className="text-2xl md:text-3xl">Our machine</h2>
-          <div className="mt-8 grid md:grid-cols-2 gap-6">
+          <h2 className="text-2xl md:text-3xl">Our rental &amp; sales catalog</h2>
+          <p className="mt-3 text-base text-slate-700 max-w-2xl">
+            {cfg.pricing.displayRate}. {cfg.pricing.multiDayNote}
+          </p>
+          <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {equipment.map((item) => (
-              <div key={item.id} className="rounded-lg border border-slate-200 p-6">
-                <p className="text-xs uppercase tracking-wide text-brand-orange font-bold">
-                  {item.class === 'heavy-duty' ? 'Heavy-duty' : 'Mini'}
-                </p>
-                <h3 className="mt-1 text-xl font-bold text-slate-950">{item.shortName}</h3>
-                <p className="mt-3 text-base text-slate-700">{item.tagline}</p>
-                <ul className="mt-4 space-y-1 text-sm text-slate-700">
-                  {item.idealFor.slice(0, 3).map((j) => (
-                    <li key={j} className="flex items-start gap-2">
-                      <span className="mt-1 w-1.5 h-1.5 rounded-full bg-brand-orange flex-shrink-0" />
-                      <span>{j}</span>
-                    </li>
-                  ))}
-                </ul>
-                <p className="mt-4 text-sm font-semibold">{item.displayRate}</p>
-                {item.bookable && (
-                  <Link href="/book" className="mt-4 inline-block btn-primary text-sm" data-event={`equipment_intro_book_${item.id}`}>
-                    Book this machine
-                  </Link>
+              <div key={item.id} className="rounded-lg border border-slate-200 p-5 flex flex-col">
+                {item.photos[0] && (
+                  <div className="relative w-full aspect-[4/3] overflow-hidden rounded-md bg-slate-100 mb-4">
+                    <Image
+                      src={item.photos[0].src}
+                      alt={item.photos[0].alt}
+                      fill
+                      sizes="(max-width: 640px) 100vw, 33vw"
+                      className="object-cover"
+                    />
+                  </div>
                 )}
+                <p className="text-xs uppercase tracking-wide text-brand-orange font-bold">
+                  {classLabel(item.class)}
+                </p>
+                <h3 className="mt-1 text-lg font-bold text-slate-950">{item.shortName}</h3>
+                <p className="mt-2 text-sm text-slate-700 flex-1">{item.tagline}</p>
+                <p className="mt-3 text-sm font-semibold">{item.displayRate}</p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {item.availability.includes('rent') && (
+                    <Link
+                      href={`/equipment/${item.id}`}
+                      className="inline-block btn-primary text-xs px-3 py-2 min-h-[40px]"
+                      data-event={`home_rent_${item.id}`}
+                    >
+                      Rent
+                    </Link>
+                  )}
+                  {item.availability.includes('buy') && (
+                    <Link
+                      href={`/equipment/${item.id}?mode=buy`}
+                      className="inline-block btn-secondary text-xs px-3 py-2 min-h-[40px]"
+                      data-event={`home_buy_${item.id}`}
+                    >
+                      Buy
+                    </Link>
+                  )}
+                </div>
               </div>
             ))}
           </div>
-          <p className="mt-6 text-sm text-slate-700">
+          <p className="mt-8 text-sm text-slate-700">
             <Link href="/equipment" className="underline font-semibold">
-              See full specs &amp; photos
+              See full catalog &amp; place an order
             </Link>
           </p>
         </div>
@@ -73,7 +95,7 @@ export default function HomePage() {
       {/* Trust block */}
       <section className="bg-slate-50">
         <div className="container-page py-12">
-          <h2 className="text-2xl md:text-3xl">Why rent from us</h2>
+          <h2 className="text-2xl md:text-3xl">Why order from us</h2>
           <ul className="mt-6 grid sm:grid-cols-2 gap-4">
             {cfg.trustPoints.map((t) => (
               <li key={t} className="flex items-start gap-3">
@@ -82,12 +104,12 @@ export default function HomePage() {
               </li>
             ))}
           </ul>
-          <p className="mt-6 text-sm text-slate-700">
-            Operated in partnership with{' '}
-            <a href={cfg.partner.url} target="_blank" rel="noopener noreferrer" className="underline font-semibold">
-              {cfg.partner.business}
-            </a>{' '}— {cfg.partner.credentials}.
-          </p>
+          {cfg.partner.name && (
+            <p className="mt-6 text-sm text-slate-700">
+              Partner: <span className="font-semibold">{cfg.partner.name}</span>
+              {cfg.partner.credentials ? ` — ${cfg.partner.credentials}` : ''}.
+            </p>
+          )}
           <p className="mt-4 text-sm text-slate-700">{cfg.pricing.comparisonNote}</p>
         </div>
       </section>
@@ -105,42 +127,21 @@ export default function HomePage() {
       {/* Service area summary */}
       <section className="bg-white">
         <div className="container-page py-12">
-          <h2 className="text-2xl md:text-3xl">We deliver across the GTA</h2>
+          <h2 className="text-2xl md:text-3xl">We deliver across Toronto, Markham &amp; Durham</h2>
           <p className="mt-3 text-base text-slate-700 max-w-2xl">{cfg.serviceAreaTagline}</p>
 
           <div className="mt-8">
-            <h3 className="text-sm uppercase tracking-wide text-slate-600 font-bold">Core delivery area</h3>
-            <ul className="mt-3 flex flex-wrap gap-2">
-              {cfg.cityPages.cities
-                .filter((c) => c.coverage === 'core')
-                .map((c) => (
-                  <li key={c.slug}>
-                    <Link
-                      href={cityPageUrl(c.slug, cfg)}
-                      className="inline-block px-3 py-2 rounded-full bg-slate-100 text-sm font-semibold hover:bg-slate-200"
-                    >
-                      {c.name}
-                    </Link>
-                  </li>
-                ))}
-            </ul>
-          </div>
-
-          <div className="mt-6">
-            <h3 className="text-sm uppercase tracking-wide text-slate-600 font-bold">Also serving</h3>
-            <ul className="mt-3 flex flex-wrap gap-2">
-              {cfg.cityPages.cities
-                .filter((c) => c.coverage === 'extended')
-                .map((c) => (
-                  <li key={c.slug}>
-                    <Link
-                      href={cityPageUrl(c.slug, cfg)}
-                      className="inline-block px-3 py-2 rounded-full bg-slate-50 border border-slate-200 text-sm font-semibold hover:bg-slate-100"
-                    >
-                      {c.name}
-                    </Link>
-                  </li>
-                ))}
+            <ul className="flex flex-wrap gap-2">
+              {cfg.cityPages.cities.map((c) => (
+                <li key={c.slug}>
+                  <Link
+                    href={cityPageUrl(c.slug, cfg)}
+                    className="inline-block px-3 py-2 rounded-full bg-slate-100 text-sm font-semibold hover:bg-slate-200"
+                  >
+                    {c.name} · ${c.deliveryPrice}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -170,18 +171,17 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA — link to /book (single request form lives there) */}
+      {/* CTA — link to /equipment */}
       <section id="cta" className="bg-slate-950 text-white scroll-mt-16">
         <div className="container-page py-12 md:py-16 text-center">
-          <h2 className="text-2xl md:text-3xl">Ready to book?</h2>
+          <h2 className="text-2xl md:text-3xl">Ready to order?</h2>
           <p className="mt-4 text-slate-200 max-w-2xl mx-auto">
-            Pick your dates, choose your delivery zone, and tell us where to send it.
-            We&apos;ll confirm availability and delivery details via email within a few
-            hours during business hours.
+            Add what you need to the cart, pick your dates and delivery city, and
+            we&apos;ll confirm delivery details within a few hours during business hours.
           </p>
           <div className="mt-8">
-            <Link href="/book" className="btn-primary text-lg" data-event="cta_book_click">
-              Request the loader
+            <Link href="/equipment" className="btn-primary text-lg" data-event="cta_shop_click">
+              Browse the catalog
             </Link>
           </div>
         </div>
