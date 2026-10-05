@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { getSiteConfig } from '@/lib/config';
+import { getSiteConfigDynamic } from '@/lib/config';
 import { calculateRentalPrice, calculateBuyPrice, daysBetween } from '@/lib/pricing';
 import { createServiceClient } from '@/lib/supabase/service';
 import { sendEmail } from '@/lib/email-send';
@@ -59,7 +59,7 @@ function money(cents: number): string {
 }
 
 export async function POST(req: NextRequest) {
-  const cfg = getSiteConfig();
+  const cfg = await getSiteConfigDynamic();
   const ip =
     req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
     req.headers.get('x-real-ip') ||

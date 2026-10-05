@@ -2,16 +2,19 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getSiteConfig, getEquipmentById, classLabel } from '@/lib/config';
+import { getSiteConfig, getSiteConfigDynamic, getEquipmentById, classLabel } from '@/lib/config';
 import { AddToCartForm } from '@/components/AddToCartForm';
+
+// ISR: revalidate every 60s so admin equipment edits propagate without redeploy.
+export const revalidate = 60;
 
 export function generateStaticParams() {
   const cfg = getSiteConfig();
   return cfg.equipment.map((e) => ({ id: e.id }));
 }
 
-export function generateMetadata({ params }: { params: { id: string } }): Metadata {
-  const cfg = getSiteConfig();
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const cfg = await getSiteConfigDynamic();
   const item = getEquipmentById(params.id, cfg);
   if (!item) return {};
   const title = `${item.name} — rent or buy · ${cfg.business.name}`;
@@ -32,14 +35,14 @@ export function generateMetadata({ params }: { params: { id: string } }): Metada
 
 type SpecRow = { label: string; value: string | null | undefined };
 
-export default function EquipmentDetailPage({
+export default async function EquipmentDetailPage({
   params,
   searchParams,
 }: {
   params: { id: string };
   searchParams: { mode?: string };
 }) {
-  const cfg = getSiteConfig();
+  const cfg = await getSiteConfigDynamic();
   const item = getEquipmentById(params.id, cfg);
   if (!item) notFound();
 

@@ -1,15 +1,19 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getSiteConfig, visibleEquipment, classLabel, type EquipmentItem } from '@/lib/config';
+import { getSiteConfig, getSiteConfigDynamic, visibleEquipment, classLabel, type EquipmentItem } from '@/lib/config';
 
-const cfg = getSiteConfig();
-const equipment = visibleEquipment(cfg);
+// ISR: revalidate every 60s so admin equipment edits propagate without redeploy.
+export const revalidate = 60;
 
-export const metadata: Metadata = {
-  title: `Equipment catalog — ${cfg.business.name}`,
-  description: `Rent or buy drying, power, and climate equipment across Toronto, Markham, and Durham Region. ${equipment.map((e) => e.shortName).join(', ')}.`,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const cfg = await getSiteConfigDynamic();
+  const equipment = visibleEquipment(cfg);
+  return {
+    title: `Equipment catalog — ${cfg.business.name}`,
+    description: `Rent or buy drying, power, and climate equipment across Toronto, Markham, and Durham Region. ${equipment.map((e) => e.shortName).join(', ')}.`,
+  };
+}
 
 function EquipmentCard({ item }: { item: EquipmentItem }) {
   const rentable = item.availability.includes('rent');
@@ -100,7 +104,9 @@ function EquipmentCard({ item }: { item: EquipmentItem }) {
   );
 }
 
-export default function EquipmentPage() {
+export default async function EquipmentPage() {
+  const cfg = await getSiteConfigDynamic();
+  const equipment = visibleEquipment(cfg);
   const rentables = equipment.filter((e) => e.availability.includes('rent'));
   const buyables = equipment.filter((e) => e.availability.includes('buy'));
 

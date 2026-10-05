@@ -2,8 +2,11 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getSiteConfig, getEquipmentById, classLabel } from '@/lib/config';
+import { getSiteConfig, getSiteConfigDynamic, getEquipmentById, classLabel, getEquipmentDeliveryPrice } from '@/lib/config';
 import { AddToCartForm } from '@/components/AddToCartForm';
+
+// ISR: revalidate every 60s so admin equipment/delivery edits propagate without redeploy.
+export const revalidate = 60;
 
 export function generateStaticParams() {
   const cfg = getSiteConfig();
@@ -16,17 +19,18 @@ export function generateStaticParams() {
   return out;
 }
 
-export function generateMetadata({
+export async function generateMetadata({
   params,
 }: {
   params: { id: string; city: string };
-}): Metadata {
-  const cfg = getSiteConfig();
+}): Promise<Metadata> {
+  const cfg = await getSiteConfigDynamic();
   const item = getEquipmentById(params.id, cfg);
   const city = cfg.cityPages.cities.find((c) => c.slug === params.city);
   if (!item || !city) return {};
+  const deliveryPrice = await getEquipmentDeliveryPrice(item.id, city.slug, cfg);
   const title = `${item.shortName} rental in ${city.name} — ${cfg.business.name}`;
-  const description = `Rent or buy a ${item.shortName.toLowerCase()} delivered to ${city.name}. Delivery $${city.deliveryPrice}. Daily, weekly, and monthly rates.`;
+  const description = `Rent or buy a ${item.shortName.toLowerCase()} delivered to ${city.name}. Delivery $${deliveryPrice ?? city.deliveryPrice}. Daily, weekly, and monthly rates.`;
   return {
     title,
     description,
@@ -41,15 +45,16 @@ export function generateMetadata({
   };
 }
 
-export default function EquipmentCityPage({
+export default async function EquipmentCityPage({
   params,
 }: {
   params: { id: string; city: string };
 }) {
-  const cfg = getSiteConfig();
+  const cfg = await getSiteConfigDynamic();
   const item = getEquipmentById(params.id, cfg);
   const city = cfg.cityPages.cities.find((c) => c.slug === params.city);
   if (!item || !city) notFound();
+  const deliveryPrice = (await getEquipmentDeliveryPrice(item.id, city.slug, cfg)) ?? city.deliveryPrice;
 
   return (
     <section className="bg-slate-50">
@@ -73,7 +78,7 @@ export default function EquipmentCityPage({
               {item.shortName} rental in {city.name}
             </h1>
             <p className="mt-3 text-base text-slate-700">
-              {item.tagline} Delivered to {city.name} for <strong>${city.deliveryPrice}</strong>.
+              {item.tagline} Delivered to {city.name} for <strong>${deliveryPrice}</strong>.
             </p>
 
             {item.photos.length > 0 && (
@@ -98,7 +103,7 @@ export default function EquipmentCityPage({
               <dl className="mt-4 space-y-2 text-sm">
                 <div className="flex justify-between border-b border-slate-100 pb-2">
                   <dt>Delivery to {city.name}</dt>
-                  <dd className="font-semibold">${city.deliveryPrice}</dd>
+                  <dd className="font-semibold">${deliveryPrice}</dd>
                 </div>
                 {item.pricing.daily != null && (
                   <div className="flex justify-between border-b border-slate-100 pb-2">

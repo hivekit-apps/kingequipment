@@ -195,3 +195,119 @@ export function classLabel(c: EquipmentClass): string {
       return String(c).charAt(0).toUpperCase() + String(c).slice(1);
   }
 }
+
+// ---------------------------------------------------------------------------
+// Admin override merge — Option A: site.json is seed, equipment_overrides is diff.
+// `getSiteConfigDynamic()` is the async variant. Server components should prefer
+// it when they want admin edits to show up without a redeploy.
+// ---------------------------------------------------------------------------
+
+type EquipmentOverrideRow = {
+  equipment_id: string;
+  pricing?: Partial<EquipmentPricing> | null;
+  specs?: Partial<EquipmentItem['specs']> | null;
+  photos?: EquipmentPhoto[] | null;
+  availability?: EquipmentAvailability[] | null;
+  visible?: boolean | null;
+  city_delivery?: Record<string, number> | null;
+};
+
+async function fetchEquipmentOverrides(): Promise<Map<string, EquipmentOverrideRow>> {
+  const map = new Map<string, EquipmentOverrideRow>();
+  // Soft-fail: if envs unset or Supabase unreachable, return empty map (site.json wins).
+  let url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  let key = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return map;
+  url = sanitize(url);
+  key = sanitize(key);
+  if (!url || !key) return map;
+  try {
+    const res = await fetch(`${url}/rest/v1/equipment_overrides?select=*`, {
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        Accept: 'application/json',
+      },
+      // Allow Next to cache for 60s so public pages are fast but admin edits
+      // propagate within a minute.
+      next: { revalidate: 60 },
+    });
+    if (!res.ok) return map;
+    const rows = (await res.json()) as EquipmentOverrideRow[];
+    for (const row of rows) {
+      if (row && typeof row.equipment_id === 'string') map.set(row.equipment_id, row);
+    }
+  } catch {
+    // network/DB unreachable: fall back to seed
+  }
+  return map;
+}
+
+function applyEquipmentOverride(base: EquipmentItem, ovr: EquipmentOverrideRow): EquipmentItem {
+  const merged: EquipmentItem = { ...base };
+  if (ovr.pricing && typeof ovr.pricing === 'object') {
+    merged.pricing = { ...base.pricing, ...ovr.pricing } as EquipmentPricing;
+  }
+  if (ovr.specs && typeof ovr.specs === 'object') {
+    merged.specs = { ...base.specs, ...ovr.specs };
+  }
+  if (Array.isArray(ovr.photos) && ovr.photos.length > 0) {
+    merged.photos = ovr.photos;
+  }
+  if (Array.isArray(ovr.availability) && ovr.availability.length > 0) {
+    merged.availability = ovr.availability;
+  }
+  if (typeof ovr.visible === 'boolean') {
+    merged.visible = ovr.visible;
+  }
+  return merged;
+}
+
+function applyCityDeliveryOverrides(
+  cities: CityPage[],
+  overrides: Map<string, EquipmentOverrideRow>,
+): CityPage[] {
+  // city_delivery is per-equipment per-city; it does NOT override the city's
+  // base deliveryPrice (that's shown as the default). The per-equipment × city
+  // calc lives in getEquipmentDeliveryPrice() below.
+  void overrides;
+  return cities;
+}
+
+export async function getSiteConfigDynamic(): Promise<SiteConfig> {
+  const seed = getSiteConfig();
+  const overrides = await fetchEquipmentOverrides();
+  if (overrides.size === 0) return seed;
+  const mergedEquipment = seed.equipment.map((e) => {
+    const ovr = overrides.get(e.id);
+    return ovr ? applyEquipmentOverride(e, ovr) : e;
+  });
+  return {
+    ...seed,
+    equipment: mergedEquipment,
+    cityPages: {
+      ...seed.cityPages,
+      cities: applyCityDeliveryOverrides(seed.cityPages.cities, overrides),
+    },
+  };
+}
+
+// Per-equipment × per-city delivery price. Falls back to the city's base price
+// when no override exists for this SKU. Reads overrides on demand (cached 60s).
+export async function getEquipmentDeliveryPrice(
+  equipmentId: string,
+  citySlug: string,
+  cfg: SiteConfig,
+): Promise<number | null> {
+  const city = cfg.cityPages.cities.find((c) => c.slug === citySlug);
+  if (!city) return null;
+  const base = typeof city.deliveryPrice === 'number' ? city.deliveryPrice : null;
+  const overrides = await fetchEquipmentOverrides();
+  const ovr = overrides.get(equipmentId);
+  const perCityCents = ovr?.city_delivery?.[citySlug];
+  if (typeof perCityCents === 'number' && Number.isFinite(perCityCents)) {
+    // city_delivery is stored in cents to match orders; convert to dollars for display.
+    return Math.round(perCityCents / 100);
+  }
+  return base;
+}
