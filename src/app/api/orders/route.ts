@@ -120,10 +120,31 @@ export async function POST(req: NextRequest) {
       if (!item.availability.includes('rent')) continue;
       const startDate = asString(raw.startDate);
       const endDate = asString(raw.endDate);
+      // Date-shape + chronology + not-in-past validation.
+      const isIsoDate = (s: string) => /^\d{4}-\d{2}-\d{2}$/.test(s);
+      if (!isIsoDate(startDate) || !isIsoDate(endDate)) {
+        return NextResponse.json(
+          { error: `Rental dates for ${item.shortName} are missing or malformed.` },
+          { status: 422 },
+        );
+      }
+      const todayISO = new Date().toISOString().slice(0, 10);
+      if (startDate < todayISO) {
+        return NextResponse.json(
+          { error: `Start date for ${item.shortName} can't be in the past.` },
+          { status: 422 },
+        );
+      }
+      if (endDate < startDate) {
+        return NextResponse.json(
+          { error: `End date for ${item.shortName} must be on or after the start date.` },
+          { status: 422 },
+        );
+      }
       const days = daysBetween(startDate, endDate);
       if (days <= 0) {
         return NextResponse.json(
-          { error: `Invalid rental dates for ${item.shortName}.` },
+          { error: `Rental for ${item.shortName} must be at least one day.` },
           { status: 422 },
         );
       }

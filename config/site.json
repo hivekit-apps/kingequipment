@@ -2,8 +2,9 @@
   "business": {
     "name": "King Equipment",
     "tagline": "Equipment rental & sales for Toronto, Markham & Durham Region — delivered.",
-    "shortDescription": "Local equipment rental and sales — serving Toronto, Markham, and the Durham Region (Pickering, Ajax, Whitby, Oshawa, Uxbridge, Clarington, Scugog, Brock). Dehumidifiers, air scrubbers, carpet water extractors, air movers, generators, and heaters. Daily, weekly, and monthly rental rates, or buy new and used. Delivery across the service area.",
-    "phoneFallback": "647-555-5555",
+    "shortDescription": "Local equipment rental and sales — serving Toronto, Markham, and the Durham Region (Pickering, Ajax, Whitby, Oshawa, Uxbridge, Clarington, Scugog, Brock). Construction heaters, drying and water damage equipment, inverter generators, and more. Daily, weekly, and monthly rental rates, with select used equipment for sale. Delivery across the service area.",
+    "phoneFallback": "",
+    "showPhone": false,
     "emailFallback": "kingequipment.ca@gmail.com",
     "siteUrlFallback": "https://kingequipment.ca",
     "hours": "Mon-Sat 7am-7pm; Sun by appointment"
@@ -26,23 +27,135 @@
     "width": 960,
     "height": 1280
   },
+  "categories": [
+    {
+      "slug": "construction-heaters",
+      "name": "Construction Heaters",
+      "description": "Portable propane and kerosene heaters for cold-weather job sites and drying assist."
+    },
+    {
+      "slug": "drying-water-damage",
+      "name": "Drying & Water Damage",
+      "description": "Dehumidifiers, air movers, air scrubbers, and extractors for flood recovery and remediation."
+    },
+    {
+      "slug": "inverter-generators",
+      "name": "Inverter Generators",
+      "description": "Quiet, fuel-efficient inverter generators for sensitive electronics, trades, and off-grid work."
+    },
+    {
+      "slug": "conventional-generators",
+      "name": "Conventional Generators",
+      "description": "Workhorse open-frame generators for construction and heavy loads."
+    }
+  ],
   "equipment": [
     {
-      "id": "dehumidifier-lgr-7000",
+      "id": "heater-flagro-400k",
+      "class": "climate",
+      "category": "construction-heaters",
+      "visible": true,
+      "bookable": true,
+      "availability": ["rent", "buy"],
+      "name": "Flagro 400,000 BTU Construction Heater",
+      "shortName": "Flagro 400,000 BTU Heater",
+      "tagline": "High-output portable propane construction heater for large job sites and cold-weather drying.",
+      "displayRate": "From $80 / day · $320 / week · $960 / month",
+      "pricing": {
+        "daily": 80,
+        "weekly": 320,
+        "monthly": 960,
+        "buyNew": null,
+        "buyUsed": 1800,
+        "deposit": 300
+      },
+      "specs": {
+        "operatingWeightLbs": "",
+        "ratedOperatingCapacityLbs": "~400,000 BTU/hr",
+        "engineHp": "N/A",
+        "liftHeightIn": null,
+        "gateWidthIn": null
+      },
+      "attachmentsIncluded": [
+        "Propane regulator + hose"
+      ],
+      "idealFor": [
+        "Cold-weather large-site warming",
+        "Drying assist in winter",
+        "Open-air warehouse heating",
+        "Large-footprint construction heat"
+      ],
+      "photos": [
+        {
+          "src": "/images/heater-mr-heater-mh85qfav.jpg",
+          "alt": "Portable propane construction heater — representative photo."
+        }
+      ],
+      "operatorNote": "Renter operates — connect propane, light per included instructions, ensure ventilation.",
+      "photoNote": "Representative photo. Actual rental unit is a Flagro 400,000 BTU."
+    },
+    {
+      "id": "heater-remington-140k",
+      "class": "climate",
+      "category": "construction-heaters",
+      "visible": true,
+      "bookable": true,
+      "availability": ["rent", "buy"],
+      "name": "Remington 140,000 BTU Kerosene Heater",
+      "shortName": "Remington 140,000 BTU Kerosene",
+      "tagline": "Portable kerosene torpedo heater for cold-weather job sites.",
+      "displayRate": "From $50 / day · $200 / week · $600 / month",
+      "pricing": {
+        "daily": 50,
+        "weekly": 200,
+        "monthly": 600,
+        "buyNew": null,
+        "buyUsed": 650,
+        "deposit": 200
+      },
+      "specs": {
+        "operatingWeightLbs": "",
+        "ratedOperatingCapacityLbs": "~140,000 BTU/hr",
+        "engineHp": "N/A",
+        "liftHeightIn": null,
+        "gateWidthIn": null
+      },
+      "attachmentsIncluded": [
+        "Fuel cap",
+        "Thermostat controller"
+      ],
+      "idealFor": [
+        "Mid-size construction site warming",
+        "Garage and workshop heating",
+        "Cold-weather drying assist",
+        "Outdoor event warming"
+      ],
+      "photos": [
+        {
+          "src": "/images/heater-mr-heater-mh85qfav.jpg",
+          "alt": "Portable kerosene torpedo heater — representative photo."
+        }
+      ],
+      "operatorNote": "Renter operates — fuel with kerosene, light per instructions, use with ventilation.",
+      "photoNote": "Representative photo. Actual rental unit is a Remington 140,000 BTU kerosene heater."
+    },
+    {
+      "id": "dehumidifier-lgr-7000-xli",
       "class": "drying",
+      "category": "drying-water-damage",
       "visible": true,
       "bookable": true,
       "availability": ["rent", "buy"],
       "name": "Dri-Eaz LGR 7000 XLi Dehumidifier",
-      "shortName": "LGR 7000 XLi Dehumidifier",
+      "shortName": "Dri-Eaz LGR 7000 XLi",
       "tagline": "Low-grain refrigerant dehumidifier — the industry standard for water damage drying.",
-      "displayRate": "From $85 / day · $340 / week · $980 / month",
+      "displayRate": "From $80 / day · $320 / week · $960 / month",
       "pricing": {
-        "daily": 85,
-        "weekly": 340,
-        "monthly": 980,
-        "buyNew": 3200,
-        "buyUsed": null,
+        "daily": 80,
+        "weekly": 320,
+        "monthly": 960,
+        "buyNew": null,
+        "buyUsed": 2200,
         "deposit": 500
       },
       "specs": {
@@ -72,115 +185,117 @@
       "photoNote": "Representative manufacturer product photo. Actual rental unit is similar."
     },
     {
-      "id": "air-scrubber",
+      "id": "dehumidifier-drizair-1200",
       "class": "drying",
+      "category": "drying-water-damage",
       "visible": true,
       "bookable": true,
       "availability": ["rent", "buy"],
-      "name": "Air Scrubber / Air Purifier (HEPA)",
-      "shortName": "Air Scrubber",
-      "tagline": "HEPA air scrubber for construction dust, mold remediation, and smoke damage.",
-      "displayRate": "From $55 / day · $220 / week · $650 / month",
+      "name": "Dri-Eaz Drizair 1200 Dehumidifier",
+      "shortName": "Dri-Eaz Drizair 1200",
+      "tagline": "Compact refrigerant dehumidifier for small to medium drying jobs.",
+      "displayRate": "From $50 / day · $200 / week · $600 / month",
       "pricing": {
-        "daily": 55,
-        "weekly": 220,
-        "monthly": 650,
-        "buyNew": 1600,
-        "buyUsed": null,
+        "daily": 50,
+        "weekly": 200,
+        "monthly": 600,
+        "buyNew": null,
+        "buyUsed": 1100,
         "deposit": 300
       },
       "specs": {
-        "operatingWeightLbs": "~55",
-        "ratedOperatingCapacityLbs": "~500 CFM",
+        "operatingWeightLbs": "~90",
+        "ratedOperatingCapacityLbs": "~75 pints/day at saturation",
         "engineHp": "N/A",
         "liftHeightIn": null,
         "gateWidthIn": null
       },
       "attachmentsIncluded": [
-        "HEPA filter",
-        "Pre-filter"
+        "Drain hose",
+        "Air filter"
       ],
       "idealFor": [
-        "Mold remediation",
-        "Construction dust control",
-        "Smoke damage",
-        "Post-reno air cleanup"
+        "Residential water damage drying",
+        "Smaller flooded rooms",
+        "Humidity control in finished spaces",
+        "Secondary drying support"
       ],
       "photos": [
         {
-          "src": "/images/air-scrubber-dri-eaz-defendair-hepa-500.jpg",
-          "alt": "Dri-Eaz DefendAir HEPA 500 air scrubber — portable HEPA filtration unit with carry handle."
+          "src": "/images/dehumidifier-dri-eaz-lgr-7000.jpg",
+          "alt": "Compact refrigerant dehumidifier — representative photo."
         }
       ],
-      "operatorNote": "Renter operates — place in the affected area, plug in, run continuously.",
-      "photoNote": "Representative manufacturer product photo. Actual rental unit is similar."
+      "operatorNote": "Renter operates — plug in, set humidity target, let it run.",
+      "photoNote": "Representative photo. Actual rental unit is a Dri-Eaz Drizair 1200."
     },
     {
-      "id": "carpet-water-extractor",
+      "id": "dehumidifier-evolution-lgr",
       "class": "drying",
+      "category": "drying-water-damage",
       "visible": true,
       "bookable": true,
       "availability": ["rent", "buy"],
-      "name": "Carpet Water Extractor",
-      "shortName": "Carpet Extractor",
-      "tagline": "Portable carpet and upholstery water extractor for flooded floors.",
-      "displayRate": "From $75 / day · $300 / week · $880 / month",
+      "name": "Dri-Eaz Evolution LGR Dehumidifier",
+      "shortName": "Dri-Eaz Evolution LGR",
+      "tagline": "Mid-size low-grain refrigerant dehumidifier for general restoration work.",
+      "displayRate": "From $60 / day · $240 / week · $720 / month",
       "pricing": {
-        "daily": 75,
-        "weekly": 300,
-        "monthly": 880,
-        "buyNew": 2400,
-        "buyUsed": null,
+        "daily": 60,
+        "weekly": 240,
+        "monthly": 720,
+        "buyNew": null,
+        "buyUsed": 1500,
         "deposit": 400
       },
       "specs": {
-        "operatingWeightLbs": "~65",
-        "ratedOperatingCapacityLbs": "~10 gal tank",
+        "operatingWeightLbs": "~95",
+        "ratedOperatingCapacityLbs": "~95 pints/day at saturation",
         "engineHp": "N/A",
         "liftHeightIn": null,
         "gateWidthIn": null
       },
       "attachmentsIncluded": [
-        "Floor wand",
-        "Upholstery tool",
-        "Hoses"
+        "Drain hose",
+        "Air filter"
       ],
       "idealFor": [
-        "Flooded carpets",
-        "Water removal after burst pipes",
-        "Deep carpet cleaning",
-        "Upholstery extraction"
+        "General restoration drying",
+        "Mid-size flooded areas",
+        "Post-leak drying",
+        "Humidity control on sites"
       ],
       "photos": [
         {
-          "src": "/images/carpet-water-extractor-dri-eaz-hve3000.jpg",
-          "alt": "Dri-Eaz HVE 3000 portable flood pumper carpet water extractor on wheels."
+          "src": "/images/dehumidifier-dri-eaz-lgr-7000.jpg",
+          "alt": "Dri-Eaz LGR refrigerant dehumidifier — representative photo."
         }
       ],
-      "operatorNote": "Renter operates — fill clean tank, extract, empty waste tank.",
-      "photoNote": "Representative manufacturer product photo. Actual rental unit is similar."
+      "operatorNote": "Renter operates — plug in, set humidity target, let it run.",
+      "photoNote": "Representative photo. Actual rental unit is a Dri-Eaz Evolution LGR."
     },
     {
-      "id": "air-mover",
+      "id": "air-mover-f259-sm",
       "class": "drying",
+      "category": "drying-water-damage",
       "visible": true,
       "bookable": true,
       "availability": ["rent", "buy"],
-      "name": "Air Mover / Floor Dryer",
-      "shortName": "Air Mover",
-      "tagline": "High-velocity air mover for drying carpets, floors, and walls.",
-      "displayRate": "From $25 / day · $100 / week · $280 / month",
+      "name": "Dri-Eaz F259-SM Air Mover",
+      "shortName": "Dri-Eaz F259-SM Air Mover",
+      "tagline": "Stackable centrifugal air mover for drying carpets, floors, and walls.",
+      "displayRate": "From $30 / day · $120 / week · $360 / month",
       "pricing": {
-        "daily": 25,
-        "weekly": 100,
-        "monthly": 280,
-        "buyNew": 450,
-        "buyUsed": null,
+        "daily": 30,
+        "weekly": 120,
+        "monthly": 360,
+        "buyNew": null,
+        "buyUsed": 320,
         "deposit": 100
       },
       "specs": {
-        "operatingWeightLbs": "~35",
-        "ratedOperatingCapacityLbs": "~3000 CFM",
+        "operatingWeightLbs": "~29",
+        "ratedOperatingCapacityLbs": "~2200 CFM",
         "engineHp": "N/A",
         "liftHeightIn": null,
         "gateWidthIn": null
@@ -197,34 +312,217 @@
       "photos": [
         {
           "src": "/images/air-mover-dri-eaz-sahara-pro-x4.jpg",
-          "alt": "Dri-Eaz Sahara Pro X4 TurboDryer air mover / floor dryer on wheels."
+          "alt": "Centrifugal air mover for floor and wall drying — representative photo."
         }
       ],
       "operatorNote": "Renter operates — position, plug in, let run.",
-      "photoNote": "Representative manufacturer product photo. Actual rental unit is similar."
+      "photoNote": "Representative photo. Actual rental unit is a Dri-Eaz F259-SM."
     },
     {
-      "id": "generator-portable",
-      "class": "power",
+      "id": "air-scrubber-airbeast-2000",
+      "class": "drying",
+      "category": "drying-water-damage",
       "visible": true,
       "bookable": true,
       "availability": ["rent", "buy"],
-      "name": "Portable Generator",
-      "shortName": "Generator",
-      "tagline": "Portable gasoline generator for site power, outages, and events.",
-      "displayRate": "From $70 / day · $280 / week · $820 / month",
+      "name": "Express Air Beast 2000 CFM Industrial HEPA Air Scrubber",
+      "shortName": "Express Air Beast 2000",
+      "tagline": "Industrial HEPA / negative-air machine — 2000 CFM for large-area mold, dust, and smoke work.",
+      "displayRate": "From $100 / day · $400 / week · $1,200 / month",
+      "pricing": {
+        "daily": 100,
+        "weekly": 400,
+        "monthly": 1200,
+        "buyNew": null,
+        "buyUsed": 2400,
+        "deposit": 500
+      },
+      "specs": {
+        "operatingWeightLbs": "~90",
+        "ratedOperatingCapacityLbs": "~2000 CFM",
+        "engineHp": "N/A",
+        "liftHeightIn": null,
+        "gateWidthIn": null
+      },
+      "attachmentsIncluded": [
+        "HEPA filter",
+        "Pre-filter",
+        "Ducting adapter"
+      ],
+      "idealFor": [
+        "Large-area mold remediation",
+        "Negative-air containment",
+        "Industrial dust control",
+        "Smoke damage"
+      ],
+      "photos": [
+        {
+          "src": "/images/air-scrubber-dri-eaz-defendair-hepa-500.jpg",
+          "alt": "Industrial HEPA air scrubber — representative photo."
+        }
+      ],
+      "operatorNote": "Renter operates — place in the affected area, plug in, run continuously.",
+      "photoNote": "Representative photo. Actual rental unit is an Express Air Beast 2000 CFM."
+    },
+    {
+      "id": "air-scrubber-airbeast-600",
+      "class": "drying",
+      "category": "drying-water-damage",
+      "visible": true,
+      "bookable": true,
+      "availability": ["rent", "buy"],
+      "name": "Express Airbeast 600 HEPA Air Scrubber",
+      "shortName": "Express Airbeast 600",
+      "tagline": "Compact HEPA air scrubber for residential mold, construction dust, and smaller remediation jobs.",
+      "displayRate": "From $80 / day · $320 / week · $960 / month",
+      "pricing": {
+        "daily": 80,
+        "weekly": 320,
+        "monthly": 960,
+        "buyNew": null,
+        "buyUsed": 1400,
+        "deposit": 400
+      },
+      "specs": {
+        "operatingWeightLbs": "~45",
+        "ratedOperatingCapacityLbs": "~600 CFM",
+        "engineHp": "N/A",
+        "liftHeightIn": null,
+        "gateWidthIn": null
+      },
+      "attachmentsIncluded": [
+        "HEPA filter",
+        "Pre-filter"
+      ],
+      "idealFor": [
+        "Residential mold remediation",
+        "Construction dust control",
+        "Post-reno air cleanup",
+        "Small-area smoke damage"
+      ],
+      "photos": [
+        {
+          "src": "/images/air-scrubber-dri-eaz-defendair-hepa-500.jpg",
+          "alt": "Compact HEPA air scrubber — representative photo."
+        }
+      ],
+      "operatorNote": "Renter operates — place in the affected area, plug in, run continuously.",
+      "photoNote": "Representative photo. Actual rental unit is an Express Airbeast 600."
+    },
+    {
+      "id": "carpet-extractor-mytee-hp100",
+      "class": "drying",
+      "category": "drying-water-damage",
+      "visible": true,
+      "bookable": true,
+      "availability": ["rent", "buy"],
+      "name": "Mytee HP100 Grand Prix II Carpet Water Extractor",
+      "shortName": "Mytee HP100 Grand Prix II",
+      "tagline": "Professional carpet and upholstery water extractor for flood recovery.",
+      "displayRate": "From $40 / day · $160 / week · $480 / month",
+      "pricing": {
+        "daily": 40,
+        "weekly": 160,
+        "monthly": 480,
+        "buyNew": null,
+        "buyUsed": 1800,
+        "deposit": 400
+      },
+      "specs": {
+        "operatingWeightLbs": "~85",
+        "ratedOperatingCapacityLbs": "~12 gal clean + waste tanks",
+        "engineHp": "N/A",
+        "liftHeightIn": null,
+        "gateWidthIn": null
+      },
+      "attachmentsIncluded": [
+        "Floor wand",
+        "Upholstery tool",
+        "Hoses"
+      ],
+      "idealFor": [
+        "Flooded carpet extraction",
+        "Water removal after burst pipes",
+        "Deep carpet cleaning",
+        "Upholstery extraction"
+      ],
+      "photos": [
+        {
+          "src": "/images/carpet-water-extractor-dri-eaz-hve3000.jpg",
+          "alt": "Portable carpet water extractor — representative photo."
+        }
+      ],
+      "operatorNote": "Renter operates — fill clean tank, extract, empty waste tank.",
+      "photoNote": "Representative photo. Actual rental unit is a Mytee HP100 Grand Prix II."
+    },
+    {
+      "id": "carpet-cleaner-tornado-walk-behind",
+      "class": "drying",
+      "category": "drying-water-damage",
+      "visible": true,
+      "bookable": true,
+      "availability": ["rent", "buy"],
+      "name": "Tornado Walk-Behind Carpet Cleaner",
+      "shortName": "Tornado Walk-Behind Cleaner",
+      "tagline": "Walk-behind commercial carpet cleaner for larger carpeted areas.",
+      "displayRate": "From $40 / day · $160 / week · $480 / month",
+      "pricing": {
+        "daily": 40,
+        "weekly": 160,
+        "monthly": 480,
+        "buyNew": null,
+        "buyUsed": 1600,
+        "deposit": 400
+      },
+      "specs": {
+        "operatingWeightLbs": "~110",
+        "ratedOperatingCapacityLbs": "~17 in cleaning path",
+        "engineHp": "N/A",
+        "liftHeightIn": null,
+        "gateWidthIn": null
+      },
+      "attachmentsIncluded": [
+        "Solution tank",
+        "Waste tank"
+      ],
+      "idealFor": [
+        "Commercial carpet cleaning",
+        "Large residential carpets",
+        "Post-job carpet refresh",
+        "Water-damage carpet rehab"
+      ],
+      "photos": [
+        {
+          "src": "/images/carpet-water-extractor-dri-eaz-hve3000.jpg",
+          "alt": "Walk-behind commercial carpet cleaner — representative photo."
+        }
+      ],
+      "operatorNote": "Renter operates — fill solution tank, operate, empty waste tank.",
+      "photoNote": "Representative photo. Actual rental unit is a Tornado walk-behind."
+    },
+    {
+      "id": "generator-firman-w3300i",
+      "class": "power",
+      "category": "inverter-generators",
+      "visible": true,
+      "bookable": true,
+      "availability": ["rent", "buy"],
+      "name": "Firman W3300i Inverter Generator (3,300W)",
+      "shortName": "Firman W3300i (3,300W)",
+      "tagline": "Quiet 3,300W inverter generator for sensitive electronics, trades, and backup power.",
+      "displayRate": "From $70 / day · $280 / week · $840 / month",
       "pricing": {
         "daily": 70,
         "weekly": 280,
-        "monthly": 820,
-        "buyNew": 1800,
-        "buyUsed": null,
-        "deposit": 350
+        "monthly": 840,
+        "buyNew": null,
+        "buyUsed": 850,
+        "deposit": 300
       },
       "specs": {
-        "operatingWeightLbs": "~140",
-        "ratedOperatingCapacityLbs": "~6500W peak / 5500W running",
-        "engineHp": "~10",
+        "operatingWeightLbs": "~69",
+        "ratedOperatingCapacityLbs": "3,300W peak / 3,000W running",
+        "engineHp": "~5",
         "liftHeightIn": null,
         "gateWidthIn": null
       },
@@ -233,62 +531,156 @@
         "Starting fuel"
       ],
       "idealFor": [
-        "Job site power",
-        "Backup power during outages",
+        "Trades truck power",
+        "Backup power for small loads",
         "Outdoor events",
-        "Running air movers off-grid"
+        "Running sensitive electronics"
       ],
       "photos": [
         {
           "src": "/images/generator-champion-7500w.jpg",
-          "alt": "Champion 7500W portable gasoline generator with wheel kit and outlet panel."
+          "alt": "Portable inverter generator — representative photo."
         }
       ],
       "operatorNote": "Renter operates — fuel up, plug in, follow included safety guide.",
-      "photoNote": "Representative manufacturer product photo. Actual rental unit is similar."
+      "photoNote": "Representative photo. Actual rental unit is a Firman W3300i."
     },
     {
-      "id": "heater-propane",
-      "class": "climate",
+      "id": "generator-predator-5000-dual-fuel",
+      "class": "power",
+      "category": "inverter-generators",
       "visible": true,
       "bookable": true,
       "availability": ["rent", "buy"],
-      "name": "Portable Propane Heater",
-      "shortName": "Propane Heater",
-      "tagline": "Portable propane heater for construction site warming and cold-weather drying.",
-      "displayRate": "From $50 / day · $200 / week · $580 / month",
+      "name": "Predator Super Quiet 5000W Dual-Fuel Inverter Generator",
+      "shortName": "Predator 5000W Dual-Fuel",
+      "tagline": "5,000W dual-fuel inverter generator — runs on gasoline or propane.",
+      "displayRate": "From $80 / day · $320 / week · $960 / month",
       "pricing": {
-        "daily": 50,
-        "weekly": 200,
-        "monthly": 580,
-        "buyNew": 850,
-        "buyUsed": null,
-        "deposit": 200
+        "daily": 80,
+        "weekly": 320,
+        "monthly": 960,
+        "buyNew": null,
+        "buyUsed": 1250,
+        "deposit": 400
       },
       "specs": {
-        "operatingWeightLbs": "~45",
-        "ratedOperatingCapacityLbs": "~80,000 BTU/hr",
-        "engineHp": "N/A",
+        "operatingWeightLbs": "~105",
+        "ratedOperatingCapacityLbs": "5,000W peak / 4,200W running",
+        "engineHp": "~7",
         "liftHeightIn": null,
         "gateWidthIn": null
       },
       "attachmentsIncluded": [
-        "Propane regulator + hose"
+        "Standard outlets",
+        "Propane regulator (dual-fuel)",
+        "Starting fuel"
       ],
       "idealFor": [
-        "Cold-weather job site warming",
-        "Cold-weather drying assist",
-        "Garage and workshop heating",
-        "Outdoor event warming"
+        "Trades site power",
+        "Backup power",
+        "Outdoor events",
+        "Dual-fuel flexibility"
       ],
       "photos": [
         {
-          "src": "/images/heater-mr-heater-mh85qfav.jpg",
-          "alt": "Mr. Heater MH85QFAV 85,000 BTU portable forced-air propane torpedo heater."
+          "src": "/images/generator-champion-7500w.jpg",
+          "alt": "Dual-fuel inverter generator — representative photo."
         }
       ],
-      "operatorNote": "Renter operates — connect propane, light per included instructions, use with ventilation.",
-      "photoNote": "Representative manufacturer product photo. Actual rental unit is similar."
+      "operatorNote": "Renter operates — select fuel, plug in, follow included safety guide.",
+      "photoNote": "Representative photo. Actual rental unit is a Predator Super Quiet 5000 Dual Fuel."
+    },
+    {
+      "id": "generator-champion-5500w-inverter",
+      "class": "power",
+      "category": "inverter-generators",
+      "visible": true,
+      "bookable": true,
+      "availability": ["rent", "buy"],
+      "name": "Champion Global 5,500W Inverter Generator",
+      "shortName": "Champion 5,500W Inverter",
+      "tagline": "5,500W inverter generator — quiet, reliable, trade-ready.",
+      "displayRate": "From $80 / day · $320 / week · $960 / month",
+      "pricing": {
+        "daily": 80,
+        "weekly": 320,
+        "monthly": 960,
+        "buyNew": null,
+        "buyUsed": 1300,
+        "deposit": 400
+      },
+      "specs": {
+        "operatingWeightLbs": "~110",
+        "ratedOperatingCapacityLbs": "5,500W peak / 4,500W running",
+        "engineHp": "~8",
+        "liftHeightIn": null,
+        "gateWidthIn": null
+      },
+      "attachmentsIncluded": [
+        "Standard outlets",
+        "Starting fuel"
+      ],
+      "idealFor": [
+        "Trades site power",
+        "Backup power for medium loads",
+        "Outdoor events",
+        "Running sensitive electronics"
+      ],
+      "photos": [
+        {
+          "src": "/images/generator-champion-7500w.jpg",
+          "alt": "Champion portable inverter generator — representative photo."
+        }
+      ],
+      "operatorNote": "Renter operates — fuel up, plug in, follow included safety guide.",
+      "photoNote": "Representative photo. Actual rental unit is a Champion Global 5,500W inverter."
+    },
+    {
+      "id": "generator-aipower-gxs7100irdc",
+      "class": "power",
+      "category": "inverter-generators",
+      "visible": true,
+      "bookable": true,
+      "availability": ["rent", "buy"],
+      "name": "A-iPower GXS7100iRDC Inverter Generator (7,000W)",
+      "shortName": "A-iPower 7,000W Inverter",
+      "tagline": "7,000W inverter generator with electric start — large-load trade-ready power.",
+      "displayRate": "From $100 / day · $400 / week · $1,200 / month",
+      "pricing": {
+        "daily": 100,
+        "weekly": 400,
+        "monthly": 1200,
+        "buyNew": null,
+        "buyUsed": 1700,
+        "deposit": 500
+      },
+      "specs": {
+        "operatingWeightLbs": "~190",
+        "ratedOperatingCapacityLbs": "7,000W peak / 5,500W running",
+        "engineHp": "~11",
+        "liftHeightIn": null,
+        "gateWidthIn": null
+      },
+      "attachmentsIncluded": [
+        "Standard outlets",
+        "Starting fuel",
+        "Electric start key"
+      ],
+      "idealFor": [
+        "Larger trade sites",
+        "Backup power for heavier loads",
+        "Running multiple tools",
+        "Powering sensitive electronics"
+      ],
+      "photos": [
+        {
+          "src": "/images/generator-champion-7500w.jpg",
+          "alt": "A-iPower large portable inverter generator — representative photo."
+        }
+      ],
+      "operatorNote": "Renter operates — fuel up, electric start, follow included safety guide.",
+      "photoNote": "Representative photo. Actual rental unit is an A-iPower GXS7100iRDC."
     }
   ],
   "serviceAreas": [
@@ -487,12 +879,12 @@
     "Transparent pricing — daily, weekly, and monthly rates visible on every item",
     "Automatic rate tiering — you always get the cheapest applicable rate",
     "Delivery across Toronto, Markham, and Durham Region",
-    "Buy new or used — the same catalog is available for sale"
+    "Used equipment also available for sale"
   ],
   "faq": [
     {
       "q": "How does rental pricing work?",
-      "a": "Every item has a daily, weekly, and monthly rate. We automatically charge whichever is cheapest for your rental length. For example, if 5 days at $85/day ($425) is more than our weekly rate ($340), you pay the weekly rate — so 5–7 days always costs $340. Same rule applies at the monthly tier."
+      "a": "Every item has a daily, weekly, and monthly rate. We automatically charge whichever is cheapest for your rental length. If 5 days at the daily rate costs more than our weekly rate, you pay the weekly rate — so 5–7 days always costs the weekly amount. Same rule applies at the monthly tier."
     },
     {
       "q": "Can I rent multiple items in one order?",
@@ -508,7 +900,7 @@
     },
     {
       "q": "Can I buy equipment instead of renting?",
-      "a": "Yes — most of our rental catalog is also available for sale, new or used. Switch to the Buy section on any equipment page."
+      "a": "Yes — we have a Buy section featuring select used equipment. Prices and condition shown on each listing."
     },
     {
       "q": "How do I pick up or arrange delivery?",

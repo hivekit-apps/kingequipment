@@ -28,6 +28,7 @@ export type EquipmentPhoto = { src: string; alt: string };
 export type EquipmentItem = {
   id: string;
   class: EquipmentClass;
+  category?: string;
   visible?: boolean;
   bookable?: boolean;
   availability: EquipmentAvailability[];
@@ -49,6 +50,12 @@ export type EquipmentItem = {
   photos: EquipmentPhoto[];
   operatorNote: string;
   photoNote: string;
+};
+
+export type Category = {
+  slug: string;
+  name: string;
+  description: string;
 };
 
 export type CityPage = {
@@ -75,12 +82,14 @@ export type SiteConfig = {
     tagline: string;
     shortDescription: string;
     phone: string;
+    showPhone: boolean;
     email: string;
     siteUrl: string;
     gbpUrl: string;
     ga4Id: string;
     hours: string;
   };
+  categories: Category[];
   partner: {
     name: string;
     business: string;
@@ -122,18 +131,22 @@ function sanitize(v: string | undefined): string {
 
 export function getSiteConfig(): SiteConfig {
   const r = rawConfig as typeof rawConfig;
+  const biz = r.business as typeof r.business & { showPhone?: boolean };
+  const phone = sanitize(process.env.NEXT_PUBLIC_PHONE) || biz.phoneFallback || '';
   return {
     business: {
       name: r.business.name,
       tagline: r.business.tagline,
       shortDescription: r.business.shortDescription,
-      phone: sanitize(process.env.NEXT_PUBLIC_PHONE) || r.business.phoneFallback,
+      phone,
+      showPhone: biz.showPhone !== false && !!phone,
       email: sanitize(process.env.NEXT_PUBLIC_EMAIL) || r.business.emailFallback,
       siteUrl: sanitize(process.env.NEXT_PUBLIC_SITE_URL) || r.business.siteUrlFallback,
       gbpUrl: sanitize(process.env.NEXT_PUBLIC_GBP_URL),
       ga4Id: sanitize(process.env.NEXT_PUBLIC_GA4_ID),
       hours: r.business.hours,
     },
+    categories: ((r as unknown as { categories?: Category[] }).categories ?? []) as Category[],
     partner: r.partner,
     pricing: r.pricing,
     heroPhoto: r.heroPhoto,
@@ -145,6 +158,41 @@ export function getSiteConfig(): SiteConfig {
     faq: r.faq,
     ctas: r.ctas,
   };
+}
+
+export function getCategory(slug: string, cfg: SiteConfig): Category | undefined {
+  return cfg.categories.find((c) => c.slug === slug);
+}
+
+export function equipmentByCategory(cfg: SiteConfig): Map<string, EquipmentItem[]> {
+  const map = new Map<string, EquipmentItem[]>();
+  for (const cat of cfg.categories) map.set(cat.slug, []);
+  for (const e of visibleEquipment(cfg)) {
+    const key = e.category || 'uncategorized';
+    if (!map.has(key)) map.set(key, []);
+    map.get(key)!.push(e);
+  }
+  return map;
+}
+
+export function rentableByCategory(cfg: SiteConfig): Map<string, EquipmentItem[]> {
+  const base = equipmentByCategory(cfg);
+  const out = new Map<string, EquipmentItem[]>();
+  for (const [k, items] of base.entries()) {
+    const filtered = items.filter((e) => e.availability.includes('rent'));
+    if (filtered.length > 0) out.set(k, filtered);
+  }
+  return out;
+}
+
+export function buyableByCategory(cfg: SiteConfig): Map<string, EquipmentItem[]> {
+  const base = equipmentByCategory(cfg);
+  const out = new Map<string, EquipmentItem[]>();
+  for (const [k, items] of base.entries()) {
+    const filtered = items.filter((e) => e.availability.includes('buy'));
+    if (filtered.length > 0) out.set(k, filtered);
+  }
+  return out;
 }
 
 export function getCityPage(slug: string, cfg: SiteConfig): CityPage | undefined {

@@ -133,11 +133,16 @@ export default function CityPageRoute({ params }: { params: { city: string } }) 
           <h2 className="text-2xl md:text-3xl">What we deliver to {city.name}</h2>
           <div className="mt-8 grid md:grid-cols-2 gap-6">
             {equipment.map((item) => (
-              <div key={item.id} className="rounded-lg border border-slate-200 p-6">
+              <Link
+                key={item.id}
+                href={`/equipment/${item.id}/${city.slug}`}
+                className="rounded-lg border border-slate-200 p-6 bg-white hover:border-brand-orange hover:shadow-sm transition-all group"
+                data-event={`city_item_click_${city.slug}_${item.id}`}
+              >
                 <p className="text-xs uppercase tracking-wide text-brand-orange font-bold">
                   {item.class}
                 </p>
-                <h3 className="mt-1 text-xl font-bold text-slate-950">{item.shortName}</h3>
+                <h3 className="mt-1 text-xl font-bold text-slate-950 group-hover:text-brand-orange">{item.shortName}</h3>
                 <p className="mt-3 text-base text-slate-700">{item.tagline}</p>
                 <ul className="mt-4 space-y-1 text-sm text-slate-700">
                   {item.idealFor.slice(0, 3).map((j) => (
@@ -148,12 +153,19 @@ export default function CityPageRoute({ params }: { params: { city: string } }) 
                   ))}
                 </ul>
                 <p className="mt-4 text-sm font-semibold">{item.displayRate}</p>
-              </div>
+                <p className="mt-3 text-xs font-semibold text-brand-orange group-hover:underline">
+                  Rent in {city.name} →
+                </p>
+              </Link>
             ))}
           </div>
           <p className="mt-6 text-sm text-slate-700">
-            <Link href="/equipment" className="underline font-semibold">
-              See full catalog &amp; place a rental
+            <Link href="/rent" className="underline font-semibold">
+              See full rental catalog
+            </Link>
+            {' · '}
+            <Link href="/buy" className="underline font-semibold">
+              Shop used equipment
             </Link>
           </p>
         </div>

@@ -58,6 +58,17 @@ export default function CartPage() {
   const depositTotal = rows.reduce((sum, r) => sum + r.deposit, 0);
   const grandTotal = rentalSubtotal + buySubtotal + (rows.length > 0 ? deliveryPrice : 0);
 
+  const hasInvalidDates = useMemo(() => {
+    const todayISO = new Date().toISOString().slice(0, 10);
+    return rows.some((r) => {
+      if (r.cart.kind !== 'rent') return false;
+      if (!r.cart.startDate || !r.cart.endDate) return true;
+      if (r.cart.startDate < todayISO) return true;
+      if (r.cart.endDate < r.cart.startDate) return true;
+      return r.days <= 0;
+    });
+  }, [rows]);
+
   if (!hydrated) {
     return (
       <section className="container-page py-12">
@@ -112,38 +123,57 @@ export default function CartPage() {
                 </button>
               </div>
 
-              {r.cart.kind === 'rent' && (
-                <div className="mt-4 grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-700">Start</label>
-                    <input
-                      type="date"
-                      value={r.cart.startDate || ''}
-                      onChange={(e) => {
-                        const v = e.target.value;
-                        const curEnd = r.cart.endDate || '';
-                        updateItem(r.cart.equipmentId, r.cart.kind, {
-                          startDate: v,
-                          endDate: curEnd && curEnd < v ? v : curEnd,
-                        });
-                      }}
-                      className="mt-1 w-full rounded-md border border-slate-300 px-2 py-2 text-sm"
-                    />
+              {r.cart.kind === 'rent' && (() => {
+                const todayISO = new Date().toISOString().slice(0, 10);
+                const startInvalid =
+                  !r.cart.startDate ||
+                  r.cart.startDate < todayISO;
+                const endInvalid =
+                  !r.cart.endDate ||
+                  (r.cart.startDate && r.cart.endDate < r.cart.startDate);
+                return (
+                  <div className="mt-4">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700">Start</label>
+                        <input
+                          type="date"
+                          value={r.cart.startDate || ''}
+                          min={todayISO}
+                          onChange={(e) => {
+                            const v = e.target.value;
+                            const curEnd = r.cart.endDate || '';
+                            updateItem(r.cart.equipmentId, r.cart.kind, {
+                              startDate: v,
+                              endDate: curEnd && curEnd < v ? v : curEnd,
+                            });
+                          }}
+                          className={`mt-1 w-full rounded-md border px-2 py-2 text-sm ${startInvalid ? 'border-red-400' : 'border-slate-300'}`}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700">End</label>
+                        <input
+                          type="date"
+                          value={r.cart.endDate || ''}
+                          min={r.cart.startDate || todayISO}
+                          onChange={(e) =>
+                            updateItem(r.cart.equipmentId, r.cart.kind, { endDate: e.target.value })
+                          }
+                          className={`mt-1 w-full rounded-md border px-2 py-2 text-sm ${endInvalid ? 'border-red-400' : 'border-slate-300'}`}
+                        />
+                      </div>
+                    </div>
+                    {(startInvalid || endInvalid) && (
+                      <p className="mt-2 text-xs text-red-700">
+                        {startInvalid
+                          ? 'Pick a start date today or later.'
+                          : 'End date must be on or after the start date.'}
+                      </p>
+                    )}
                   </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-700">End</label>
-                    <input
-                      type="date"
-                      value={r.cart.endDate || ''}
-                      min={r.cart.startDate}
-                      onChange={(e) =>
-                        updateItem(r.cart.equipmentId, r.cart.kind, { endDate: e.target.value })
-                      }
-                      className="mt-1 w-full rounded-md border border-slate-300 px-2 py-2 text-sm"
-                    />
-                  </div>
-                </div>
-              )}
+                );
+              })()}
 
               <div className="mt-4 flex items-end justify-between gap-4">
                 <div>
@@ -237,10 +267,16 @@ export default function CartPage() {
           <button
             type="button"
             onClick={() => router.push('/checkout')}
-            className="btn-primary w-full mt-5"
+            disabled={hasInvalidDates}
+            className="btn-primary w-full mt-5 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Checkout
           </button>
+          {hasInvalidDates && (
+            <p className="mt-2 text-xs text-red-700">
+              Fix the rental date errors above before you can check out.
+            </p>
+          )}
           <p className="mt-3 text-xs text-slate-600">
             Deposits and delivery due to lock in the booking. Rental balance invoiced the morning of delivery.
           </p>

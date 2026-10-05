@@ -50,7 +50,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
           </Script>
         </>
       )}
-      <SiteHeader />
+      <SiteHeader businessName={cfg.business.name} />
       <main>{children}</main>
       <SiteFooter />
     </CartProvider>
