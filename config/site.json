@@ -64,12 +64,12 @@
       ],
       "photos": [
         {
-          "src": "/images/equipment-dehumidifier-placeholder.webp",
-          "alt": "Dri-Eaz LGR 7000 XLi dehumidifier."
+          "src": "/images/dehumidifier-dri-eaz-lgr-7000.jpg",
+          "alt": "Dri-Eaz LGR 7000 XLi dehumidifier — yellow refrigerant unit with wheels and handle."
         }
       ],
       "operatorNote": "Renter operates — plug in, set humidity target, let it run.",
-      "photoNote": "Representative photo — equipment is clean and well-maintained."
+      "photoNote": "Representative manufacturer product photo. Actual rental unit is similar."
     },
     {
       "id": "air-scrubber",
@@ -108,12 +108,12 @@
       ],
       "photos": [
         {
-          "src": "/images/equipment-airscrubber-placeholder.webp",
-          "alt": "HEPA air scrubber."
+          "src": "/images/air-scrubber-dri-eaz-defendair-hepa-500.jpg",
+          "alt": "Dri-Eaz DefendAir HEPA 500 air scrubber — portable HEPA filtration unit with carry handle."
         }
       ],
       "operatorNote": "Renter operates — place in the affected area, plug in, run continuously.",
-      "photoNote": "Representative photo — equipment is clean and well-maintained."
+      "photoNote": "Representative manufacturer product photo. Actual rental unit is similar."
     },
     {
       "id": "carpet-water-extractor",
@@ -153,12 +153,12 @@
       ],
       "photos": [
         {
-          "src": "/images/equipment-extractor-placeholder.webp",
-          "alt": "Portable carpet water extractor."
+          "src": "/images/carpet-water-extractor-dri-eaz-hve3000.jpg",
+          "alt": "Dri-Eaz HVE 3000 portable flood pumper carpet water extractor on wheels."
         }
       ],
       "operatorNote": "Renter operates — fill clean tank, extract, empty waste tank.",
-      "photoNote": "Representative photo — equipment is clean and well-maintained."
+      "photoNote": "Representative manufacturer product photo. Actual rental unit is similar."
     },
     {
       "id": "air-mover",
@@ -196,12 +196,12 @@
       ],
       "photos": [
         {
-          "src": "/images/equipment-airmover-placeholder.webp",
-          "alt": "Centrifugal air mover / floor dryer."
+          "src": "/images/air-mover-dri-eaz-sahara-pro-x4.jpg",
+          "alt": "Dri-Eaz Sahara Pro X4 TurboDryer air mover / floor dryer on wheels."
         }
       ],
       "operatorNote": "Renter operates — position, plug in, let run.",
-      "photoNote": "Representative photo — equipment is clean and well-maintained."
+      "photoNote": "Representative manufacturer product photo. Actual rental unit is similar."
     },
     {
       "id": "generator-portable",
@@ -240,12 +240,12 @@
       ],
       "photos": [
         {
-          "src": "/images/equipment-generator-placeholder.webp",
-          "alt": "Portable gasoline generator."
+          "src": "/images/generator-champion-7500w.jpg",
+          "alt": "Champion 7500W portable gasoline generator with wheel kit and outlet panel."
         }
       ],
       "operatorNote": "Renter operates — fuel up, plug in, follow included safety guide.",
-      "photoNote": "Representative photo — equipment is clean and well-maintained."
+      "photoNote": "Representative manufacturer product photo. Actual rental unit is similar."
     },
     {
       "id": "heater-propane",
@@ -283,12 +283,12 @@
       ],
       "photos": [
         {
-          "src": "/images/equipment-heater-placeholder.webp",
-          "alt": "Portable propane heater."
+          "src": "/images/heater-mr-heater-mh85qfav.jpg",
+          "alt": "Mr. Heater MH85QFAV 85,000 BTU portable forced-air propane torpedo heater."
         }
       ],
       "operatorNote": "Renter operates — connect propane, light per included instructions, use with ventilation.",
-      "photoNote": "Representative photo — equipment is clean and well-maintained."
+      "photoNote": "Representative manufacturer product photo. Actual rental unit is similar."
     }
   ],
   "serviceAreas": [
