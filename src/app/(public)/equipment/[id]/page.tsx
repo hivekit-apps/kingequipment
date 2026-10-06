@@ -1,12 +1,15 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { getSiteConfig, getSiteConfigDynamic, getEquipmentById, classLabel } from '@/lib/config';
+import { notFound, redirect } from 'next/navigation';
+import { getSiteConfig, getSiteConfigDynamic, getEquipmentById, classLabel, getEquipmentRedirect } from '@/lib/config';
 import { AddToCartForm } from '@/components/AddToCartForm';
 
 // ISR: revalidate every 60s so admin equipment edits propagate without redeploy.
 export const revalidate = 60;
+// Cycle 10: deleted items need to be served on-demand so getEquipmentRedirect
+// can run and redirect() instead of 404. Known-at-build-time ids still pre-render.
+export const dynamicParams = true;
 
 export function generateStaticParams() {
   const cfg = getSiteConfig();
@@ -44,7 +47,14 @@ export default async function EquipmentDetailPage({
 }) {
   const cfg = await getSiteConfigDynamic();
   const item = getEquipmentById(params.id, cfg);
-  if (!item) notFound();
+  // Cycle 10: handle deleted items. visible=false means the item was soft-deleted
+  // via admin; look up a redirect row and 307 to the category hash. If no
+  // redirect row, fall through to notFound (keeps legacy "hidden" items 404).
+  if (!item || item.visible === false) {
+    const target = await getEquipmentRedirect(params.id);
+    if (target) redirect(target);
+    notFound();
+  }
 
   const defaultMode: 'rent' | 'buy' =
     searchParams.mode === 'buy' && item.availability.includes('buy') ? 'buy' : 'rent';
@@ -79,13 +89,13 @@ export default async function EquipmentDetailPage({
 
             {item.photos.length > 0 && (
               <div className="mt-6 space-y-3">
-                <div className="relative w-full aspect-[4/3] overflow-hidden rounded-md bg-slate-100">
+                <div className="relative w-full aspect-square overflow-hidden rounded-md bg-white border border-slate-200">
                   <Image
                     src={item.photos[0].src}
                     alt={item.photos[0].alt}
                     fill
                     sizes="(max-width: 1024px) 100vw, 55vw"
-                    className="object-cover"
+                    className="object-contain"
                     priority
                   />
                 </div>
@@ -94,14 +104,14 @@ export default async function EquipmentDetailPage({
                     {item.photos.slice(1).map((p) => (
                       <div
                         key={p.src}
-                        className="relative aspect-[4/3] overflow-hidden rounded-md bg-slate-100"
+                        className="relative aspect-square overflow-hidden rounded-md bg-white border border-slate-200"
                       >
                         <Image
                           src={p.src}
                           alt={p.alt}
                           fill
                           sizes="(max-width: 1024px) 33vw, 18vw"
-                          className="object-cover"
+                          className="object-contain"
                           loading="lazy"
                         />
                       </div>
@@ -154,7 +164,18 @@ export default async function EquipmentDetailPage({
               </p>
             </div>
 
-            {specs.length > 0 && (
+            {/* Cycle 10 precedence: admin-authored specsBullets REPLACE the fixed-shape
+                spec table when present. Fixed-shape specs remain the fallback. */}
+            {item.specsBullets && item.specsBullets.length > 0 ? (
+              <div className="mt-6 rounded-lg border border-slate-200 bg-white p-5">
+                <h2 className="text-lg font-bold text-slate-950">Specs</h2>
+                <ul className="mt-3 list-disc list-inside space-y-1 text-sm text-slate-700">
+                  {item.specsBullets.map((s) => (
+                    <li key={s}>{s}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : specs.length > 0 ? (
               <div className="mt-6 rounded-lg border border-slate-200 bg-white p-5">
                 <h2 className="text-lg font-bold text-slate-950">Specs</h2>
                 <dl className="mt-3 space-y-2 text-sm">
@@ -166,7 +187,7 @@ export default async function EquipmentDetailPage({
                   ))}
                 </dl>
               </div>
-            )}
+            ) : null}
 
             {item.attachmentsIncluded.length > 0 && (
               <div className="mt-6">
@@ -187,6 +208,16 @@ export default async function EquipmentDetailPage({
                     <li key={j}>{j}</li>
                   ))}
                 </ul>
+              </div>
+            )}
+
+            {/* Cycle 10: long-form description. Renders only when non-empty. */}
+            {item.description && item.description.trim().length > 0 && (
+              <div className="mt-8 rounded-lg border border-slate-200 bg-white p-5">
+                <h2 className="text-lg font-bold text-slate-950">About this equipment</h2>
+                <p className="mt-3 text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">
+                  {item.description}
+                </p>
               </div>
             )}
 

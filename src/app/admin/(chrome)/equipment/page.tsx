@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getSiteConfigLive, classLabel } from '@/lib/config';
 import { createServiceClient } from '@/lib/supabase/service';
+import { RestoreButton } from './RestoreButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,6 +10,13 @@ type Override = {
   pricing?: Record<string, number | null> | null;
   visible?: boolean | null;
   availability?: string[] | null;
+};
+
+type RedirectRow = {
+  equipment_id: string;
+  redirect_to: string;
+  category_slug: string | null;
+  deleted_at: string;
 };
 
 async function fetchOverrides(): Promise<Record<string, Override>> {
@@ -35,9 +43,30 @@ async function fetchCustomIds(): Promise<Set<string>> {
   }
 }
 
+async function fetchRedirects(): Promise<RedirectRow[]> {
+  try {
+    const svc = createServiceClient();
+    const { data } = await svc
+      .from('equipment_redirects')
+      .select('*')
+      .order('deleted_at', { ascending: false });
+    return (data as RedirectRow[]) || [];
+  } catch {
+    return [];
+  }
+}
+
 export default async function AdminEquipmentListPage() {
   const cfg = await getSiteConfigLive();
-  const [overrides, customIds] = await Promise.all([fetchOverrides(), fetchCustomIds()]);
+  const [overrides, customIds, redirects] = await Promise.all([
+    fetchOverrides(),
+    fetchCustomIds(),
+    fetchRedirects(),
+  ]);
+  // A redirect row flags the item as "deleted" in UI terms. Pull the names from
+  // the merged catalog if they're still queryable (seed items hidden via overrides
+  // still appear in cfg.equipment because getSiteConfigLive returns all).
+  const redirectIds = new Set(redirects.map((r) => r.equipment_id));
 
   return (
     <div>
@@ -73,7 +102,7 @@ export default async function AdminEquipmentListPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {cfg.equipment.map((item) => {
+            {cfg.equipment.filter((item) => !redirectIds.has(item.id)).map((item) => {
               const o = overrides[item.id];
               const pricing = { ...item.pricing, ...(o?.pricing || {}) };
               const availability = (o?.availability as string[]) || item.availability;
@@ -115,6 +144,58 @@ export default async function AdminEquipmentListPage() {
           </tbody>
         </table>
       </div>
+
+      {redirects.length > 0 && (
+        <div className="mt-10">
+          <h2 className="text-lg font-bold text-gray-900">Deleted (redirecting)</h2>
+          <p className="mt-1 text-sm text-gray-600">
+            These equipment IDs have been removed from the public catalog. Any old URLs
+            redirect to the category page. Seed items can be restored; custom items were
+            hard-deleted and cannot be restored.
+          </p>
+          <div className="mt-4 bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-50 text-xs uppercase text-gray-600">
+                <tr>
+                  <th className="px-4 py-3 text-left">Equipment ID</th>
+                  <th className="px-4 py-3 text-left">Redirects to</th>
+                  <th className="px-4 py-3 text-left">Deleted at</th>
+                  <th className="px-4 py-3 text-left">Source</th>
+                  <th className="px-4 py-3 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {redirects.map((r) => {
+                  const wasCustom = customIds.has(r.equipment_id);
+                  // A row in equipment_custom means hard-delete happened (custom items
+                  // get hard-deleted). But cycle-10 custom-delete also wipes equipment_custom,
+                  // so wasCustom = true here is impossible after a custom-delete. We check
+                  // seed items by presence in cfg.equipment (seed items stay in site.json).
+                  const seedItem = cfg.equipment.find((e) => e.id === r.equipment_id);
+                  const canRestore = !!seedItem && !wasCustom;
+                  return (
+                    <tr key={r.equipment_id}>
+                      <td className="px-4 py-3 font-mono text-xs">{r.equipment_id}</td>
+                      <td className="px-4 py-3 text-xs">{r.redirect_to}</td>
+                      <td className="px-4 py-3 text-xs text-gray-600">
+                        {new Date(r.deleted_at).toLocaleString()}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className="inline-block px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-700">
+                          {seedItem ? 'seed' : 'custom (deleted)'}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <RestoreButton id={r.equipment_id} disabled={!canRestore} />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

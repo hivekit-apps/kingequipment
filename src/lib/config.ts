@@ -50,6 +50,10 @@ export type EquipmentItem = {
   photos: EquipmentPhoto[];
   operatorNote: string;
   photoNote: string;
+  // Cycle 10: optional long-form editorial content. All empty => public page
+  // omits the "About this equipment" section entirely.
+  description?: string;
+  specsBullets?: string[];
 };
 
 export type Category = {
@@ -261,6 +265,11 @@ type EquipmentOverrideRow = {
   name?: string | null;
   short_name?: string | null;
   tagline?: string | null;
+  // cycle 10 long-form fields (all optional)
+  description?: string | null;
+  specs_bullets?: string[] | null;
+  attachments_included?: string[] | null;
+  ideal_for?: string[] | null;
 };
 
 // Admin-created equipment (new SKUs beyond the site.json seed). Stored in the
@@ -284,6 +293,9 @@ type EquipmentCustomRow = {
   bookable?: boolean | null;
   operator_note?: string | null;
   photo_note?: string | null;
+  // cycle 10 long-form fields (all optional)
+  description?: string | null;
+  specs_bullets?: string[] | null;
 };
 
 async function fetchEquipmentOverrides(mode: 'cached' | 'live' = 'cached'): Promise<Map<string, EquipmentOverrideRow>> {
@@ -347,6 +359,21 @@ function applyEquipmentOverride(base: EquipmentItem, ovr: EquipmentOverrideRow):
   if (typeof ovr.tagline === 'string' && ovr.tagline.trim().length > 0) {
     merged.tagline = ovr.tagline;
   }
+  // cycle 10 long-form fields. Only override when non-empty: an override row
+  // with description=null / empty array should fall back to seed values, not
+  // blank them out.
+  if (typeof ovr.description === 'string' && ovr.description.trim().length > 0) {
+    merged.description = ovr.description;
+  }
+  if (Array.isArray(ovr.specs_bullets) && ovr.specs_bullets.length > 0) {
+    merged.specsBullets = ovr.specs_bullets;
+  }
+  if (Array.isArray(ovr.attachments_included) && ovr.attachments_included.length > 0) {
+    merged.attachmentsIncluded = ovr.attachments_included;
+  }
+  if (Array.isArray(ovr.ideal_for) && ovr.ideal_for.length > 0) {
+    merged.idealFor = ovr.ideal_for;
+  }
   return merged;
 }
 
@@ -387,6 +414,8 @@ function customRowToEquipmentItem(row: EquipmentCustomRow): EquipmentItem {
     photos: Array.isArray(row.photos) ? row.photos : [],
     operatorNote: row.operator_note ?? '',
     photoNote: row.photo_note ?? '',
+    description: typeof row.description === 'string' && row.description.trim().length > 0 ? row.description : undefined,
+    specsBullets: Array.isArray(row.specs_bullets) && row.specs_bullets.length > 0 ? row.specs_bullets : undefined,
   };
 }
 
@@ -477,6 +506,38 @@ export async function getSiteConfigDynamic(mode: 'cached' | 'live' = 'cached'): 
 // (orders API, admin pages). Bypasses the 60s ISR cache.
 export function getSiteConfigLive(): Promise<SiteConfig> {
   return getSiteConfigDynamic('live');
+}
+
+// Cycle 10: equipment_redirects lookup. Public equipment pages call this when
+// getEquipmentById returns undefined OR when the item is hidden via override.
+// Returns a redirect target like "/rent#cat-drying-water-damage" if the id
+// was deleted, else null.
+export async function getEquipmentRedirect(id: string): Promise<string | null> {
+  let url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  let key = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return null;
+  url = sanitize(url);
+  key = sanitize(key);
+  if (!url || !key) return null;
+  try {
+    const res = await fetch(
+      `${url}/rest/v1/equipment_redirects?equipment_id=eq.${encodeURIComponent(id)}&select=redirect_to`,
+      {
+        headers: {
+          apikey: key,
+          Authorization: `Bearer ${key}`,
+          Accept: 'application/json',
+        },
+        cache: 'no-store',
+      },
+    );
+    if (!res.ok) return null;
+    const rows = (await res.json()) as { redirect_to: string }[];
+    if (rows.length === 0) return null;
+    return rows[0].redirect_to || null;
+  } catch {
+    return null;
+  }
 }
 
 // Per-equipment × per-city delivery price. Falls back to the city's base price

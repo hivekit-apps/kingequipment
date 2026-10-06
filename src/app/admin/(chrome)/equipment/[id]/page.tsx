@@ -17,6 +17,10 @@ type Override = {
   short_name?: string | null;
   tagline?: string | null;
   photos?: { src: string; alt: string }[] | null;
+  description?: string | null;
+  specs_bullets?: string[] | null;
+  attachments_included?: string[] | null;
+  ideal_for?: string[] | null;
 };
 
 async function fetchOverride(id: string): Promise<Override | null> {
@@ -67,6 +71,12 @@ export default async function AdminEquipmentEditPage({
   // Photos come from merged item (which already applies overrides) -- this is
   // the canonical post-merge list the admin should edit.
   const photos = item.photos || [];
+  // Cycle 10 long-form fields: show the current effective values (post-merge),
+  // which are override OR seed. Admin edits these in-place.
+  const initialDescription = item.description ?? '';
+  const initialSpecsBullets = item.specsBullets ?? [];
+  const initialAttachmentsIncluded = item.attachmentsIncluded ?? [];
+  const initialIdealFor = item.idealFor ?? [];
 
   return (
     <div>
@@ -102,6 +112,10 @@ export default async function AdminEquipmentEditPage({
         initialCityDelivery={cityDelivery}
         isCustom={custom}
         cities={cfg.cityPages.cities.map((c) => ({ slug: c.slug, name: c.name, defaultPrice: c.deliveryPrice }))}
+        initialDescription={initialDescription}
+        initialSpecsBullets={initialSpecsBullets}
+        initialAttachmentsIncluded={initialAttachmentsIncluded}
+        initialIdealFor={initialIdealFor}
       />
 
       <PhotoManager id={item.id} initialPhotos={photos} />

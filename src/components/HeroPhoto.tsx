@@ -9,14 +9,14 @@ export function HeroPhoto() {
   const cfg = getSiteConfig();
   const { src, alt } = cfg.heroPhoto;
   return (
-    <div className="relative w-full overflow-hidden rounded-lg bg-slate-900 aspect-[4/5] md:aspect-[3/4] md:max-h-[600px]">
+    <div className="relative w-full overflow-hidden rounded-lg bg-white aspect-square md:max-h-[600px]">
       <Image
         src={src}
         alt={alt}
         fill
         priority
         sizes="(max-width: 768px) 100vw, 50vw"
-        className="object-cover"
+        className="object-contain"
       />
     </div>
   );

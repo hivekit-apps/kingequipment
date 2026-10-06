@@ -19,13 +19,13 @@ export function PhotoStrip({ limit, machineId }: { limit?: number; machineId?: s
     return (
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {photos.map((p) => (
-          <div key={p.src} className="relative aspect-[3/4] overflow-hidden rounded-md bg-slate-200">
+          <div key={p.src} className="relative aspect-square overflow-hidden rounded-md bg-white">
             <Image
               src={p.src}
               alt={p.alt}
               fill
               sizes="(max-width: 768px) 50vw, 25vw"
-              className="object-cover"
+              className="object-contain"
               loading="lazy"
             />
           </div>
@@ -57,8 +57,8 @@ export function PhotoStrip({ limit, machineId }: { limit?: number; machineId?: s
     return (
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {photos.map((p) => (
-          <div key={p.src} className="relative aspect-[3/4] overflow-hidden rounded-md bg-slate-200">
-            <Image src={p.src} alt={p.alt} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover" loading="lazy" />
+          <div key={p.src} className="relative aspect-square overflow-hidden rounded-md bg-white">
+            <Image src={p.src} alt={p.alt} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-contain" loading="lazy" />
           </div>
         ))}
       </div>
@@ -70,7 +70,7 @@ export function PhotoStrip({ limit, machineId }: { limit?: number; machineId?: s
         <Link
           key={p.src}
           href={`/equipment/${p.id}`}
-          className="group relative aspect-[3/4] overflow-hidden rounded-md bg-slate-200"
+          className="group relative aspect-square overflow-hidden rounded-md bg-white"
           data-event={`photo_strip_${p.id}`}
         >
           <Image
@@ -78,7 +78,7 @@ export function PhotoStrip({ limit, machineId }: { limit?: number; machineId?: s
             alt={p.alt}
             fill
             sizes="(max-width: 768px) 50vw, 25vw"
-            className="object-cover group-hover:scale-105 transition-transform"
+            className="object-contain group-hover:scale-105 transition-transform"
             loading="lazy"
           />
           <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/80 to-transparent p-2 text-xs font-semibold text-white">

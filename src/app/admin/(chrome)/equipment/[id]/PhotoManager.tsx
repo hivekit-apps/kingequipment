@@ -124,7 +124,7 @@ export function PhotoManager({ id, initialPhotos }: Props) {
               <img
                 src={p.src}
                 alt={p.alt}
-                className="w-32 h-24 object-cover rounded border border-gray-200 bg-gray-50"
+                className="w-32 h-32 object-contain rounded border border-gray-200 bg-white"
               />
               <div className="flex-1 min-w-0">
                 <label className="block text-xs font-medium text-gray-700">Alt text</label>

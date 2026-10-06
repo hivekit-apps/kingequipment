@@ -14,6 +14,11 @@ type Patch = {
   availability?: string[];
   visible?: boolean;
   city_delivery?: Record<string, number>;
+  // cycle 10 long-form fields
+  description?: string | null;
+  specsBullets?: string[] | null;
+  attachmentsIncluded?: string[] | null;
+  idealFor?: string[] | null;
 };
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
@@ -41,6 +46,30 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   if (typeof body.name === 'string') upsert.name = body.name.trim();
   if (typeof body.shortName === 'string') upsert.short_name = body.shortName.trim();
   if (typeof body.tagline === 'string') upsert.tagline = body.tagline.trim();
+  // Cycle 10 long-form fields. Store empty string / empty array as null so
+  // the merge falls back to seed instead of overriding with "nothing".
+  if (body.description !== undefined) {
+    const trimmed = typeof body.description === 'string' ? body.description.trim() : '';
+    upsert.description = trimmed.length > 0 ? trimmed : null;
+  }
+  if (body.specsBullets !== undefined) {
+    const arr = Array.isArray(body.specsBullets)
+      ? body.specsBullets.map((s) => String(s).trim()).filter((s) => s.length > 0)
+      : [];
+    upsert.specs_bullets = arr.length > 0 ? arr : null;
+  }
+  if (body.attachmentsIncluded !== undefined) {
+    const arr = Array.isArray(body.attachmentsIncluded)
+      ? body.attachmentsIncluded.map((s) => String(s).trim()).filter((s) => s.length > 0)
+      : [];
+    upsert.attachments_included = arr.length > 0 ? arr : null;
+  }
+  if (body.idealFor !== undefined) {
+    const arr = Array.isArray(body.idealFor)
+      ? body.idealFor.map((s) => String(s).trim()).filter((s) => s.length > 0)
+      : [];
+    upsert.ideal_for = arr.length > 0 ? arr : null;
+  }
 
   const { error } = await svc
     .from('equipment_overrides')
@@ -52,36 +81,80 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   return NextResponse.json({ ok: true });
 }
 
-// DELETE a custom equipment entry. Seed items (from site.json) cannot be
-// deleted via this route -- hide them with overrides.visible=false instead.
+// DELETE any equipment entry (seed OR custom) via cycle-10 flow.
+// - Resolve item category + preferred mode (rent vs buy) to compute redirect target.
+// - Insert equipment_redirects row (upsert) so public /equipment/<id>[/city] 307s.
+// - SEED items: upsert equipment_overrides with visible=false (removes from catalog;
+//   seed row stays in site.json so a Restore can un-hide without redeploy).
+// - CUSTOM items: hard-delete from equipment_custom + clean up blocked dates.
+// Returns { ok, redirect_to } so the UI can navigate the admin away.
 export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
   await requireAdminRole();
   const svc = createServiceClient();
+  const cfg = await getSiteConfigLive();
+  const item = getEquipmentById(params.id, cfg);
+  if (!item) {
+    return NextResponse.json({ error: 'Unknown equipment id' }, { status: 404 });
+  }
 
-  // Confirm this id exists in equipment_custom (else it's a seed item).
-  const { data: customRow, error: fetchErr } = await svc
+  // Compute redirect target. Prefer /rent#cat-<cat> when the item is rentable,
+  // else /buy#cat-<cat>. Fallback /rent when no availability info is present.
+  const category = item.category || 'drying-water-damage';
+  const prefersBuy = !item.availability.includes('rent') && item.availability.includes('buy');
+  const target = `${prefersBuy ? '/buy' : '/rent'}#cat-${category}`;
+
+  // Is this a custom-created item?
+  const { data: customRow } = await svc
     .from('equipment_custom')
     .select('id')
     .eq('id', params.id)
     .maybeSingle();
-  if (fetchErr) {
-    return NextResponse.json({ error: fetchErr.message }, { status: 500 });
-  }
-  if (!customRow) {
-    return NextResponse.json(
-      { error: 'This equipment is defined in the seed catalog and cannot be deleted. Toggle Visible=off to hide it.' },
-      { status: 400 },
+  const isCustom = !!customRow;
+
+  // Record the redirect first (upsert so Restore can delete this row cleanly).
+  const { error: redirectErr } = await svc
+    .from('equipment_redirects')
+    .upsert(
+      {
+        equipment_id: params.id,
+        redirect_to: target,
+        category_slug: category,
+        deleted_at: new Date().toISOString(),
+      },
+      { onConflict: 'equipment_id' },
     );
+  if (redirectErr) {
+    console.error('[admin equipment DELETE] redirect upsert failed:', redirectErr.message);
+    return NextResponse.json({ error: redirectErr.message }, { status: 500 });
   }
 
-  // Clean up any override row piggy-backed on this id.
-  await svc.from('equipment_overrides').delete().eq('equipment_id', params.id);
-  // Clean up any blocked dates.
+  // Clean up blocked dates for both seed and custom.
   await svc.from('equipment_blocked_dates').delete().eq('equipment_id', params.id);
 
-  const { error } = await svc.from('equipment_custom').delete().eq('id', params.id);
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (isCustom) {
+    // Hard-delete the custom row and any lingering override.
+    await svc.from('equipment_overrides').delete().eq('equipment_id', params.id);
+    const { error } = await svc.from('equipment_custom').delete().eq('id', params.id);
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+  } else {
+    // Seed item: soft-hide via overrides.visible=false. Keep other override
+    // fields intact so a Restore brings back the exact prior state.
+    const { error } = await svc
+      .from('equipment_overrides')
+      .upsert(
+        {
+          equipment_id: params.id,
+          visible: false,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'equipment_id' },
+      );
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
   }
-  return NextResponse.json({ ok: true });
+
+  return NextResponse.json({ ok: true, redirect_to: target });
 }

@@ -25,6 +25,11 @@ type Props = {
   initialCityDelivery: Record<string, number>;
   isCustom: boolean;
   cities: CityInfo[];
+  // cycle 10 long-form fields (all optional)
+  initialDescription: string;
+  initialSpecsBullets: string[];
+  initialAttachmentsIncluded: string[];
+  initialIdealFor: string[];
 };
 
 export function EquipmentEditForm({
@@ -38,6 +43,10 @@ export function EquipmentEditForm({
   initialCityDelivery,
   isCustom,
   cities,
+  initialDescription,
+  initialSpecsBullets,
+  initialAttachmentsIncluded,
+  initialIdealFor,
 }: Props) {
   const router = useRouter();
   const [name, setName] = useState<string>(initialName);
@@ -47,9 +56,20 @@ export function EquipmentEditForm({
   const [availability, setAvailability] = useState<('rent' | 'buy')[]>(initialAvailability);
   const [visible, setVisible] = useState<boolean>(initialVisible);
   const [cityDelivery, setCityDelivery] = useState<Record<string, number>>(initialCityDelivery);
+  const [description, setDescription] = useState<string>(initialDescription);
+  const [specsBulletsText, setSpecsBulletsText] = useState<string>(initialSpecsBullets.join('\n'));
+  const [attachmentsText, setAttachmentsText] = useState<string>(initialAttachmentsIncluded.join('\n'));
+  const [idealForText, setIdealForText] = useState<string>(initialIdealFor.join('\n'));
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [deleting, setDeleting] = useState<boolean>(false);
+
+  function parseBullets(raw: string): string[] {
+    return raw
+      .split('\n')
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
+  }
 
   function toggleAvail(k: 'rent' | 'buy') {
     setAvailability((prev) =>
@@ -79,6 +99,10 @@ export function EquipmentEditForm({
           availability,
           visible,
           city_delivery: cityDelivery,
+          description,
+          specsBullets: parseBullets(specsBulletsText),
+          attachmentsIncluded: parseBullets(attachmentsText),
+          idealFor: parseBullets(idealForText),
         }),
       });
       const data = (await res.json().catch(() => ({}))) as { error?: string };
@@ -97,7 +121,10 @@ export function EquipmentEditForm({
 
   async function onDelete() {
     if (deleting) return;
-    if (!confirm(`Delete "${name}" (${id})? This removes the custom equipment and all its overrides. This cannot be undone.`)) return;
+    const confirmMsg = isCustom
+      ? `This will permanently remove "${name}" from the catalog. Old URLs will redirect to the category page. Custom equipment cannot be restored. Continue?`
+      : `This will permanently remove "${name}" from the catalog. Old URLs will redirect to the category page. Seed items can be restored from the admin equipment list. Continue?`;
+    if (!confirm(confirmMsg)) return;
     setDeleting(true);
     try {
       const res = await fetch(`/api/admin/equipment/${id}`, { method: 'DELETE' });
@@ -224,6 +251,62 @@ export function EquipmentEditForm({
         </div>
       </section>
 
+      <section className="bg-white rounded-lg border border-gray-200 p-5">
+        <h2 className="text-lg font-bold text-gray-900">Long-form content (optional)</h2>
+        <p className="text-xs text-gray-600 mt-1">
+          These show at the bottom of the public equipment page as an &ldquo;About this equipment&rdquo; section.
+          Leave any field blank to hide it. Bullets are one per line.
+        </p>
+        <div className="mt-4 space-y-4">
+          <div>
+            <label className="block text-xs font-medium text-gray-700">Description (long prose, free text)</label>
+            <textarea
+              rows={8}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              placeholder="Longer-form prose about this equipment. Multiple paragraphs OK — line breaks are preserved on the public page."
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-700">
+              Specs bullets (one per line — overrides the fixed-shape spec table on the public page)
+            </label>
+            <textarea
+              rows={6}
+              value={specsBulletsText}
+              onChange={(e) => setSpecsBulletsText(e.target.value)}
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm font-mono"
+              placeholder={'Weight: 2,000 lbs\nEngine: Honda GX390 11hp\n...'}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-700">
+              What&apos;s included (one bullet per line)
+            </label>
+            <textarea
+              rows={5}
+              value={attachmentsText}
+              onChange={(e) => setAttachmentsText(e.target.value)}
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm font-mono"
+              placeholder={'Fuel-up on delivery\nSafety walkthrough\n...'}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-700">
+              Ideal for (one bullet per line)
+            </label>
+            <textarea
+              rows={5}
+              value={idealForText}
+              onChange={(e) => setIdealForText(e.target.value)}
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm font-mono"
+              placeholder={'Flood recovery in basements under 1,500 sq ft\nMold remediation jobs\n...'}
+            />
+          </div>
+        </div>
+      </section>
+
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <button
@@ -240,16 +323,14 @@ export function EquipmentEditForm({
             <span className="text-sm text-red-700">{errorMsg || 'Save failed.'}</span>
           )}
         </div>
-        {isCustom && (
-          <button
-            type="button"
-            onClick={onDelete}
-            disabled={deleting}
-            className="px-4 py-2 rounded-md border border-red-300 text-red-700 font-semibold text-sm hover:bg-red-50 disabled:opacity-50"
-          >
-            {deleting ? 'Deleting…' : 'Delete equipment'}
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={onDelete}
+          disabled={deleting}
+          className="px-4 py-2 rounded-md border border-red-300 text-red-700 font-semibold text-sm hover:bg-red-50 disabled:opacity-50"
+        >
+          {deleting ? 'Deleting…' : 'Delete equipment'}
+        </button>
       </div>
     </form>
   );

@@ -1,12 +1,14 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { getSiteConfig, getSiteConfigDynamic, getEquipmentById, classLabel, getEquipmentDeliveryPrice } from '@/lib/config';
+import { notFound, redirect } from 'next/navigation';
+import { getSiteConfig, getSiteConfigDynamic, getEquipmentById, classLabel, getEquipmentDeliveryPrice, getEquipmentRedirect } from '@/lib/config';
 import { AddToCartForm } from '@/components/AddToCartForm';
 
 // ISR: revalidate every 60s so admin equipment/delivery edits propagate without redeploy.
 export const revalidate = 60;
+// Cycle 10: dynamic city routes for deleted items go through redirect lookup.
+export const dynamicParams = true;
 
 export function generateStaticParams() {
   const cfg = getSiteConfig();
@@ -53,7 +55,15 @@ export default async function EquipmentCityPage({
   const cfg = await getSiteConfigDynamic();
   const item = getEquipmentById(params.id, cfg);
   const city = cfg.cityPages.cities.find((c) => c.slug === params.city);
-  if (!item || !city) notFound();
+  // Cycle 10: deleted-item redirect lookup for /equipment/<id>/<city> too.
+  // We strip the city suffix because the category hash lives on /rent (or /buy),
+  // not on a per-city page.
+  if (!item || item.visible === false) {
+    const target = await getEquipmentRedirect(params.id);
+    if (target) redirect(target);
+    notFound();
+  }
+  if (!city) notFound();
   const deliveryPrice = (await getEquipmentDeliveryPrice(item.id, city.slug, cfg)) ?? city.deliveryPrice;
 
   return (
@@ -83,13 +93,13 @@ export default async function EquipmentCityPage({
 
             {item.photos.length > 0 && (
               <div className="mt-6">
-                <div className="relative w-full aspect-[4/3] overflow-hidden rounded-md bg-slate-100">
+                <div className="relative w-full aspect-square overflow-hidden rounded-md bg-white border border-slate-200">
                   <Image
                     src={item.photos[0].src}
                     alt={item.photos[0].alt}
                     fill
                     sizes="(max-width: 1024px) 100vw, 55vw"
-                    className="object-cover"
+                    className="object-contain"
                     priority
                   />
                 </div>
@@ -147,6 +157,53 @@ export default async function EquipmentCityPage({
                 </ul>
               </div>
             )}
+
+            {/* Cycle 10: admin-authored long-form content. Shown only when at
+                least one field is non-empty. Same precedence as /equipment/[id]:
+                specsBullets replaces the fixed spec table (shown via the item page). */}
+            {(item.description && item.description.trim().length > 0) ||
+            (item.specsBullets && item.specsBullets.length > 0) ||
+            item.attachmentsIncluded.length > 0 ||
+            item.idealFor.length > 0 ? (
+              <section className="mt-10 border-t border-slate-200 pt-8">
+                <h2 className="text-2xl font-bold text-slate-950">About this equipment</h2>
+                {item.description && item.description.trim().length > 0 && (
+                  <p className="mt-4 text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">
+                    {item.description}
+                  </p>
+                )}
+                {item.specsBullets && item.specsBullets.length > 0 && (
+                  <div className="mt-6">
+                    <h3 className="text-sm uppercase tracking-wide text-slate-600 font-bold">Specs</h3>
+                    <ul className="mt-2 list-disc list-inside text-sm text-slate-700 space-y-1">
+                      {item.specsBullets.map((s) => (
+                        <li key={s}>{s}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {item.attachmentsIncluded.length > 0 && (
+                  <div className="mt-6">
+                    <h3 className="text-sm uppercase tracking-wide text-slate-600 font-bold">Included</h3>
+                    <ul className="mt-2 list-disc list-inside text-sm text-slate-700 space-y-1">
+                      {item.attachmentsIncluded.map((a) => (
+                        <li key={a}>{a}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {item.idealFor.length > 0 && (
+                  <div className="mt-6">
+                    <h3 className="text-sm uppercase tracking-wide text-slate-600 font-bold">Ideal for</h3>
+                    <ul className="mt-2 list-disc list-inside text-sm text-slate-700 space-y-1">
+                      {item.idealFor.map((j) => (
+                        <li key={j}>{j}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </section>
+            ) : null}
           </div>
 
           <div className="lg:sticky lg:top-6">
