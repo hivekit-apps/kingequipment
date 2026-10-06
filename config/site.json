@@ -1,8 +1,8 @@
 {
   "business": {
     "name": "King Equipment",
-    "tagline": "Equipment rental & sales for Toronto, Markham & Durham Region — delivered.",
-    "shortDescription": "Local equipment rental and sales — serving Toronto, Markham, and the Durham Region (Pickering, Ajax, Whitby, Oshawa, Uxbridge, Clarington, Scugog, Brock). Construction heaters, drying and water damage equipment, inverter generators, and more. Daily, weekly, and monthly rental rates, with select used equipment for sale. Delivery across the service area.",
+    "tagline": "Equipment rental & sales for Toronto, Markham & Durham Region \u2014 delivered.",
+    "shortDescription": "Local equipment rental and sales \u2014 serving Toronto, Markham, and the Durham Region (Pickering, Ajax, Whitby, Oshawa, Uxbridge, Clarington, Scugog, Brock). Construction heaters, drying and water damage equipment, inverter generators, and more. Daily, weekly, and monthly rental rates, with select used equipment for sale. Delivery across the service area.",
     "phoneFallback": "",
     "showPhone": false,
     "emailFallback": "kingequipment.ca@gmail.com",
@@ -17,13 +17,13 @@
   },
   "pricing": {
     "displayRate": "Daily, weekly, and monthly rates",
-    "deliveryNote": "Delivery across Toronto, Markham, and the Durham Region. Delivery pricing varies by city — see each equipment page for a quote.",
+    "deliveryNote": "Delivery across Toronto, Markham, and the Durham Region. Delivery pricing varies by city \u2014 see each equipment page for a quote.",
     "multiDayNote": "Weekly rate kicks in automatically once it's cheaper than per-day. Monthly rate kicks in automatically once it's cheaper than per-week.",
     "comparisonNote": "Owner-operated. Honest pricing. Clean, well-maintained equipment."
   },
   "heroPhoto": {
     "src": "/images/mini-loading-bin-residential.webp",
-    "alt": "King Equipment — rental and sales for Toronto, Markham, and Durham Region.",
+    "alt": "King Equipment \u2014 rental and sales for Toronto, Markham, and Durham Region.",
     "width": 960,
     "height": 1280
   },
@@ -56,11 +56,14 @@
       "category": "construction-heaters",
       "visible": true,
       "bookable": true,
-      "availability": ["rent", "buy"],
+      "availability": [
+        "rent",
+        "buy"
+      ],
       "name": "Flagro 400,000 BTU Construction Heater",
       "shortName": "Flagro 400,000 BTU Heater",
       "tagline": "High-output portable propane construction heater for large job sites and cold-weather drying.",
-      "displayRate": "From $80 / day · $320 / week · $960 / month",
+      "displayRate": "From $80 / day \u00b7 $320 / week \u00b7 $960 / month",
       "pricing": {
         "daily": 80,
         "weekly": 320,
@@ -88,10 +91,10 @@
       "photos": [
         {
           "src": "/images/heater-mr-heater-mh85qfav.jpg",
-          "alt": "Portable propane construction heater — representative photo."
+          "alt": "Portable propane construction heater \u2014 representative photo."
         }
       ],
-      "operatorNote": "Renter operates — connect propane, light per included instructions, ensure ventilation.",
+      "operatorNote": "Renter operates \u2014 connect propane, light per included instructions, ensure ventilation.",
       "photoNote": "Representative photo. Actual rental unit is a Flagro 400,000 BTU."
     },
     {
@@ -100,11 +103,14 @@
       "category": "construction-heaters",
       "visible": true,
       "bookable": true,
-      "availability": ["rent", "buy"],
+      "availability": [
+        "rent",
+        "buy"
+      ],
       "name": "Remington 140,000 BTU Kerosene Heater",
       "shortName": "Remington 140,000 BTU Kerosene",
       "tagline": "Portable kerosene torpedo heater for cold-weather job sites.",
-      "displayRate": "From $50 / day · $200 / week · $600 / month",
+      "displayRate": "From $50 / day \u00b7 $200 / week \u00b7 $600 / month",
       "pricing": {
         "daily": 50,
         "weekly": 200,
@@ -133,10 +139,10 @@
       "photos": [
         {
           "src": "/images/heater-mr-heater-mh85qfav.jpg",
-          "alt": "Portable kerosene torpedo heater — representative photo."
+          "alt": "Portable kerosene torpedo heater \u2014 representative photo."
         }
       ],
-      "operatorNote": "Renter operates — fuel with kerosene, light per instructions, use with ventilation.",
+      "operatorNote": "Renter operates \u2014 fuel with kerosene, light per instructions, use with ventilation.",
       "photoNote": "Representative photo. Actual rental unit is a Remington 140,000 BTU kerosene heater."
     },
     {
@@ -145,11 +151,14 @@
       "category": "drying-water-damage",
       "visible": true,
       "bookable": true,
-      "availability": ["rent", "buy"],
+      "availability": [
+        "rent",
+        "buy"
+      ],
       "name": "Dri-Eaz LGR 7000 XLi Dehumidifier",
       "shortName": "Dri-Eaz LGR 7000 XLi",
-      "tagline": "Low-grain refrigerant dehumidifier — the industry standard for water damage drying.",
-      "displayRate": "From $80 / day · $320 / week · $960 / month",
+      "tagline": "Low-grain refrigerant dehumidifier \u2014 the industry standard for water damage drying.",
+      "displayRate": "From $80 / day \u00b7 $320 / week \u00b7 $960 / month",
       "pricing": {
         "daily": 80,
         "weekly": 320,
@@ -178,10 +187,10 @@
       "photos": [
         {
           "src": "/images/dehumidifier-dri-eaz-lgr-7000.jpg",
-          "alt": "Dri-Eaz LGR 7000 XLi dehumidifier — yellow refrigerant unit with wheels and handle."
+          "alt": "Dri-Eaz LGR 7000 XLi dehumidifier \u2014 yellow refrigerant unit with wheels and handle."
         }
       ],
-      "operatorNote": "Renter operates — plug in, set humidity target, let it run.",
+      "operatorNote": "Renter operates \u2014 plug in, set humidity target, let it run.",
       "photoNote": "Representative manufacturer product photo. Actual rental unit is similar."
     },
     {
@@ -190,11 +199,14 @@
       "category": "drying-water-damage",
       "visible": true,
       "bookable": true,
-      "availability": ["rent", "buy"],
+      "availability": [
+        "rent",
+        "buy"
+      ],
       "name": "Dri-Eaz Drizair 1200 Dehumidifier",
       "shortName": "Dri-Eaz Drizair 1200",
       "tagline": "Compact refrigerant dehumidifier for small to medium drying jobs.",
-      "displayRate": "From $50 / day · $200 / week · $600 / month",
+      "displayRate": "From $50 / day \u00b7 $200 / week \u00b7 $600 / month",
       "pricing": {
         "daily": 50,
         "weekly": 200,
@@ -223,10 +235,10 @@
       "photos": [
         {
           "src": "/images/dehumidifier-dri-eaz-lgr-7000.jpg",
-          "alt": "Compact refrigerant dehumidifier — representative photo."
+          "alt": "Compact refrigerant dehumidifier \u2014 representative photo."
         }
       ],
-      "operatorNote": "Renter operates — plug in, set humidity target, let it run.",
+      "operatorNote": "Renter operates \u2014 plug in, set humidity target, let it run.",
       "photoNote": "Representative photo. Actual rental unit is a Dri-Eaz Drizair 1200."
     },
     {
@@ -235,11 +247,14 @@
       "category": "drying-water-damage",
       "visible": true,
       "bookable": true,
-      "availability": ["rent", "buy"],
+      "availability": [
+        "rent",
+        "buy"
+      ],
       "name": "Dri-Eaz Evolution LGR Dehumidifier",
       "shortName": "Dri-Eaz Evolution LGR",
       "tagline": "Mid-size low-grain refrigerant dehumidifier for general restoration work.",
-      "displayRate": "From $60 / day · $240 / week · $720 / month",
+      "displayRate": "From $60 / day \u00b7 $240 / week \u00b7 $720 / month",
       "pricing": {
         "daily": 60,
         "weekly": 240,
@@ -268,10 +283,10 @@
       "photos": [
         {
           "src": "/images/dehumidifier-dri-eaz-lgr-7000.jpg",
-          "alt": "Dri-Eaz LGR refrigerant dehumidifier — representative photo."
+          "alt": "Dri-Eaz LGR refrigerant dehumidifier \u2014 representative photo."
         }
       ],
-      "operatorNote": "Renter operates — plug in, set humidity target, let it run.",
+      "operatorNote": "Renter operates \u2014 plug in, set humidity target, let it run.",
       "photoNote": "Representative photo. Actual rental unit is a Dri-Eaz Evolution LGR."
     },
     {
@@ -280,11 +295,14 @@
       "category": "drying-water-damage",
       "visible": true,
       "bookable": true,
-      "availability": ["rent", "buy"],
+      "availability": [
+        "rent",
+        "buy"
+      ],
       "name": "Dri-Eaz F259-SM Air Mover",
       "shortName": "Dri-Eaz F259-SM Air Mover",
       "tagline": "Stackable centrifugal air mover for drying carpets, floors, and walls.",
-      "displayRate": "From $30 / day · $120 / week · $360 / month",
+      "displayRate": "From $30 / day \u00b7 $120 / week \u00b7 $360 / month",
       "pricing": {
         "daily": 30,
         "weekly": 120,
@@ -312,10 +330,10 @@
       "photos": [
         {
           "src": "/images/air-mover-dri-eaz-sahara-pro-x4.jpg",
-          "alt": "Centrifugal air mover for floor and wall drying — representative photo."
+          "alt": "Centrifugal air mover for floor and wall drying \u2014 representative photo."
         }
       ],
-      "operatorNote": "Renter operates — position, plug in, let run.",
+      "operatorNote": "Renter operates \u2014 position, plug in, let run.",
       "photoNote": "Representative photo. Actual rental unit is a Dri-Eaz F259-SM."
     },
     {
@@ -324,11 +342,14 @@
       "category": "drying-water-damage",
       "visible": true,
       "bookable": true,
-      "availability": ["rent", "buy"],
+      "availability": [
+        "rent",
+        "buy"
+      ],
       "name": "Express Air Beast 2000 CFM Industrial HEPA Air Scrubber",
       "shortName": "Express Air Beast 2000",
-      "tagline": "Industrial HEPA / negative-air machine — 2000 CFM for large-area mold, dust, and smoke work.",
-      "displayRate": "From $100 / day · $400 / week · $1,200 / month",
+      "tagline": "Industrial HEPA / negative-air machine \u2014 2000 CFM for large-area mold, dust, and smoke work.",
+      "displayRate": "From $100 / day \u00b7 $400 / week \u00b7 $1,200 / month",
       "pricing": {
         "daily": 100,
         "weekly": 400,
@@ -358,10 +379,10 @@
       "photos": [
         {
           "src": "/images/air-scrubber-dri-eaz-defendair-hepa-500.jpg",
-          "alt": "Industrial HEPA air scrubber — representative photo."
+          "alt": "Industrial HEPA air scrubber \u2014 representative photo."
         }
       ],
-      "operatorNote": "Renter operates — place in the affected area, plug in, run continuously.",
+      "operatorNote": "Renter operates \u2014 place in the affected area, plug in, run continuously.",
       "photoNote": "Representative photo. Actual rental unit is an Express Air Beast 2000 CFM."
     },
     {
@@ -370,11 +391,14 @@
       "category": "drying-water-damage",
       "visible": true,
       "bookable": true,
-      "availability": ["rent", "buy"],
+      "availability": [
+        "rent",
+        "buy"
+      ],
       "name": "Express Airbeast 600 HEPA Air Scrubber",
       "shortName": "Express Airbeast 600",
       "tagline": "Compact HEPA air scrubber for residential mold, construction dust, and smaller remediation jobs.",
-      "displayRate": "From $80 / day · $320 / week · $960 / month",
+      "displayRate": "From $80 / day \u00b7 $320 / week \u00b7 $960 / month",
       "pricing": {
         "daily": 80,
         "weekly": 320,
@@ -403,10 +427,10 @@
       "photos": [
         {
           "src": "/images/air-scrubber-dri-eaz-defendair-hepa-500.jpg",
-          "alt": "Compact HEPA air scrubber — representative photo."
+          "alt": "Compact HEPA air scrubber \u2014 representative photo."
         }
       ],
-      "operatorNote": "Renter operates — place in the affected area, plug in, run continuously.",
+      "operatorNote": "Renter operates \u2014 place in the affected area, plug in, run continuously.",
       "photoNote": "Representative photo. Actual rental unit is an Express Airbeast 600."
     },
     {
@@ -415,11 +439,14 @@
       "category": "drying-water-damage",
       "visible": true,
       "bookable": true,
-      "availability": ["rent", "buy"],
+      "availability": [
+        "rent",
+        "buy"
+      ],
       "name": "Mytee HP100 Grand Prix II Carpet Water Extractor",
       "shortName": "Mytee HP100 Grand Prix II",
       "tagline": "Professional carpet and upholstery water extractor for flood recovery.",
-      "displayRate": "From $40 / day · $160 / week · $480 / month",
+      "displayRate": "From $40 / day \u00b7 $160 / week \u00b7 $480 / month",
       "pricing": {
         "daily": 40,
         "weekly": 160,
@@ -449,10 +476,10 @@
       "photos": [
         {
           "src": "/images/carpet-water-extractor-dri-eaz-hve3000.jpg",
-          "alt": "Portable carpet water extractor — representative photo."
+          "alt": "Portable carpet water extractor \u2014 representative photo."
         }
       ],
-      "operatorNote": "Renter operates — fill clean tank, extract, empty waste tank.",
+      "operatorNote": "Renter operates \u2014 fill clean tank, extract, empty waste tank.",
       "photoNote": "Representative photo. Actual rental unit is a Mytee HP100 Grand Prix II."
     },
     {
@@ -461,11 +488,14 @@
       "category": "drying-water-damage",
       "visible": true,
       "bookable": true,
-      "availability": ["rent", "buy"],
+      "availability": [
+        "rent",
+        "buy"
+      ],
       "name": "Tornado Walk-Behind Carpet Cleaner",
       "shortName": "Tornado Walk-Behind Cleaner",
       "tagline": "Walk-behind commercial carpet cleaner for larger carpeted areas.",
-      "displayRate": "From $40 / day · $160 / week · $480 / month",
+      "displayRate": "From $40 / day \u00b7 $160 / week \u00b7 $480 / month",
       "pricing": {
         "daily": 40,
         "weekly": 160,
@@ -494,10 +524,10 @@
       "photos": [
         {
           "src": "/images/carpet-water-extractor-dri-eaz-hve3000.jpg",
-          "alt": "Walk-behind commercial carpet cleaner — representative photo."
+          "alt": "Walk-behind commercial carpet cleaner \u2014 representative photo."
         }
       ],
-      "operatorNote": "Renter operates — fill solution tank, operate, empty waste tank.",
+      "operatorNote": "Renter operates \u2014 fill solution tank, operate, empty waste tank.",
       "photoNote": "Representative photo. Actual rental unit is a Tornado walk-behind."
     },
     {
@@ -506,11 +536,14 @@
       "category": "inverter-generators",
       "visible": true,
       "bookable": true,
-      "availability": ["rent", "buy"],
+      "availability": [
+        "rent",
+        "buy"
+      ],
       "name": "Firman W3300i Inverter Generator (3,300W)",
       "shortName": "Firman W3300i (3,300W)",
       "tagline": "Quiet 3,300W inverter generator for sensitive electronics, trades, and backup power.",
-      "displayRate": "From $70 / day · $280 / week · $840 / month",
+      "displayRate": "From $70 / day \u00b7 $280 / week \u00b7 $840 / month",
       "pricing": {
         "daily": 70,
         "weekly": 280,
@@ -539,10 +572,10 @@
       "photos": [
         {
           "src": "/images/generator-champion-7500w.jpg",
-          "alt": "Portable inverter generator — representative photo."
+          "alt": "Portable inverter generator \u2014 representative photo."
         }
       ],
-      "operatorNote": "Renter operates — fuel up, plug in, follow included safety guide.",
+      "operatorNote": "Renter operates \u2014 fuel up, plug in, follow included safety guide.",
       "photoNote": "Representative photo. Actual rental unit is a Firman W3300i."
     },
     {
@@ -551,11 +584,14 @@
       "category": "inverter-generators",
       "visible": true,
       "bookable": true,
-      "availability": ["rent", "buy"],
+      "availability": [
+        "rent",
+        "buy"
+      ],
       "name": "Predator Super Quiet 5000W Dual-Fuel Inverter Generator",
       "shortName": "Predator 5000W Dual-Fuel",
-      "tagline": "5,000W dual-fuel inverter generator — runs on gasoline or propane.",
-      "displayRate": "From $80 / day · $320 / week · $960 / month",
+      "tagline": "5,000W dual-fuel inverter generator \u2014 runs on gasoline or propane.",
+      "displayRate": "From $80 / day \u00b7 $320 / week \u00b7 $960 / month",
       "pricing": {
         "daily": 80,
         "weekly": 320,
@@ -585,10 +621,10 @@
       "photos": [
         {
           "src": "/images/generator-champion-7500w.jpg",
-          "alt": "Dual-fuel inverter generator — representative photo."
+          "alt": "Dual-fuel inverter generator \u2014 representative photo."
         }
       ],
-      "operatorNote": "Renter operates — select fuel, plug in, follow included safety guide.",
+      "operatorNote": "Renter operates \u2014 select fuel, plug in, follow included safety guide.",
       "photoNote": "Representative photo. Actual rental unit is a Predator Super Quiet 5000 Dual Fuel."
     },
     {
@@ -597,11 +633,14 @@
       "category": "inverter-generators",
       "visible": true,
       "bookable": true,
-      "availability": ["rent", "buy"],
+      "availability": [
+        "rent",
+        "buy"
+      ],
       "name": "Champion Global 5,500W Inverter Generator",
       "shortName": "Champion 5,500W Inverter",
-      "tagline": "5,500W inverter generator — quiet, reliable, trade-ready.",
-      "displayRate": "From $80 / day · $320 / week · $960 / month",
+      "tagline": "5,500W inverter generator \u2014 quiet, reliable, trade-ready.",
+      "displayRate": "From $80 / day \u00b7 $320 / week \u00b7 $960 / month",
       "pricing": {
         "daily": 80,
         "weekly": 320,
@@ -630,10 +669,10 @@
       "photos": [
         {
           "src": "/images/generator-champion-7500w.jpg",
-          "alt": "Champion portable inverter generator — representative photo."
+          "alt": "Champion portable inverter generator \u2014 representative photo."
         }
       ],
-      "operatorNote": "Renter operates — fuel up, plug in, follow included safety guide.",
+      "operatorNote": "Renter operates \u2014 fuel up, plug in, follow included safety guide.",
       "photoNote": "Representative photo. Actual rental unit is a Champion Global 5,500W inverter."
     },
     {
@@ -642,11 +681,14 @@
       "category": "inverter-generators",
       "visible": true,
       "bookable": true,
-      "availability": ["rent", "buy"],
+      "availability": [
+        "rent",
+        "buy"
+      ],
       "name": "A-iPower GXS7100iRDC Inverter Generator (7,000W)",
       "shortName": "A-iPower 7,000W Inverter",
-      "tagline": "7,000W inverter generator with electric start — large-load trade-ready power.",
-      "displayRate": "From $100 / day · $400 / week · $1,200 / month",
+      "tagline": "7,000W inverter generator with electric start \u2014 large-load trade-ready power.",
+      "displayRate": "From $100 / day \u00b7 $400 / week \u00b7 $1,200 / month",
       "pricing": {
         "daily": 100,
         "weekly": 400,
@@ -676,10 +718,10 @@
       "photos": [
         {
           "src": "/images/generator-champion-7500w.jpg",
-          "alt": "A-iPower large portable inverter generator — representative photo."
+          "alt": "A-iPower large portable inverter generator \u2014 representative photo."
         }
       ],
-      "operatorNote": "Renter operates — fuel up, electric start, follow included safety guide.",
+      "operatorNote": "Renter operates \u2014 fuel up, electric start, follow included safety guide.",
       "photoNote": "Representative photo. Actual rental unit is an A-iPower GXS7100iRDC."
     }
   ],
@@ -695,7 +737,7 @@
     "Scugog",
     "Brock"
   ],
-  "serviceAreaTagline": "We deliver across Toronto, Markham, and the full Durham Region. Delivery price varies by city — see each equipment page for the quote to your door.",
+  "serviceAreaTagline": "We deliver across Toronto, Markham, and the full Durham Region. Delivery price varies by city \u2014 see each equipment page for the quote to your door.",
   "cityPages": {
     "basePath": "/rentals",
     "coreCities": [
@@ -716,7 +758,14 @@
         "name": "Toronto",
         "region": "Toronto",
         "coverage": "core",
-        "neighborhoods": ["Downtown", "North York", "Scarborough", "Etobicoke", "East York", "York"],
+        "neighborhoods": [
+          "Downtown",
+          "North York",
+          "Scarborough",
+          "Etobicoke",
+          "East York",
+          "York"
+        ],
         "typicalJobs": [
           "Water damage drying in condos and homes",
           "Mold remediation after basement leaks",
@@ -725,14 +774,20 @@
         ],
         "localContext": "Downtown and all boroughs covered. Fast delivery across the city.",
         "driveTime": "Same-day delivery available",
-        "deliveryPrice": 75
+        "deliveryPrice": 99
       },
       {
         "slug": "markham",
         "name": "Markham",
         "region": "York",
         "coverage": "core",
-        "neighborhoods": ["Unionville", "Markham Village", "Thornhill", "Cornell", "Berczy Village"],
+        "neighborhoods": [
+          "Unionville",
+          "Markham Village",
+          "Thornhill",
+          "Cornell",
+          "Berczy Village"
+        ],
         "typicalJobs": [
           "Water damage drying in residential homes",
           "Mold remediation and crawl space drying",
@@ -741,30 +796,41 @@
         ],
         "localContext": "York Region coverage with same-day delivery for most addresses.",
         "driveTime": "Same-day delivery available",
-        "deliveryPrice": 70
+        "deliveryPrice": 79
       },
       {
         "slug": "pickering",
         "name": "Pickering",
         "region": "Durham",
         "coverage": "core",
-        "neighborhoods": ["Bay Ridges", "Rosebank", "Amberlea", "Liverpool", "West Shore"],
+        "neighborhoods": [
+          "Bay Ridges",
+          "Rosebank",
+          "Amberlea",
+          "Liverpool",
+          "West Shore"
+        ],
         "typicalJobs": [
           "Water damage drying after basement leaks",
           "Carpet water extraction",
           "Air mover rental for drying",
           "Mold remediation"
         ],
-        "localContext": "First Durham Region stop — reliable same-day drop-off.",
+        "localContext": "First Durham Region stop \u2014 reliable same-day drop-off.",
         "driveTime": "Same-day delivery available",
-        "deliveryPrice": 80
+        "deliveryPrice": 69
       },
       {
         "slug": "ajax",
         "name": "Ajax",
         "region": "Durham",
         "coverage": "core",
-        "neighborhoods": ["Pickering Village", "Westney Heights", "Audley", "Nottingham"],
+        "neighborhoods": [
+          "Pickering Village",
+          "Westney Heights",
+          "Audley",
+          "Nottingham"
+        ],
         "typicalJobs": [
           "Water damage drying",
           "Flood recovery",
@@ -773,14 +839,19 @@
         ],
         "localContext": "Full Ajax coverage. Same-day drop-off and pickup available.",
         "driveTime": "Same-day delivery available",
-        "deliveryPrice": 85
+        "deliveryPrice": 69
       },
       {
         "slug": "whitby",
         "name": "Whitby",
         "region": "Durham",
         "coverage": "core",
-        "neighborhoods": ["Downtown Whitby", "Brooklin", "Rossland", "Pringle Creek"],
+        "neighborhoods": [
+          "Downtown Whitby",
+          "Brooklin",
+          "Rossland",
+          "Pringle Creek"
+        ],
         "typicalJobs": [
           "Water damage drying in Brooklin and downtown Whitby",
           "Carpet water extraction",
@@ -789,14 +860,20 @@
         ],
         "localContext": "Full Whitby coverage including Brooklin.",
         "driveTime": "Same-day delivery available",
-        "deliveryPrice": 90
+        "deliveryPrice": 79
       },
       {
         "slug": "oshawa",
         "name": "Oshawa",
         "region": "Durham",
         "coverage": "core",
-        "neighborhoods": ["Downtown Oshawa", "North Oshawa", "Donevan", "Lakeview", "Vanier"],
+        "neighborhoods": [
+          "Downtown Oshawa",
+          "North Oshawa",
+          "Donevan",
+          "Lakeview",
+          "Vanier"
+        ],
         "typicalJobs": [
           "Water damage drying",
           "Flood recovery after basement leaks",
@@ -805,14 +882,18 @@
         ],
         "localContext": "Oshawa coverage from downtown to north end.",
         "driveTime": "Same-day delivery available",
-        "deliveryPrice": 95
+        "deliveryPrice": 89
       },
       {
         "slug": "uxbridge",
         "name": "Uxbridge",
         "region": "Durham",
         "coverage": "core",
-        "neighborhoods": ["Uxbridge Village", "Goodwood", "Zephyr"],
+        "neighborhoods": [
+          "Uxbridge Village",
+          "Goodwood",
+          "Zephyr"
+        ],
         "typicalJobs": [
           "Rural property water damage",
           "Barn and outbuilding dehumidification",
@@ -821,14 +902,19 @@
         ],
         "localContext": "North Durham coverage. Rural addresses welcome.",
         "driveTime": "Same-day delivery (schedule ahead for rural addresses)",
-        "deliveryPrice": 120
+        "deliveryPrice": 99
       },
       {
         "slug": "clarington",
         "name": "Clarington",
         "region": "Durham",
         "coverage": "core",
-        "neighborhoods": ["Bowmanville", "Courtice", "Newcastle", "Orono"],
+        "neighborhoods": [
+          "Bowmanville",
+          "Courtice",
+          "Newcastle",
+          "Orono"
+        ],
         "typicalJobs": [
           "Water damage drying in Bowmanville and Courtice",
           "Rural property drying",
@@ -837,14 +923,19 @@
         ],
         "localContext": "Covers Bowmanville, Courtice, Newcastle, Orono, and all of Clarington.",
         "driveTime": "Same-day delivery available",
-        "deliveryPrice": 110
+        "deliveryPrice": 109
       },
       {
         "slug": "scugog",
         "name": "Scugog",
         "region": "Durham",
         "coverage": "core",
-        "neighborhoods": ["Port Perry", "Prince Albert", "Blackstock", "Caesarea"],
+        "neighborhoods": [
+          "Port Perry",
+          "Prince Albert",
+          "Blackstock",
+          "Caesarea"
+        ],
         "typicalJobs": [
           "Rural property water damage",
           "Cottage dehumidification",
@@ -853,42 +944,46 @@
         ],
         "localContext": "North Durham including Port Perry and Lake Scugog area.",
         "driveTime": "Next-day delivery (schedule ahead)",
-        "deliveryPrice": 140
+        "deliveryPrice": 109
       },
       {
         "slug": "brock",
         "name": "Brock",
         "region": "Durham",
         "coverage": "core",
-        "neighborhoods": ["Beaverton", "Cannington", "Sunderland"],
+        "neighborhoods": [
+          "Beaverton",
+          "Cannington",
+          "Sunderland"
+        ],
         "typicalJobs": [
           "Rural water damage",
           "Lake Simcoe property drying",
           "Cottage dehumidification",
           "Generator rental"
         ],
-        "localContext": "Township of Brock — Beaverton, Cannington, Sunderland.",
+        "localContext": "Township of Brock \u2014 Beaverton, Cannington, Sunderland.",
         "driveTime": "Next-day delivery (schedule ahead)",
-        "deliveryPrice": 160
+        "deliveryPrice": 109
       }
     ]
   },
   "trustPoints": [
-    "Local owner-operator — not a national chain",
+    "Local owner-operator \u2014 not a national chain",
     "Clean, well-maintained equipment",
-    "Transparent pricing — daily, weekly, and monthly rates visible on every item",
-    "Automatic rate tiering — you always get the cheapest applicable rate",
+    "Transparent pricing \u2014 daily, weekly, and monthly rates visible on every item",
+    "Automatic rate tiering \u2014 you always get the cheapest applicable rate",
     "Delivery across Toronto, Markham, and Durham Region",
     "Used equipment also available for sale"
   ],
   "faq": [
     {
       "q": "How does rental pricing work?",
-      "a": "Every item has a daily, weekly, and monthly rate. We automatically charge whichever is cheapest for your rental length. If 5 days at the daily rate costs more than our weekly rate, you pay the weekly rate — so 5–7 days always costs the weekly amount. Same rule applies at the monthly tier."
+      "a": "Every item has a daily, weekly, and monthly rate. We automatically charge whichever is cheapest for your rental length. If 5 days at the daily rate costs more than our weekly rate, you pay the weekly rate \u2014 so 5\u20137 days always costs the weekly amount. Same rule applies at the monthly tier."
     },
     {
       "q": "Can I rent multiple items in one order?",
-      "a": "Yes — add everything you need to your cart and check out in one go. One delivery, one deposit, one pickup."
+      "a": "Yes \u2014 add everything you need to your cart and check out in one go. One delivery, one deposit, one pickup."
     },
     {
       "q": "What's the deposit?",
@@ -900,7 +995,7 @@
     },
     {
       "q": "Can I buy equipment instead of renting?",
-      "a": "Yes — we have a Buy section featuring select used equipment. Prices and condition shown on each listing."
+      "a": "Yes \u2014 we have a Buy section featuring select used equipment. Prices and condition shown on each listing."
     },
     {
       "q": "How do I pick up or arrange delivery?",
