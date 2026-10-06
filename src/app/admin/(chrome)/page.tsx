@@ -1,26 +1,45 @@
 import Link from 'next/link';
 import { requireAdmin } from '@/lib/require-role';
 import { createServiceClient } from '@/lib/supabase/service';
-import { formatCurrency } from '@/lib/invoice';
-import type { Booking } from '@/lib/booking-db';
-import type { Invoice } from '@/lib/invoice';
+import { formatMoneyCents } from '@/lib/order-pricing';
 
 export const dynamic = 'force-dynamic';
 
-type EquipmentLite = { id: string; short_name: string };
+type OrderLite = {
+  id: string;
+  created_at: string;
+  status: string;
+  customer_name: string;
+  customer_email: string;
+  customer_phone: string | null;
+  delivery_city: string;
+  rental_subtotal_cents: number | null;
+  buy_subtotal_cents: number | null;
+  delivery_price_cents: number | null;
+  grand_total_cents: number | null;
+};
+
+type OrderItemLite = {
+  order_id: string;
+  equipment_name: string;
+  kind: string;
+  qty: number;
+  end_date: string | null;
+};
 
 interface DashboardData {
   now: Date;
   monthStart: Date;
-  pending: Booking[];
-  upcoming: Booking[];
-  recentPayments: Invoice[];
-  equipmentMap: Map<string, EquipmentLite>;
-  bookingMap: Map<string, Booking>;
+  pending: OrderLite[];
+  confirmed: OrderLite[];
+  past: OrderLite[];
+  archived: OrderLite[];
+  itemsByOrder: Map<string, OrderItemLite[]>;
   stats: {
-    bookings_this_month: number;
-    days_booked_this_month: number;
+    orders_this_month: number;
     revenue_this_month_cents: number;
+    pending_count: number;
+    confirmed_count: number;
   };
 }
 
@@ -37,97 +56,87 @@ async function loadDashboard(): Promise<DashboardData> {
   const now = new Date();
   const monthStart = firstOfMonthUTC(now);
   const monthStartIso = monthStart.toISOString();
-  const monthStartDate = isoDateUTC(monthStart);
   const todayDate = isoDateUTC(now);
 
-  const [
-    pendingRes,
-    upcomingRes,
-    recentPaymentsRes,
-    equipmentRes,
-    monthBookingsRes,
-    monthAvailabilityRes,
-    monthPaidInvoicesRes,
-  ] = await Promise.all([
-    svc
-      .from('kiril_bookings')
-      .select('*')
-      .eq('status', 'pending')
-      .order('created_at', { ascending: false })
-      .limit(10),
-    svc
-      .from('kiril_bookings')
-      .select('*')
-      .eq('status', 'confirmed')
-      .gte('end_date', todayDate)
-      .order('start_date', { ascending: true })
-      .limit(10),
-    svc
-      .from('kiril_invoices')
-      .select('*')
-      .eq('status', 'paid')
-      .order('paid_at', { ascending: false })
-      .limit(10),
-    svc.from('kiril_equipment').select('id, short_name'),
-    svc
-      .from('kiril_bookings')
-      .select('id', { count: 'exact', head: true })
-      .gte('created_at', monthStartIso),
-    svc
-      .from('kiril_availability')
-      .select('date')
-      .eq('status', 'booked')
-      .gte('date', monthStartDate),
-    svc
-      .from('kiril_invoices')
-      .select('total_cents')
-      .eq('status', 'paid')
-      .gte('paid_at', monthStartIso),
-  ]);
+  const { data: ordersData, error: ordersErr } = await svc
+    .from('orders')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(200);
+  if (ordersErr) console.error('[admin dashboard] orders load:', ordersErr.message);
+  const orders = (ordersData ?? []) as OrderLite[];
 
-  const equipmentMap = new Map<string, EquipmentLite>();
-  for (const e of (equipmentRes.data ?? []) as EquipmentLite[]) equipmentMap.set(e.id, e);
-
-  const recentPayments = (recentPaymentsRes.data ?? []) as Invoice[];
-  const bookingIds = Array.from(new Set(recentPayments.map((i) => i.booking_id).filter(Boolean)));
-  let bookingMap = new Map<string, Booking>();
-  if (bookingIds.length > 0) {
-    const { data } = await svc.from('kiril_bookings').select('*').in('id', bookingIds);
-    for (const b of (data ?? []) as Booking[]) bookingMap.set(b.id, b);
+  const ids = orders.map((o) => o.id);
+  const itemsByOrder = new Map<string, OrderItemLite[]>();
+  if (ids.length > 0) {
+    const { data: itemsData } = await svc
+      .from('order_items')
+      .select('order_id, equipment_name, kind, qty, end_date')
+      .in('order_id', ids);
+    for (const it of (itemsData ?? []) as OrderItemLite[]) {
+      const arr = itemsByOrder.get(it.order_id) ?? [];
+      arr.push(it);
+      itemsByOrder.set(it.order_id, arr);
+    }
   }
 
-  const uniqueDaysBooked = new Set<string>();
-  for (const row of (monthAvailabilityRes.data ?? []) as Array<{ date: string }>) {
-    uniqueDaysBooked.add(row.date);
+  // Classify.
+  const pending: OrderLite[] = [];
+  const confirmed: OrderLite[] = [];
+  const past: OrderLite[] = [];
+  const archived: OrderLite[] = [];
+  for (const o of orders) {
+    if (o.status === 'archived') {
+      archived.push(o);
+      continue;
+    }
+    if (o.status === 'pending') {
+      pending.push(o);
+      continue;
+    }
+    if (o.status === 'delivered' || o.status === 'returned') {
+      past.push(o);
+      continue;
+    }
+    if (o.status === 'confirmed') {
+      // "past" if every item's end_date < today AND there's at least one dated item.
+      const items = itemsByOrder.get(o.id) ?? [];
+      const datedItems = items.filter((it) => it.end_date);
+      const allPast =
+        datedItems.length > 0 && datedItems.every((it) => (it.end_date ?? '') < todayDate);
+      if (allPast) {
+        past.push(o);
+      } else {
+        confirmed.push(o);
+      }
+      continue;
+    }
+    // denied / cancelled → past bucket by default.
+    past.push(o);
   }
-  const revenueThisMonth = ((monthPaidInvoicesRes.data ?? []) as Array<{ total_cents: number }>).reduce(
-    (s, r) => s + (r.total_cents ?? 0),
-    0,
-  );
+
+  const monthRevenue = orders
+    .filter((o) => o.status === 'confirmed' || o.status === 'delivered' || o.status === 'returned')
+    .filter((o) => new Date(o.created_at).toISOString() >= monthStartIso)
+    .reduce((s, o) => s + (o.grand_total_cents ?? 0), 0);
+  const monthCount = orders.filter((o) => new Date(o.created_at).toISOString() >= monthStartIso)
+    .length;
 
   return {
     now,
     monthStart,
-    pending: (pendingRes.data ?? []) as Booking[],
-    upcoming: (upcomingRes.data ?? []) as Booking[],
-    recentPayments,
-    equipmentMap,
-    bookingMap,
+    pending,
+    confirmed,
+    past,
+    archived,
+    itemsByOrder,
     stats: {
-      bookings_this_month: monthBookingsRes.count ?? 0,
-      days_booked_this_month: uniqueDaysBooked.size,
-      revenue_this_month_cents: revenueThisMonth,
+      orders_this_month: monthCount,
+      revenue_this_month_cents: monthRevenue,
+      pending_count: pending.length,
+      confirmed_count: confirmed.length,
     },
   };
-}
-
-function fmtDate(iso: string): string {
-  return new Date(iso + 'T00:00:00Z').toLocaleDateString('en-CA', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    timeZone: 'UTC',
-  });
 }
 
 function fmtTs(iso: string): string {
@@ -152,23 +161,17 @@ function fmtRelative(iso: string, now: Date): string {
   return fmtTs(iso);
 }
 
-function fmtDaysUntil(startIso: string, now: Date): string {
-  const start = new Date(startIso + 'T00:00:00Z').getTime();
-  const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
-  const diffD = Math.round((start - today) / (86400 * 1000));
-  if (diffD < 0) return 'in progress';
-  if (diffD === 0) return 'today';
-  if (diffD === 1) return 'tomorrow';
-  return `in ${diffD} days`;
-}
-
-function DeliveryZoneLabel({ zone }: { zone: Booking['delivery_zone'] }) {
-  const map: Record<Booking['delivery_zone'], string> = {
-    'king-township': 'King Twp (free)',
-    gta: 'GTA flat-rate',
-    other: 'Southern ON (quoted)',
+function statusBadge(status: string): string {
+  const map: Record<string, string> = {
+    pending: 'bg-amber-100 text-amber-800',
+    confirmed: 'bg-green-100 text-green-800',
+    denied: 'bg-red-100 text-red-800',
+    archived: 'bg-gray-200 text-gray-700',
+    delivered: 'bg-blue-100 text-blue-800',
+    returned: 'bg-gray-100 text-gray-700',
+    cancelled: 'bg-gray-100 text-gray-500',
   };
-  return <span className="text-xs text-gray-500">{map[zone]}</span>;
+  return map[status] ?? 'bg-gray-100 text-gray-700';
 }
 
 export default async function AdminDashboard() {
@@ -191,191 +194,135 @@ export default async function AdminDashboard() {
         </p>
       </div>
 
-      <section aria-label="This month at a glance" className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <section aria-label="This month at a glance" className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         <StatCard
-          label={`Bookings in ${monthLabel}`}
-          value={data.stats.bookings_this_month.toString()}
-          hint={data.stats.bookings_this_month === 0 ? 'No requests yet this month' : 'requests received'}
+          label={`Orders in ${monthLabel}`}
+          value={data.stats.orders_this_month.toString()}
+          hint={data.stats.orders_this_month === 0 ? 'No orders yet this month' : 'orders received'}
         />
         <StatCard
-          label={`Days booked in ${monthLabel}`}
-          value={data.stats.days_booked_this_month.toString()}
-          hint={data.stats.days_booked_this_month === 0 ? 'No equipment out yet' : 'unique days on rent'}
+          label="Pending approval"
+          value={data.stats.pending_count.toString()}
+          hint={data.stats.pending_count === 0 ? "You're caught up" : 'awaiting your action'}
+        />
+        <StatCard
+          label="Active orders"
+          value={data.stats.confirmed_count.toString()}
+          hint={data.stats.confirmed_count === 0 ? 'None in progress' : 'confirmed, upcoming or in-progress'}
         />
         <StatCard
           label={`Revenue in ${monthLabel}`}
-          value={formatCurrency(data.stats.revenue_this_month_cents)}
-          hint={data.stats.revenue_this_month_cents === 0 ? 'No payments received yet' : 'invoices marked paid'}
+          value={formatMoneyCents(data.stats.revenue_this_month_cents)}
+          hint={data.stats.revenue_this_month_cents === 0 ? 'No confirmed revenue yet' : 'confirmed-order total'}
         />
       </section>
 
-      <section aria-label="Booking requests waiting on you">
+      <section aria-label="Pending approval">
         <SectionHeader
-          title={`Pending requests (${data.pending.length})`}
-          linkHref="/admin/bookings"
-          linkLabel="All bookings →"
+          title={`Pending approval (${data.pending.length})`}
+          linkHref="/admin/orders"
+          linkLabel="All orders →"
         />
         {data.pending.length === 0 ? (
-          <EmptyRow>No booking requests waiting. You&rsquo;re caught up.</EmptyRow>
+          <EmptyRow>No orders waiting. You&rsquo;re caught up.</EmptyRow>
         ) : (
           <ul className="space-y-2">
-            {data.pending.map((b) => {
-              const eq = data.equipmentMap.get(b.equipment_id);
-              return (
-                <li key={b.id} className="rounded-lg border border-amber-200 bg-amber-50 p-4">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="min-w-0 flex-1">
-                      <p className="font-medium text-gray-900">
-                        {b.customer_name}
-                        <span className="ml-2 text-sm font-normal text-gray-600">
-                          &middot; {eq?.short_name ?? '(equipment)'}
-                        </span>
-                      </p>
-                      <p className="text-sm text-gray-700 mt-1">
-                        {fmtDate(b.start_date)}
-                        {b.end_date !== b.start_date && ` → ${fmtDate(b.end_date)}`}
-                        {b.operator && ' · +operator'}
-                        {' · '}
-                        <DeliveryZoneLabel zone={b.delivery_zone} />
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {b.customer_address}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        Requested {fmtRelative(b.created_at, data.now)}
-                        {' · '}
-                        <a href={`mailto:${b.customer_email}`} className="text-orange-700 hover:underline">
-                          {b.customer_email}
-                        </a>
-                        {b.customer_phone && (
-                          <>
-                            {' · '}
-                            <a href={`tel:${b.customer_phone}`} className="text-orange-700 hover:underline">
-                              {b.customer_phone}
-                            </a>
-                          </>
-                        )}
-                      </p>
-                    </div>
-                    <Link
-                      href="/admin/bookings"
-                      className="shrink-0 rounded-md bg-white border border-amber-300 px-3 py-1.5 text-sm font-medium text-amber-800 hover:bg-amber-100"
-                    >
-                      Review
-                    </Link>
+            {data.pending.slice(0, 10).map((o) => (
+              <li key={o.id} className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-gray-900">
+                      {o.customer_name}
+                      <span className={`ml-2 text-xs px-2 py-0.5 rounded-full uppercase font-medium tracking-wide ${statusBadge(o.status)}`}>
+                        {o.status}
+                      </span>
+                    </p>
+                    <p className="text-sm text-gray-700 mt-1">
+                      {formatMoneyCents(o.grand_total_cents ?? 0)} &middot; {o.delivery_city}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Submitted {fmtRelative(o.created_at, data.now)}
+                      {' · '}
+                      <a href={`mailto:${o.customer_email}`} className="text-orange-700 hover:underline">
+                        {o.customer_email}
+                      </a>
+                      {o.customer_phone && (
+                        <>
+                          {' · '}
+                          <a href={`tel:${o.customer_phone}`} className="text-orange-700 hover:underline">
+                            {o.customer_phone}
+                          </a>
+                        </>
+                      )}
+                    </p>
                   </div>
-                </li>
-              );
-            })}
+                  <Link
+                    href={`/admin/orders/${o.id}`}
+                    className="shrink-0 rounded-md bg-white border border-amber-300 px-3 py-1.5 text-sm font-medium text-amber-800 hover:bg-amber-100"
+                  >
+                    Review
+                  </Link>
+                </div>
+              </li>
+            ))}
           </ul>
         )}
       </section>
 
-      <section aria-label="Upcoming deliveries">
+      <section aria-label="Active orders">
         <SectionHeader
-          title={`Upcoming deliveries (${data.upcoming.length})`}
+          title={`Active orders (${data.confirmed.length})`}
           linkHref="/admin/calendar"
           linkLabel="Calendar →"
         />
-        {data.upcoming.length === 0 ? (
-          <EmptyRow>No upcoming deliveries. Once a booking is confirmed it will land here.</EmptyRow>
+        {data.confirmed.length === 0 ? (
+          <EmptyRow>Nothing confirmed yet. Approved orders show up here.</EmptyRow>
         ) : (
           <ul className="space-y-2">
-            {data.upcoming.map((b) => {
-              const eq = data.equipmentMap.get(b.equipment_id);
-              return (
-                <li key={b.id} className="rounded-lg border border-gray-200 bg-white p-4">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="min-w-0 flex-1">
-                      <p className="font-medium text-gray-900">
-                        {b.customer_name}
-                        <span className="ml-2 text-sm font-normal text-gray-600">
-                          &middot; {eq?.short_name ?? '(equipment)'}
-                        </span>
-                      </p>
-                      <p className="text-sm text-gray-700 mt-1">
-                        <span className="font-medium">{fmtDaysUntil(b.start_date, data.now)}</span>
-                        {' · '}
-                        {fmtDate(b.start_date)}
-                        {b.end_date !== b.start_date && ` → ${fmtDate(b.end_date)}`}
-                        {b.operator && ' · +operator'}
-                      </p>
-                      <p className="text-sm text-gray-700 mt-1">📍 {b.customer_address}</p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        <DeliveryZoneLabel zone={b.delivery_zone} />
-                        {' · '}
-                        <a href={`mailto:${b.customer_email}`} className="text-orange-700 hover:underline">
-                          {b.customer_email}
-                        </a>
-                        {b.customer_phone && (
-                          <>
-                            {' · '}
-                            <a href={`tel:${b.customer_phone}`} className="text-orange-700 hover:underline">
-                              {b.customer_phone}
-                            </a>
-                          </>
-                        )}
-                      </p>
-                      {b.notes && (
-                        <p className="mt-2 text-xs text-gray-600 bg-gray-50 rounded p-2 whitespace-pre-wrap">
-                          {b.notes}
-                        </p>
-                      )}
-                    </div>
+            {data.confirmed.slice(0, 10).map((o) => (
+              <li key={o.id} className="rounded-lg border border-gray-200 bg-white p-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-gray-900">
+                      {o.customer_name}
+                      <span className="ml-2 text-sm font-normal text-gray-600">
+                        &middot; {formatMoneyCents(o.grand_total_cents ?? 0)} &middot; {o.delivery_city}
+                      </span>
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Confirmed {fmtRelative(o.created_at, data.now)}
+                    </p>
                   </div>
-                </li>
-              );
-            })}
+                  <Link
+                    href={`/admin/orders/${o.id}`}
+                    className="shrink-0 text-sm text-orange-700 hover:underline"
+                  >
+                    View
+                  </Link>
+                </div>
+              </li>
+            ))}
           </ul>
         )}
       </section>
 
-      {admin.role === 'admin' && (
-        <section aria-label="Recent payments">
-          <SectionHeader
-            title={`Recent payments (${data.recentPayments.length})`}
-            linkHref="/admin/invoices"
-            linkLabel="Invoices →"
-          />
-          {data.recentPayments.length === 0 ? (
-            <EmptyRow>No payments yet. Marked-paid invoices show up here.</EmptyRow>
-          ) : (
-            <ul className="space-y-2">
-              {data.recentPayments.map((inv) => {
-                const b = data.bookingMap.get(inv.booking_id);
-                return (
-                  <li key={inv.id} className="rounded-lg border border-green-200 bg-green-50 p-4">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="min-w-0 flex-1">
-                        <p className="font-medium text-gray-900">
-                          {formatCurrency(inv.total_cents, inv.currency)}
-                          <span className="ml-2 text-sm font-normal text-gray-600">
-                            &middot; {b?.customer_name ?? '(unknown)'}
-                            {' · '}
-                            <span className="capitalize">{inv.kind}</span>
-                          </span>
-                        </p>
-                        <p className="text-xs text-gray-600 mt-1">
-                          {inv.paid_at ? fmtRelative(inv.paid_at, data.now) : 'unknown time'}
-                          {inv.paid_method && ` · via ${inv.paid_method}`}
-                          {inv.paid_reference && ` · ref ${inv.paid_reference}`}
-                        </p>
-                        <p className="text-xs text-gray-400 mt-1 font-mono">#{inv.id.slice(0, 8)}</p>
-                      </div>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </section>
-      )}
+      <section aria-label="Past orders">
+        <SectionHeader
+          title={`Past (${data.past.length})`}
+          linkHref="/admin/orders"
+          linkLabel="All orders →"
+        />
+        {data.past.length === 0 ? (
+          <EmptyRow>No past orders.</EmptyRow>
+        ) : (
+          <p className="text-sm text-gray-500">{data.past.length} order{data.past.length === 1 ? '' : 's'} completed or declined. See the Orders tab for details.</p>
+        )}
+      </section>
     </div>
   );
 }
 
 function greeting(now: Date): string {
-  // America/Toronto — use en-CA hour to keep it timezone-safe.
   const hourStr = now.toLocaleString('en-CA', { hour: 'numeric', hour12: false, timeZone: 'America/Toronto' });
   const h = parseInt(hourStr, 10);
   if (Number.isNaN(h)) return 'Hello';

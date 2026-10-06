@@ -38,8 +38,19 @@ export function SettingsForm({ initial }: Props) {
   return (
     <div className="space-y-6 max-w-2xl">
       <Row
+        label="Deposit percentage"
+        description="Fraction of the rental deposit charged up-front when an order is approved. e.g. 0.20 means the customer pays 20% of the sum-of-item-deposits before delivery."
+      >
+        <PctInput value={s.deposit_pct} onSave={(v) => save('deposit_pct', 'deposit_pct', v)} />
+      </Row>
+
+      <Row label="HST tax rate" description="Ontario HST = 0.13. Change if service area expands outside Ontario.">
+        <PctInput value={s.tax_rate} onSave={(v) => save('tax_rate', 'tax_rate', v)} />
+      </Row>
+
+      <Row
         label="5% Google-review discount enabled"
-        description="When enabled, the confirm-booking dialog shows a checkbox to apply this discount at invoice creation time."
+        description="Reserved for future per-order discount at approval time."
       >
         <label className="flex items-center gap-2">
           <input
@@ -51,27 +62,11 @@ export function SettingsForm({ initial }: Props) {
         </label>
       </Row>
 
-      <Row label="Discount amount" description="Percent off subtotal when checkbox is applied at confirm time.">
+      <Row label="Discount amount" description="Percent off subtotal when the Google-review discount applies.">
         <PctInput value={s.discounts_google_review_pct} onSave={(v) => save('discounts.google_review_pct', 'discounts_google_review_pct', v)} />
       </Row>
 
-      <Row label="HST tax rate" description="Ontario HST = 0.13. Change if service area expands outside Ontario.">
-        <PctInput value={s.tax_rate} onSave={(v) => save('tax_rate', 'tax_rate', v)} />
-      </Row>
-
-      <Row label="Deposit percentage" description="Percentage of total charged as deposit at booking confirmation.">
-        <PctInput value={s.deposit_pct} onSave={(v) => save('deposit_pct', 'deposit_pct', v)} />
-      </Row>
-
-      <Row label="GTA delivery fee (cents)" description="Flat-rate delivery + pickup for GTA jobs. Change in cents (e.g. 9999 = $99.99).">
-        <CentsInput value={s.delivery_fee_gta_cents} onSave={(v) => save('delivery_fee_gta_cents', 'delivery_fee_gta_cents', v)} />
-      </Row>
-
-      <Row label="King Township delivery fee (cents)" description="Currently free (0).">
-        <CentsInput value={s.delivery_fee_king_township_cents} onSave={(v) => save('delivery_fee_king_township_cents', 'delivery_fee_king_township_cents', v)} />
-      </Row>
-
-      <Row label="E-transfer recipient email" description="Shown on every invoice email as the e-transfer destination.">
+      <Row label="E-transfer recipient email" description="Shown on every approval email as the e-transfer destination.">
         <TextInput value={s.etransfer_recipient_email} onSave={(v) => save('etransfer_recipient_email', 'etransfer_recipient_email', v)} />
       </Row>
 
@@ -114,26 +109,6 @@ function PctInput({ value, onSave }: { value: number; onSave: (v: number) => voi
         className="w-24 px-2 py-1 border border-gray-300 rounded-md text-sm text-right"
       />
       <span className="text-sm text-gray-500">({(parseFloat(v) * 100).toFixed(1)}%)</span>
-    </div>
-  );
-}
-
-function CentsInput({ value, onSave }: { value: number; onSave: (v: number) => void }) {
-  const [v, setV] = useState(String(value));
-  return (
-    <div className="flex items-center gap-1">
-      <input
-        type="number"
-        min="0"
-        value={v}
-        onChange={(e) => setV(e.target.value)}
-        onBlur={() => {
-          const n = parseInt(v, 10);
-          if (!Number.isNaN(n) && n !== value) onSave(n);
-        }}
-        className="w-28 px-2 py-1 border border-gray-300 rounded-md text-sm text-right"
-      />
-      <span className="text-sm text-gray-500">(${(parseInt(v, 10) / 100).toFixed(2)})</span>
     </div>
   );
 }

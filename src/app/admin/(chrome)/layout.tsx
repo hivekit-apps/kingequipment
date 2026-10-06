@@ -48,19 +48,10 @@ export default async function AdminChromeLayout({ children }: { children: React.
               <Link href="/admin/equipment" className="text-gray-700 hover:text-orange-700">
                 Equipment
               </Link>
-              <Link href="/admin/bookings" className="text-gray-700 hover:text-orange-700">
-                Legacy bookings
-              </Link>
               {admin.role === 'admin' && (
                 <>
                   <Link href="/admin/calendar" className="text-gray-700 hover:text-orange-700">
                     Calendar
-                  </Link>
-                  <Link href="/admin/invoices" className="text-gray-700 hover:text-orange-700">
-                    Invoices
-                  </Link>
-                  <Link href="/admin/payments" className="text-gray-700 hover:text-orange-700">
-                    Payments
                   </Link>
                   <Link href="/admin/settings" className="text-gray-700 hover:text-orange-700">
                     Settings
