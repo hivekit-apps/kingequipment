@@ -46,13 +46,13 @@ export default function HomePage() {
             {equipment.map((item) => (
               <div key={item.id} className="rounded-lg border border-slate-200 p-5 flex flex-col">
                 {item.photos[0] && (
-                  <div className="relative w-full aspect-[4/3] overflow-hidden rounded-md bg-slate-100 mb-4">
+                  <div className="relative w-full aspect-square overflow-hidden rounded-md bg-white mb-4">
                     <Image
                       src={item.photos[0].src}
                       alt={item.photos[0].alt}
                       fill
                       sizes="(max-width: 640px) 100vw, 33vw"
-                      className="object-cover"
+                      className="object-contain"
                     />
                   </div>
                 )}
