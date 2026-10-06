@@ -330,11 +330,23 @@ export async function POST(req: NextRequest) {
     `Reply to this email with any questions.\n\n` +
     `${cfg.business.name}\n${cfg.business.hours || ''}\n`;
 
-  const adminTo = process.env.LEAD_INBOX_EMAIL || cfg.business.email;
-  const adminCc = (process.env.LEAD_CC_EMAIL || '')
+  // Sanitize env values — Vercel-stored values have trailing-quote artifacts
+  // that cause Resend to reject the request if we pass them through raw.
+  const sanitizeEnv = (v: string | undefined): string => {
+    if (!v) return '';
+    let out = v.trim();
+    while (out.startsWith('"') || out.startsWith("'")) out = out.slice(1);
+    while (out.endsWith('"') || out.endsWith("'")) out = out.slice(0, -1);
+    return out.trim();
+  };
+  const adminTo = sanitizeEnv(process.env.LEAD_INBOX_EMAIL) || cfg.business.email;
+  const adminCc = sanitizeEnv(process.env.LEAD_CC_EMAIL)
     .split(',')
     .map((s) => s.trim())
     .filter((s) => s.length > 0);
+  // Fire-and-forget: each send is isolated so an admin-notify failure never
+  // suppresses the customer-confirmation (previously a shared try/catch would
+  // swallow both when adminTo had a stray quote).
   try {
     await sendEmail({
       to: adminTo,
@@ -344,6 +356,10 @@ export async function POST(req: NextRequest) {
       html: `<pre style="font-family:ui-monospace,SFMono-Regular,monospace;font-size:12px">${adminText}</pre>`,
       text: adminText,
     });
+  } catch (err) {
+    console.error('[orders] admin notify send failed:', err instanceof Error ? err.message : String(err));
+  }
+  try {
     await sendEmail({
       to: email,
       replyTo: adminTo,
@@ -352,8 +368,7 @@ export async function POST(req: NextRequest) {
       text: customerText,
     });
   } catch (err) {
-    console.error('[orders] email send threw:', err instanceof Error ? err.message : String(err));
-    // non-fatal
+    console.error('[orders] customer confirmation send failed:', err instanceof Error ? err.message : String(err));
   }
 
   return NextResponse.json({
