@@ -48,7 +48,10 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
     notes: orderRow.notes,
   };
   const email = buildDenialEmail(order, brand);
-  const adminTo = process.env.LEAD_INBOX_EMAIL || brand.supportEmail;
+  const adminToRaw = (process.env.LEAD_INBOX_EMAIL ?? '').trim();
+  const adminTo = (
+    adminToRaw.replace(/^['"]+/, '').replace(/['"]+$/, '').trim()
+  ) || brand.supportEmail;
   const errs: string[] = [];
   try {
     const r = await sendEmail({

@@ -100,7 +100,10 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
   const customerEmail = buildApprovalEmail(order, itemList, settings, brand);
   const adminNotify = buildApprovalAdminNotify(order, itemList, settings, brand);
 
-  const adminTo = process.env.LEAD_INBOX_EMAIL || brand.supportEmail;
+  const adminToRaw = (process.env.LEAD_INBOX_EMAIL ?? '').trim();
+  const adminTo = (
+    adminToRaw.replace(/^['"]+/, '').replace(/['"]+$/, '').trim()
+  ) || brand.supportEmail;
   const emailErrors: string[] = [];
 
   try {
