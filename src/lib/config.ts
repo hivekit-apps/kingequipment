@@ -258,6 +258,32 @@ type EquipmentOverrideRow = {
   availability?: EquipmentAvailability[] | null;
   visible?: boolean | null;
   city_delivery?: Record<string, number> | null;
+  name?: string | null;
+  short_name?: string | null;
+  tagline?: string | null;
+};
+
+// Admin-created equipment (new SKUs beyond the site.json seed). Stored in the
+// equipment_custom Supabase table and merged into the catalog at read-time.
+// Column names use snake_case per Postgres convention; translated to camelCase here.
+type EquipmentCustomRow = {
+  id: string;
+  class?: string | null;
+  category: string;
+  name: string;
+  short_name?: string | null;
+  tagline?: string | null;
+  display_rate?: string | null;
+  pricing?: Partial<EquipmentPricing> | null;
+  specs?: Partial<EquipmentItem['specs']> | null;
+  attachments_included?: string[] | null;
+  ideal_for?: string[] | null;
+  photos?: EquipmentPhoto[] | null;
+  availability?: EquipmentAvailability[] | null;
+  visible?: boolean | null;
+  bookable?: boolean | null;
+  operator_note?: string | null;
+  photo_note?: string | null;
 };
 
 async function fetchEquipmentOverrides(mode: 'cached' | 'live' = 'cached'): Promise<Map<string, EquipmentOverrideRow>> {
@@ -312,7 +338,83 @@ function applyEquipmentOverride(base: EquipmentItem, ovr: EquipmentOverrideRow):
   if (typeof ovr.visible === 'boolean') {
     merged.visible = ovr.visible;
   }
+  if (typeof ovr.name === 'string' && ovr.name.trim().length > 0) {
+    merged.name = ovr.name;
+  }
+  if (typeof ovr.short_name === 'string' && ovr.short_name.trim().length > 0) {
+    merged.shortName = ovr.short_name;
+  }
+  if (typeof ovr.tagline === 'string' && ovr.tagline.trim().length > 0) {
+    merged.tagline = ovr.tagline;
+  }
   return merged;
+}
+
+// Translate an equipment_custom row (snake_case jsonb columns) into the full
+// EquipmentItem shape expected by the public pages. Fills in sane empty defaults
+// for optional fields so downstream rendering doesn't need to null-check.
+function customRowToEquipmentItem(row: EquipmentCustomRow): EquipmentItem {
+  const pricing: EquipmentPricing = {
+    daily: row.pricing?.daily ?? null,
+    weekly: row.pricing?.weekly ?? null,
+    monthly: row.pricing?.monthly ?? null,
+    buyNew: row.pricing?.buyNew ?? null,
+    buyUsed: row.pricing?.buyUsed ?? null,
+    deposit: typeof row.pricing?.deposit === 'number' ? row.pricing.deposit : 0,
+  };
+  return {
+    id: row.id,
+    class: (row.class ?? 'power') as EquipmentClass,
+    category: row.category,
+    visible: typeof row.visible === 'boolean' ? row.visible : true,
+    bookable: typeof row.bookable === 'boolean' ? row.bookable : true,
+    availability: Array.isArray(row.availability) && row.availability.length > 0 ? row.availability : ['rent'],
+    name: row.name,
+    shortName: row.short_name ?? row.name,
+    tagline: row.tagline ?? '',
+    displayRate: row.display_rate ?? '',
+    pricing,
+    specs: {
+      operatingWeightLbs: row.specs?.operatingWeightLbs ?? '',
+      ratedOperatingCapacityLbs: row.specs?.ratedOperatingCapacityLbs ?? '',
+      engineHp: row.specs?.engineHp ?? '',
+      liftHeightIn: row.specs?.liftHeightIn ?? null,
+      gateWidthIn: row.specs?.gateWidthIn ?? null,
+      bucketWidthIn: row.specs?.bucketWidthIn ?? null,
+    },
+    attachmentsIncluded: Array.isArray(row.attachments_included) ? row.attachments_included : [],
+    idealFor: Array.isArray(row.ideal_for) ? row.ideal_for : [],
+    photos: Array.isArray(row.photos) ? row.photos : [],
+    operatorNote: row.operator_note ?? '',
+    photoNote: row.photo_note ?? '',
+  };
+}
+
+async function fetchEquipmentCustom(mode: 'cached' | 'live' = 'cached'): Promise<EquipmentCustomRow[]> {
+  let url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  let key = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return [];
+  url = sanitize(url);
+  key = sanitize(key);
+  if (!url || !key) return [];
+  try {
+    const fetchInit: RequestInit =
+      mode === 'live'
+        ? { cache: 'no-store' }
+        : ({ next: { revalidate: 60 } } as unknown as RequestInit);
+    const res = await fetch(`${url}/rest/v1/equipment_custom?select=*`, {
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        Accept: 'application/json',
+      },
+      ...fetchInit,
+    });
+    if (!res.ok) return [];
+    return (await res.json()) as EquipmentCustomRow[];
+  } catch {
+    return [];
+  }
 }
 
 function applyCityDeliveryOverrides(
@@ -328,9 +430,36 @@ function applyCityDeliveryOverrides(
 
 export async function getSiteConfigDynamic(mode: 'cached' | 'live' = 'cached'): Promise<SiteConfig> {
   const seed = getSiteConfig();
-  const overrides = await fetchEquipmentOverrides(mode);
-  if (overrides.size === 0) return seed;
-  const mergedEquipment = seed.equipment.map((e) => {
+  const [overrides, customRows] = await Promise.all([
+    fetchEquipmentOverrides(mode),
+    fetchEquipmentCustom(mode),
+  ]);
+
+  // Merge rule (cycle 9): custom-created SKUs are indexed by id. On id collision
+  // with the site.json seed, CUSTOM WINS — an admin who deliberately re-used an
+  // id meant to replace that item. Seed entries with no custom twin pass through.
+  const customById = new Map<string, EquipmentCustomRow>();
+  for (const row of customRows) {
+    if (row && typeof row.id === 'string') customById.set(row.id, row);
+  }
+
+  const seenIds = new Set<string>();
+  const combined: EquipmentItem[] = [];
+  for (const e of seed.equipment) {
+    const custom = customById.get(e.id);
+    if (custom) {
+      combined.push(customRowToEquipmentItem(custom));
+      seenIds.add(e.id);
+    } else {
+      combined.push(e);
+      seenIds.add(e.id);
+    }
+  }
+  for (const row of customRows) {
+    if (!seenIds.has(row.id)) combined.push(customRowToEquipmentItem(row));
+  }
+
+  const mergedEquipment = combined.map((e) => {
     const ovr = overrides.get(e.id);
     return ovr ? applyEquipmentOverride(e, ovr) : e;
   });

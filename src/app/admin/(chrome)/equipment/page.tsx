@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getSiteConfig, classLabel } from '@/lib/config';
+import { getSiteConfigLive, classLabel } from '@/lib/config';
 import { createServiceClient } from '@/lib/supabase/service';
 
 export const dynamic = 'force-dynamic';
@@ -25,9 +25,19 @@ async function fetchOverrides(): Promise<Record<string, Override>> {
   }
 }
 
+async function fetchCustomIds(): Promise<Set<string>> {
+  try {
+    const svc = createServiceClient();
+    const { data } = await svc.from('equipment_custom').select('id');
+    return new Set((data || []).map((r: { id: string }) => r.id));
+  } catch {
+    return new Set();
+  }
+}
+
 export default async function AdminEquipmentListPage() {
-  const cfg = getSiteConfig();
-  const overrides = await fetchOverrides();
+  const cfg = await getSiteConfigLive();
+  const [overrides, customIds] = await Promise.all([fetchOverrides(), fetchCustomIds()]);
 
   return (
     <div>
@@ -35,9 +45,15 @@ export default async function AdminEquipmentListPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Equipment catalog</h1>
           <p className="mt-1 text-sm text-gray-600">
-            Site.json is the seed; edits are stored as Supabase overrides and merged at read-time.
+            Site.json is the seed; custom-created SKUs and edits are stored in Supabase and merged at read-time.
           </p>
         </div>
+        <Link
+          href="/admin/equipment/new"
+          className="px-4 py-2 rounded-md bg-orange-700 text-white font-semibold text-sm hover:bg-orange-800"
+        >
+          + New equipment
+        </Link>
       </div>
 
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
@@ -45,6 +61,7 @@ export default async function AdminEquipmentListPage() {
           <thead className="bg-gray-50 text-xs uppercase text-gray-600">
             <tr>
               <th className="px-4 py-3 text-left">Item</th>
+              <th className="px-4 py-3 text-left">Source</th>
               <th className="px-4 py-3 text-left">Class</th>
               <th className="px-4 py-3 text-left">Availability</th>
               <th className="px-4 py-3 text-right">Daily</th>
@@ -61,11 +78,17 @@ export default async function AdminEquipmentListPage() {
               const pricing = { ...item.pricing, ...(o?.pricing || {}) };
               const availability = (o?.availability as string[]) || item.availability;
               const visible = o?.visible != null ? o.visible : item.visible !== false;
+              const isCustom = customIds.has(item.id);
               return (
                 <tr key={item.id}>
                   <td className="px-4 py-3">
                     <div className="font-semibold text-gray-900">{item.shortName}</div>
                     <div className="text-xs text-gray-500">{item.id}</div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className={`inline-block px-2 py-0.5 rounded-full text-xs ${isCustom ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-700'}`}>
+                      {isCustom ? 'custom' : 'seed'}
+                    </span>
                   </td>
                   <td className="px-4 py-3">{classLabel(item.class)}</td>
                   <td className="px-4 py-3 text-xs">{availability.join(', ')}</td>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
 
 type Pricing = {
   daily: number | null;
@@ -15,27 +16,40 @@ type CityInfo = { slug: string; name: string; defaultPrice: number };
 
 type Props = {
   id: string;
+  initialName: string;
+  initialShortName: string;
+  initialTagline: string;
   initialPricing: Pricing;
   initialAvailability: ('rent' | 'buy')[];
   initialVisible: boolean;
   initialCityDelivery: Record<string, number>;
+  isCustom: boolean;
   cities: CityInfo[];
 };
 
 export function EquipmentEditForm({
   id,
+  initialName,
+  initialShortName,
+  initialTagline,
   initialPricing,
   initialAvailability,
   initialVisible,
   initialCityDelivery,
+  isCustom,
   cities,
 }: Props) {
+  const router = useRouter();
+  const [name, setName] = useState<string>(initialName);
+  const [shortName, setShortName] = useState<string>(initialShortName);
+  const [tagline, setTagline] = useState<string>(initialTagline);
   const [pricing, setPricing] = useState<Pricing>(initialPricing);
   const [availability, setAvailability] = useState<('rent' | 'buy')[]>(initialAvailability);
   const [visible, setVisible] = useState<boolean>(initialVisible);
   const [cityDelivery, setCityDelivery] = useState<Record<string, number>>(initialCityDelivery);
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState<string>('');
+  const [deleting, setDeleting] = useState<boolean>(false);
 
   function toggleAvail(k: 'rent' | 'buy') {
     setAvailability((prev) =>
@@ -58,6 +72,9 @@ export function EquipmentEditForm({
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          name,
+          shortName,
+          tagline,
           pricing,
           availability,
           visible,
@@ -71,14 +88,68 @@ export function EquipmentEditForm({
         return;
       }
       setStatus('saved');
+      router.refresh();
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : 'Network error');
       setStatus('error');
     }
   }
 
+  async function onDelete() {
+    if (deleting) return;
+    if (!confirm(`Delete "${name}" (${id})? This removes the custom equipment and all its overrides. This cannot be undone.`)) return;
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/admin/equipment/${id}`, { method: 'DELETE' });
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) {
+        setErrorMsg(data.error || `Delete failed (${res.status})`);
+        setDeleting(false);
+        return;
+      }
+      router.push('/admin/equipment');
+      router.refresh();
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : 'Network error');
+      setDeleting(false);
+    }
+  }
+
   return (
     <form onSubmit={onSubmit} className="mt-8 space-y-6">
+      <section className="bg-white rounded-lg border border-gray-200 p-5">
+        <h2 className="text-lg font-bold text-gray-900">Name & tagline</h2>
+        <div className="mt-4 space-y-4">
+          <div>
+            <label className="block text-xs font-medium text-gray-700">Name (full product name)</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-700">Short name (used on cards and lists)</label>
+            <input
+              type="text"
+              value={shortName}
+              onChange={(e) => setShortName(e.target.value)}
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-700">Tagline (1-line description)</label>
+            <input
+              type="text"
+              value={tagline}
+              onChange={(e) => setTagline(e.target.value)}
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm"
+            />
+          </div>
+        </div>
+      </section>
+
       <section className="bg-white rounded-lg border border-gray-200 p-5">
         <h2 className="text-lg font-bold text-gray-900">Pricing (CAD)</h2>
         <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -153,19 +224,31 @@ export function EquipmentEditForm({
         </div>
       </section>
 
-      <div className="flex items-center gap-3">
-        <button
-          type="submit"
-          disabled={status === 'saving'}
-          className="px-4 py-2 rounded-md bg-orange-700 text-white font-semibold text-sm hover:bg-orange-800 disabled:opacity-50"
-        >
-          {status === 'saving' ? 'Saving…' : 'Save'}
-        </button>
-        {status === 'saved' && (
-          <span className="text-sm text-green-700">Saved.</span>
-        )}
-        {status === 'error' && (
-          <span className="text-sm text-red-700">{errorMsg || 'Save failed.'}</span>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <button
+            type="submit"
+            disabled={status === 'saving'}
+            className="px-4 py-2 rounded-md bg-orange-700 text-white font-semibold text-sm hover:bg-orange-800 disabled:opacity-50"
+          >
+            {status === 'saving' ? 'Saving…' : 'Save'}
+          </button>
+          {status === 'saved' && (
+            <span className="text-sm text-green-700">Saved.</span>
+          )}
+          {status === 'error' && (
+            <span className="text-sm text-red-700">{errorMsg || 'Save failed.'}</span>
+          )}
+        </div>
+        {isCustom && (
+          <button
+            type="button"
+            onClick={onDelete}
+            disabled={deleting}
+            className="px-4 py-2 rounded-md border border-red-300 text-red-700 font-semibold text-sm hover:bg-red-50 disabled:opacity-50"
+          >
+            {deleting ? 'Deleting…' : 'Delete equipment'}
+          </button>
         )}
       </div>
     </form>

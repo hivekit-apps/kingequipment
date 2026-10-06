@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getSiteConfig, getEquipmentById } from '@/lib/config';
+import { getSiteConfigLive, getEquipmentById } from '@/lib/config';
 import { createServiceClient } from '@/lib/supabase/service';
 import { BlockedDatesManager } from './BlockedDatesManager';
 
@@ -27,7 +27,7 @@ export default async function PerSkuCalendarPage({
 }: {
   params: { id: string };
 }) {
-  const cfg = getSiteConfig();
+  const cfg = await getSiteConfigLive();
   const item = getEquipmentById(params.id, cfg);
   if (!item) notFound();
   const blocks = await fetchBlocks(item.id);
