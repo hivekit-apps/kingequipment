@@ -171,6 +171,40 @@ export default function CityPageRoute({ params }: { params: { city: string } }) 
         </div>
       </section>
 
+      {/* Rent by category — links to (category × city) SEO landing pages */}
+      <section className="bg-slate-50">
+        <div className="container-page py-12">
+          <h2 className="text-2xl md:text-3xl">Rent in {city.name} by category</h2>
+          <p className="mt-3 text-base text-slate-700 max-w-3xl">
+            Looking for a specific type of equipment? Browse the catalog filtered by category — each page is
+            sized for {city.name} with local delivery pricing and typical job notes.
+          </p>
+          <ul className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {['drying-water-damage', 'inverter-generators', 'construction-heaters'].map((catSlug) => {
+              const cat = cfg.categories.find((c) => c.slug === catSlug);
+              if (!cat) return null;
+              return (
+                <li key={catSlug}>
+                  <Link
+                    href={`/${catSlug}/${city.slug}`}
+                    className="block h-full rounded-lg border border-slate-200 bg-white p-5 hover:border-brand-orange hover:shadow-sm transition-all group"
+                    data-event={`city_catnav_${city.slug}_${catSlug}`}
+                  >
+                    <h3 className="text-xl font-bold text-slate-950 group-hover:text-brand-orange">
+                      {cat.name} in {city.name}
+                    </h3>
+                    <p className="mt-2 text-sm text-slate-700">{cat.description}</p>
+                    <p className="mt-4 text-xs font-semibold text-brand-orange group-hover:underline">
+                      See {cat.name.toLowerCase()} rentals →
+                    </p>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </section>
+
       {/* Sibling cities */}
       {siblings.length > 0 && (
         <section className="bg-white">

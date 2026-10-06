@@ -1,12 +1,13 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { getSiteConfig, cityPageUrl, visibleEquipment, classLabel } from '@/lib/config';
+import { getSiteConfig, cityPageUrl, visibleEquipment, classLabel, rentableByCategory } from '@/lib/config';
 import { PhotoStrip } from '@/components/PhotoStrip';
 import { HeroPhoto } from '@/components/HeroPhoto';
 
 export default function HomePage() {
   const cfg = getSiteConfig();
   const equipment = visibleEquipment(cfg);
+  const grouped = rentableByCategory(cfg);
   return (
     <>
       {/* Hero */}
@@ -89,6 +90,70 @@ export default function HomePage() {
               See full catalog &amp; place an order
             </Link>
           </p>
+        </div>
+      </section>
+
+      {/* Browse by category */}
+      <section className="bg-slate-50 border-y border-slate-200">
+        <div className="container-page py-12">
+          <h2 className="text-2xl md:text-3xl">Browse by category</h2>
+          <p className="mt-3 text-base text-slate-700 max-w-2xl">
+            Serving {cfg.cityPages.cities.length} cities across Toronto, Markham, and the Durham Region.
+            Each category also has city-specific pages with local pricing and delivery details.
+          </p>
+          <ul className="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {cfg.categories.map((cat) => {
+              const items = grouped.get(cat.slug) ?? [];
+              const hasItems = items.length > 0;
+              const href = hasItems ? `/rent#cat-${cat.slug}` : '/contact';
+              return (
+                <li key={cat.slug}>
+                  <Link
+                    href={href}
+                    className={`block h-full rounded-lg border p-5 transition-all group ${hasItems ? 'border-slate-200 bg-white hover:border-brand-orange hover:shadow-sm' : 'border-dashed border-slate-300 bg-white/50'}`}
+                    data-event={`home_cat_${cat.slug}`}
+                  >
+                    <p className="text-xs uppercase tracking-wide text-brand-orange font-bold">
+                      {hasItems ? `${items.length} rental${items.length === 1 ? '' : 's'}` : 'Coming soon'}
+                    </p>
+                    <h3 className="mt-1 text-xl font-bold text-slate-950 group-hover:text-brand-orange">
+                      {cat.name}
+                    </h3>
+                    <p className="mt-2 text-sm text-slate-700">{cat.description}</p>
+                    {hasItems && (
+                      <p className="mt-4 text-xs font-semibold text-brand-orange group-hover:underline">
+                        See {cat.name.toLowerCase()} →
+                      </p>
+                    )}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </section>
+
+      {/* Resources strip */}
+      <section className="bg-white">
+        <div className="container-page py-10">
+          <div className="rounded-lg border border-slate-200 bg-slate-50 p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-wide text-brand-orange font-bold">New guide</p>
+              <h2 className="mt-1 text-xl md:text-2xl font-bold text-slate-950">
+                How to dry out a flooded basement — step by step
+              </h2>
+              <p className="mt-2 text-sm text-slate-700 max-w-2xl">
+                A restoration-trades playbook with equipment specs, timelines, and sizing rules of thumb.
+              </p>
+            </div>
+            <Link
+              href="/guides/basement-flood-recovery"
+              className="btn-primary text-sm"
+              data-event="home_guide_basement_flood"
+            >
+              Read the guide →
+            </Link>
+          </div>
         </div>
       </section>
 

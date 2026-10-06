@@ -58,11 +58,34 @@ export default async function RentPage() {
       {cfg.categories.map((cat) => {
         const items = grouped.get(cat.slug);
         if (!items || items.length === 0) return null;
+        // Only enabled categories have per-city landing pages; the sub-nav
+        // links to each (category × city) SEO landing page.
+        const hasLandingPages = ['drying-water-damage', 'inverter-generators', 'construction-heaters'].includes(cat.slug);
         return (
           <section key={cat.slug} id={`cat-${cat.slug}`} className="mt-12 scroll-mt-24">
             <h2 className="text-2xl font-bold">{cat.name}</h2>
             {cat.description && (
               <p className="mt-2 text-sm text-slate-700 max-w-3xl">{cat.description}</p>
+            )}
+            {hasLandingPages && (
+              <div className="mt-4">
+                <p className="text-xs uppercase tracking-wide text-slate-500 font-bold">
+                  Rent in your city
+                </p>
+                <ul className="mt-2 flex flex-wrap gap-2">
+                  {cfg.cityPages.cities.map((c) => (
+                    <li key={c.slug}>
+                      <Link
+                        href={`/${cat.slug}/${c.slug}`}
+                        className="inline-block px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold hover:bg-slate-200"
+                        data-event={`rent_cat_city_${cat.slug}_${c.slug}`}
+                      >
+                        {c.name} · ${c.deliveryPrice}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
             <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {items.map((item) => (

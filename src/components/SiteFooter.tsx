@@ -3,9 +3,20 @@ import { getSiteConfig } from '@/lib/config';
 
 export function SiteFooter() {
   const cfg = getSiteConfig();
+  // High-intent popular searches: top city + each enabled category, plus a
+  // couple of highest-population city × drying combos (water damage is the
+  // highest-volume search intent in our catalog).
+  const popular: { label: string; href: string }[] = [
+    { label: 'Drying & water damage in Toronto', href: '/drying-water-damage/toronto' },
+    { label: 'Drying & water damage in Markham', href: '/drying-water-damage/markham' },
+    { label: 'Drying & water damage in Oshawa', href: '/drying-water-damage/oshawa' },
+    { label: 'Inverter generators in Toronto', href: '/inverter-generators/toronto' },
+    { label: 'Construction heaters in Toronto', href: '/construction-heaters/toronto' },
+    { label: 'Flooded basement guide', href: '/guides/basement-flood-recovery' },
+  ];
   return (
     <footer className="border-t border-slate-200 bg-slate-50 mt-16">
-      <div className="container-page py-10 grid gap-8 md:grid-cols-3">
+      <div className="container-page py-10 grid gap-8 md:grid-cols-4">
         <div>
           <p className="font-bold text-slate-950">{cfg.business.name}</p>
           <p className="text-sm text-slate-700 mt-2">{cfg.business.shortDescription}</p>
@@ -52,7 +63,20 @@ export function SiteFooter() {
             <li><Link href="/rent" className="hover:text-brand-orange">Rent</Link></li>
             <li><Link href="/buy" className="hover:text-brand-orange">Buy</Link></li>
             <li><Link href="/service-area" className="hover:text-brand-orange">Service Area</Link></li>
+            <li><Link href="/guides" className="hover:text-brand-orange">Guides</Link></li>
             <li><Link href="/contact" className="hover:text-brand-orange">Contact</Link></li>
+          </ul>
+        </div>
+        <div>
+          <p className="font-bold text-slate-950">Popular searches</p>
+          <ul className="text-sm text-slate-700 mt-2 space-y-1">
+            {popular.map((p) => (
+              <li key={p.href}>
+                <Link href={p.href} className="hover:text-brand-orange">
+                  {p.label}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
       </div>
