@@ -20,6 +20,9 @@ type CartContextValue = {
   clearCart: () => void;
   city: string;
   setCity: (slug: string) => void;
+  cartStartDate: string;
+  cartEndDate: string;
+  setCartDates: (startDate: string, endDate: string) => void;
   hydrated: boolean;
 };
 
@@ -27,10 +30,13 @@ const CartContext = createContext<CartContextValue | null>(null);
 
 const STORAGE_KEY = 'ke_cart_v1';
 const CITY_KEY = 'ke_cart_city_v1';
+const DATES_KEY = 'ke_cart_dates_v1';
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [city, setCityState] = useState<string>('');
+  const [cartStartDate, setCartStartDateState] = useState<string>('');
+  const [cartEndDate, setCartEndDateState] = useState<string>('');
   const [hydrated, setHydrated] = useState<boolean>(false);
 
   // Hydrate from localStorage on mount.
@@ -43,6 +49,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
       const savedCity = localStorage.getItem(CITY_KEY) || '';
       if (savedCity) setCityState(savedCity);
+      const savedDatesRaw = localStorage.getItem(DATES_KEY);
+      if (savedDatesRaw) {
+        const parsedDates = JSON.parse(savedDatesRaw) as {
+          startDate?: string;
+          endDate?: string;
+        };
+        if (parsedDates.startDate) setCartStartDateState(parsedDates.startDate);
+        if (parsedDates.endDate) setCartEndDateState(parsedDates.endDate);
+      }
     } catch {
       // ignore corrupted storage
     }
@@ -68,19 +83,49 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, [city, hydrated]);
 
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      localStorage.setItem(
+        DATES_KEY,
+        JSON.stringify({ startDate: cartStartDate, endDate: cartEndDate }),
+      );
+    } catch {
+      // ignore
+    }
+  }, [cartStartDate, cartEndDate, hydrated]);
+
+  const applyGlobalDatesToRentals = useCallback(
+    (list: CartItem[], startDate: string, endDate: string): CartItem[] =>
+      list.map((it) =>
+        it.kind === 'rent'
+          ? { ...it, startDate, endDate }
+          : it,
+      ),
+    [],
+  );
+
   const addItem = useCallback((item: CartItem) => {
     setItems((prev) => {
-      const idx = prev.findIndex(
+      // Rental "last-added-wins": if this is a rental with dates, promote them
+      // to the global cart dates and apply to every existing rental too.
+      let next = prev.slice();
+      if (item.kind === 'rent' && item.startDate && item.endDate) {
+        setCartStartDateState(item.startDate);
+        setCartEndDateState(item.endDate);
+        next = applyGlobalDatesToRentals(next, item.startDate, item.endDate);
+      }
+      const idx = next.findIndex(
         (p) => p.equipmentId === item.equipmentId && p.kind === item.kind,
       );
       if (idx >= 0) {
-        const next = prev.slice();
-        next[idx] = { ...next[idx], ...item, qty: (next[idx].qty || 1) + (item.qty || 1) };
+        const merged = { ...next[idx], ...item, qty: (next[idx].qty || 1) + (item.qty || 1) };
+        next[idx] = merged;
         return next;
       }
-      return [...prev, { ...item, qty: item.qty || 1 }];
+      return [...next, { ...item, qty: item.qty || 1 }];
     });
-  }, []);
+  }, [applyGlobalDatesToRentals]);
 
   const removeItem = useCallback((equipmentId: string, kind: 'rent' | 'buy') => {
     setItems((prev) => prev.filter((p) => !(p.equipmentId === equipmentId && p.kind === kind)));
@@ -99,13 +144,48 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const clearCart = useCallback(() => {
     setItems([]);
+    setCartStartDateState('');
+    setCartEndDateState('');
   }, []);
 
   const setCity = useCallback((slug: string) => setCityState(slug), []);
 
+  const setCartDates = useCallback(
+    (startDate: string, endDate: string) => {
+      setCartStartDateState(startDate);
+      setCartEndDateState(endDate);
+      setItems((prev) => applyGlobalDatesToRentals(prev, startDate, endDate));
+    },
+    [applyGlobalDatesToRentals],
+  );
+
   const value = useMemo<CartContextValue>(
-    () => ({ items, addItem, removeItem, updateItem, clearCart, city, setCity, hydrated }),
-    [items, addItem, removeItem, updateItem, clearCart, city, setCity, hydrated],
+    () => ({
+      items,
+      addItem,
+      removeItem,
+      updateItem,
+      clearCart,
+      city,
+      setCity,
+      cartStartDate,
+      cartEndDate,
+      setCartDates,
+      hydrated,
+    }),
+    [
+      items,
+      addItem,
+      removeItem,
+      updateItem,
+      clearCart,
+      city,
+      setCity,
+      cartStartDate,
+      cartEndDate,
+      setCartDates,
+      hydrated,
+    ],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
@@ -123,6 +203,9 @@ export function useCart(): CartContextValue {
       clearCart: () => {},
       city: '',
       setCity: () => {},
+      cartStartDate: '',
+      cartEndDate: '',
+      setCartDates: () => {},
       hydrated: false,
     };
   }

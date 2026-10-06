@@ -3,6 +3,7 @@ import { getSiteConfigLive } from '@/lib/config';
 import { calculateRentalPrice, calculateBuyPrice, daysBetween } from '@/lib/pricing';
 import { createServiceClient } from '@/lib/supabase/service';
 import { sendEmail } from '@/lib/email-send';
+import { isTomorrowOrLater, START_DATE_ERROR } from '@/lib/dates';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -87,6 +88,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Name is required.' }, { status: 422 });
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
     return NextResponse.json({ error: 'Valid email required.' }, { status: 422 });
+  const phoneDigits = phone.replace(/\D/g, '');
+  if (phoneDigits.length < 7)
+    return NextResponse.json({ error: 'Phone number is required.' }, { status: 422 });
   if (address.length < 5)
     return NextResponse.json({ error: 'Delivery address required.' }, { status: 422 });
   const city = cfg.cityPages.cities.find((c) => c.slug === citySlug);
@@ -128,10 +132,9 @@ export async function POST(req: NextRequest) {
           { status: 422 },
         );
       }
-      const todayISO = new Date().toISOString().slice(0, 10);
-      if (startDate < todayISO) {
+      if (!isTomorrowOrLater(startDate)) {
         return NextResponse.json(
-          { error: `Start date for ${item.shortName} can't be in the past.` },
+          { error: START_DATE_ERROR },
           { status: 422 },
         );
       }
@@ -256,9 +259,12 @@ export async function POST(req: NextRequest) {
     )
     .join('\n');
 
+  const siteUrl = (cfg.business?.siteUrl || '').replace(/\/$/, '');
+  const adminUrl = siteUrl ? `${siteUrl}/admin/orders/${order.id}` : `/admin/orders/${order.id}`;
   const adminText =
     `New ${cfg.business.name} order from ${name} <${email}>\n\n` +
     `Order ID: ${order.id}\n` +
+    `Admin link: ${adminUrl}\n` +
     `Delivery: ${city.name} (${address})\n` +
     `Phone: ${phone || '-'}\n\n` +
     `=== Items ===\n${itemsBlock}\n\n` +
@@ -270,32 +276,59 @@ export async function POST(req: NextRequest) {
     (notes ? `Notes: ${notes}\n\n` : '') +
     `Reply directly to the customer at ${email}.\n`;
 
+  const shortId = order.id.slice(0, 8);
+  const hasRental = lines.some((l) => l.kind === 'rent');
+  const hasBuy = lines.some((l) => l.kind === 'buy');
+  const nextStepsHtml =
+    hasRental && hasBuy
+      ? `Once approved, you&rsquo;ll receive a second email with payment instructions. A deposit is required for rentals to lock in the booking; buy items are paid in full at that time.`
+      : hasRental
+        ? `Once approved, you&rsquo;ll receive a second email with payment instructions. A refundable deposit is required to lock in the booking; the rental balance is invoiced the morning of delivery.`
+        : `Once approved, you&rsquo;ll receive a second email with payment instructions. Buy items are paid in full at that time.`;
+  const nextStepsText = nextStepsHtml.replace(/&rsquo;/g, "'");
+
+  const customerItemsHtml = lines
+    .map((l) => {
+      const dateStr =
+        l.kind === 'rent' && l.startDate && l.endDate
+          ? ` <span style="color:#6b7280">(${l.startDate} → ${l.endDate}, ${l.days}d)</span>`
+          : '';
+      return `<li style="margin:4px 0">${l.equipmentName} × ${l.qty}${dateStr} — <strong>${money(l.unitSubtotalCents)}</strong></li>`;
+    })
+    .join('\n');
+
   const customerHtml =
     `<div style="font-family:system-ui,-apple-system,sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111827">` +
     `<p style="font-size:20px;font-weight:700;margin:0 0 8px 0">Thanks, ${name.split(' ')[0]}.</p>` +
-    `<p style="font-size:15px;line-height:1.55;color:#374151;margin:0 0 20px 0">We&rsquo;ve received your ${cfg.business.name} order. We&rsquo;ll confirm delivery and send e-Transfer instructions for the deposit + delivery within a few hours during business hours.</p>` +
-    `<p style="font-size:14px;color:#4b5563;margin:0 0 4px 0"><strong>Order:</strong> #${order.id.slice(0, 8)}</p>` +
+    `<p style="font-size:15px;line-height:1.55;color:#374151;margin:0 0 20px 0">We&rsquo;ve received your order. A staff member will be in touch shortly to confirm the details.</p>` +
+    `<p style="font-size:14px;color:#4b5563;margin:0 0 4px 0"><strong>Order:</strong> #${shortId}</p>` +
     `<p style="font-size:14px;color:#4b5563;margin:0 0 4px 0"><strong>Delivery to:</strong> ${city.name}</p>` +
-    `<pre style="font-family:ui-monospace,SFMono-Regular,monospace;background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:12px;font-size:12px;white-space:pre-wrap;margin:16px 0">${lines
-      .map(
-        (l) =>
-          `${l.equipmentName} × ${l.qty} (${l.kind}${
-            l.kind === 'rent' ? `, ${l.days}d` : ''
-          }) — ${money(l.unitSubtotalCents)}`,
-      )
-      .join('\n')}\nDelivery: ${money(deliveryPriceCents)}\nGrand total: ${money(grandTotalCents)}\nRefundable deposit: ${money(depositTotalCents)}</pre>` +
-    `<p style="font-size:13px;color:#6b7280;margin:24px 0 0 0">${cfg.business.name} &mdash; Ontario, Canada</p>` +
+    `<p style="font-size:14px;color:#4b5563;margin:0 0 16px 0"><strong>Address:</strong> ${address}</p>` +
+    `<h3 style="font-size:14px;margin:16px 0 6px 0;color:#111827">Items</h3>` +
+    `<ul style="font-size:14px;color:#374151;padding-left:20px;margin:0 0 16px 0">${customerItemsHtml}</ul>` +
+    `<table style="font-size:14px;color:#374151;border-collapse:collapse;width:100%;margin:0 0 16px 0">` +
+    (rentalSubtotalCents > 0 ? `<tr><td style="padding:3px 0">Rental subtotal</td><td style="padding:3px 0;text-align:right">${money(rentalSubtotalCents)}</td></tr>` : '') +
+    (buySubtotalCents > 0 ? `<tr><td style="padding:3px 0">Purchase subtotal</td><td style="padding:3px 0;text-align:right">${money(buySubtotalCents)}</td></tr>` : '') +
+    `<tr><td style="padding:3px 0">Delivery (${city.name})</td><td style="padding:3px 0;text-align:right">${money(deliveryPriceCents)}</td></tr>` +
+    `<tr><td style="padding:6px 0;border-top:1px solid #e5e7eb;font-weight:700">Grand total</td><td style="padding:6px 0;border-top:1px solid #e5e7eb;text-align:right;font-weight:700">${money(grandTotalCents)}</td></tr>` +
+    (depositTotalCents > 0 ? `<tr><td style="padding:3px 0;color:#6b7280">Refundable deposit (rentals)</td><td style="padding:3px 0;text-align:right;color:#6b7280">${money(depositTotalCents)}</td></tr>` : '') +
+    `</table>` +
+    `<h3 style="font-size:14px;margin:20px 0 6px 0;color:#111827">What happens next</h3>` +
+    `<p style="font-size:14px;line-height:1.55;color:#374151;margin:0 0 16px 0">${nextStepsHtml}</p>` +
+    `<p style="font-size:14px;line-height:1.55;color:#374151;margin:0 0 16px 0">Need to add something or ask a question? Just reply to this email.</p>` +
+    `<p style="font-size:13px;color:#6b7280;margin:24px 0 0 0;border-top:1px solid #e5e7eb;padding-top:12px"><strong>${cfg.business.name}</strong><br/>${cfg.business.hours || 'Ontario, Canada'}</p>` +
     `</div>`;
 
   const customerText =
     `Thanks, ${name.split(' ')[0]}.\n\n` +
-    `We received your ${cfg.business.name} order #${order.id.slice(0, 8)}.\n` +
-    `We'll confirm delivery and e-Transfer deposit instructions by email shortly.\n\n` +
+    `We received your ${cfg.business.name} order #${shortId}. A staff member will be in touch shortly to confirm the details.\n\n` +
     `=== Items ===\n${itemsBlock}\n\n` +
-    `Delivery to ${city.name}: ${money(deliveryPriceCents)}\n` +
+    `Delivery to ${city.name} (${address}): ${money(deliveryPriceCents)}\n` +
     `Grand total: ${money(grandTotalCents)}\n` +
-    `Refundable deposit (rentals): ${money(depositTotalCents)}\n\n` +
-    `${cfg.business.name}\n`;
+    (depositTotalCents > 0 ? `Refundable deposit (rentals): ${money(depositTotalCents)}\n` : '') +
+    `\n=== What happens next ===\n${nextStepsText}\n\n` +
+    `Reply to this email with any questions.\n\n` +
+    `${cfg.business.name}\n${cfg.business.hours || ''}\n`;
 
   const adminTo = process.env.LEAD_INBOX_EMAIL || cfg.business.email;
   const adminCc = (process.env.LEAD_CC_EMAIL || '')
@@ -307,14 +340,14 @@ export async function POST(req: NextRequest) {
       to: adminTo,
       cc: adminCc,
       replyTo: email,
-      subject: `[Order #${order.id.slice(0, 8)}] ${name} — ${city.name} — ${money(grandTotalCents)}`,
+      subject: `[NEW ORDER #${order.id.slice(0, 8)}] ${name} — ${city.name} — ${money(grandTotalCents)}`,
       html: `<pre style="font-family:ui-monospace,SFMono-Regular,monospace;font-size:12px">${adminText}</pre>`,
       text: adminText,
     });
     await sendEmail({
       to: email,
       replyTo: adminTo,
-      subject: `We got your ${cfg.business.name} order #${order.id.slice(0, 8)}`,
+      subject: `We received your ${cfg.business.name} order — #${shortId}`,
       html: customerHtml,
       text: customerText,
     });

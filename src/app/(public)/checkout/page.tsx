@@ -6,12 +6,13 @@ import { useRouter } from 'next/navigation';
 import { useCart } from '@/components/CartContext';
 import { calculateRentalPrice, calculateBuyPrice, daysBetween, formatMoney } from '@/lib/pricing';
 import { getSiteConfig } from '@/lib/config';
+import { isTomorrowOrLater, START_DATE_ERROR } from '@/lib/dates';
 
 const cfg = getSiteConfig();
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, city, clearCart, hydrated } = useCart();
+  const { items, city, clearCart, hydrated, cartStartDate, cartEndDate } = useCart();
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [orderId, setOrderId] = useState<string>('');
@@ -26,14 +27,15 @@ export default function CheckoutPage() {
       const equipment = cfg.equipment.find((e) => e.id === it.equipmentId);
       if (!equipment) return null;
       if (it.kind === 'rent') {
-        const days = daysBetween(it.startDate || '', it.endDate || '');
+        // Single source of truth for rental dates: the cart-level global range.
+        const days = daysBetween(cartStartDate || '', cartEndDate || '');
         const rp = calculateRentalPrice(equipment, days);
         return { cart: it, equipment, lineTotal: rp.total * it.qty, days };
       }
       const bp = calculateBuyPrice(equipment, it.buyCondition || 'new');
       return { cart: it, equipment, lineTotal: bp.total * it.qty, days: 0 };
     }).filter((r): r is NonNullable<typeof r> => r !== null);
-  }, [items]);
+  }, [items, cartStartDate, cartEndDate]);
 
   const rentalSubtotal = rows
     .filter((r) => r.cart.kind === 'rent')
@@ -44,40 +46,27 @@ export default function CheckoutPage() {
   const deliveryPrice = rows.length > 0 ? selectedCity?.deliveryPrice ?? 0 : 0;
   const grandTotal = rentalSubtotal + buySubtotal + deliveryPrice;
 
-  // Date validation for rental items.
+  // Date validation uses the single global cart range (one source of truth).
+  const hasRentals = rows.some((r) => r.cart.kind === 'rent');
   const dateIssues = useMemo(() => {
     const issues: string[] = [];
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    for (const r of rows) {
-      if (r.cart.kind !== 'rent') continue;
-      const label = r.equipment.shortName;
-      const start = r.cart.startDate;
-      const end = r.cart.endDate;
-      if (!start || !end) {
-        issues.push(`${label}: start and end dates are required.`);
-        continue;
-      }
-      const sd = new Date(start);
-      const ed = new Date(end);
-      if (Number.isNaN(sd.getTime()) || Number.isNaN(ed.getTime())) {
-        issues.push(`${label}: pick valid start and end dates.`);
-        continue;
-      }
-      if (sd < today) {
-        issues.push(`${label}: start date can't be in the past.`);
-        continue;
-      }
-      if (ed < sd) {
-        issues.push(`${label}: end date must be on or after the start date.`);
-        continue;
-      }
-      if (r.days <= 0) {
-        issues.push(`${label}: rental must be at least one day.`);
-      }
+    if (!hasRentals) return issues;
+    if (!cartStartDate || !cartEndDate) {
+      issues.push('Rental dates are required.');
+      return issues;
+    }
+    if (!isTomorrowOrLater(cartStartDate)) {
+      issues.push(START_DATE_ERROR);
+    }
+    if (cartEndDate < cartStartDate) {
+      issues.push('End date must be on or after the start date.');
+    }
+    const days = daysBetween(cartStartDate, cartEndDate);
+    if (days <= 0 && cartEndDate >= cartStartDate && cartStartDate) {
+      issues.push('Rental must be at least one day.');
     }
     return issues;
-  }, [rows]);
+  }, [hasRentals, cartStartDate, cartEndDate]);
   const hasDateIssues = dateIssues.length > 0;
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -91,10 +80,17 @@ export default function CheckoutPage() {
     setStatus('sending');
     setErrorMsg('');
     const fd = new FormData(e.currentTarget);
+    const phoneRaw = String(fd.get('phone') || '').trim();
+    const phoneDigits = phoneRaw.replace(/\D/g, '');
+    if (phoneDigits.length < 7) {
+      setErrorMsg('Phone number is required.');
+      setStatus('error');
+      return;
+    }
     const body = {
       customer_name: String(fd.get('name') || ''),
       customer_email: String(fd.get('email') || ''),
-      customer_phone: String(fd.get('phone') || ''),
+      customer_phone: phoneRaw,
       delivery_address: String(fd.get('address') || ''),
       delivery_city: selectedCity?.slug || '',
       notes: String(fd.get('notes') || ''),
@@ -102,8 +98,9 @@ export default function CheckoutPage() {
         equipmentId: it.equipmentId,
         kind: it.kind,
         qty: it.qty,
-        startDate: it.startDate || null,
-        endDate: it.endDate || null,
+        // Rental dates come from the global cart range (single source of truth).
+        startDate: it.kind === 'rent' ? cartStartDate || null : null,
+        endDate: it.kind === 'rent' ? cartEndDate || null : null,
         buyCondition: it.buyCondition || null,
       })),
     };
@@ -209,13 +206,16 @@ export default function CheckoutPage() {
             </div>
             <div>
               <label htmlFor="phone" className="block text-sm font-semibold text-slate-950">
-                Phone <span className="text-slate-600 font-normal">(optional)</span>
+                Phone
               </label>
               <input
                 id="phone"
                 name="phone"
                 type="tel"
+                required
+                minLength={7}
                 autoComplete="tel"
+                inputMode="tel"
                 className="mt-1 block w-full min-h-[48px] rounded-md border border-slate-300 px-3 text-base"
               />
             </div>

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getSiteConfig, mailtoHref } from '@/lib/config';
+import { ContactForm } from '@/components/ContactForm';
 
 const cfg = getSiteConfig();
 
@@ -57,18 +58,7 @@ export default function ContactPage() {
           )}
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-md p-6">
-          <h2 className="text-xl font-bold">Need something specific?</h2>
-          <p className="mt-2 text-sm text-slate-700">
-            Reach out by email with details — SKU, dates, delivery address — and
-            we&apos;ll get back to you quickly with a quote and availability.
-          </p>
-          <div className="mt-6">
-            <Link href="/equipment" className="btn-primary inline-block" data-event="contact_shop_secondary">
-              Browse equipment
-            </Link>
-          </div>
-        </div>
+        <ContactForm />
       </div>
     </section>
   );

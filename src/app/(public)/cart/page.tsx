@@ -1,17 +1,29 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/components/CartContext';
 import { calculateRentalPrice, calculateBuyPrice, daysBetween, formatMoney } from '@/lib/pricing';
 import { getSiteConfig } from '@/lib/config';
+import { tomorrowISO, plusDaysISO, isTomorrowOrLater, START_DATE_ERROR } from '@/lib/dates';
 
 const cfg = getSiteConfig();
 
 export default function CartPage() {
   const router = useRouter();
-  const { items, removeItem, updateItem, city, setCity, clearCart, hydrated } = useCart();
+  const {
+    items,
+    removeItem,
+    updateItem,
+    city,
+    setCity,
+    clearCart,
+    hydrated,
+    cartStartDate,
+    cartEndDate,
+    setCartDates,
+  } = useCart();
 
   const selectedCity = useMemo(
     () => cfg.cityPages.cities.find((c) => c.slug === city) || cfg.cityPages.cities[0],
@@ -19,12 +31,53 @@ export default function CartPage() {
   );
   const deliveryPrice = selectedCity?.deliveryPrice ?? 0;
 
+  const hasRentals = useMemo(() => items.some((it) => it.kind === 'rent'), [items]);
+  const tomorrow = tomorrowISO();
+
+  // One-time safety: if the user lands on /cart with rentals but no global
+  // dates (e.g. legacy localStorage), seed them from the first rental item or
+  // default to tomorrow + 1 day. This also propagates them to every rental.
+  useEffect(() => {
+    if (!hydrated) return;
+    if (!hasRentals) return;
+    if (cartStartDate && cartEndDate) {
+      // If stored dates are now in the past (user came back next day), bump.
+      if (cartStartDate < tomorrow) {
+        const start = tomorrow;
+        const end = cartEndDate < start ? plusDaysISO(start, 1) : cartEndDate;
+        setCartDates(start, end);
+      }
+      return;
+    }
+    // Seed from first rental item.
+    const firstRental = items.find((it) => it.kind === 'rent');
+    const start = firstRental?.startDate && firstRental.startDate >= tomorrow
+      ? firstRental.startDate
+      : tomorrow;
+    const end = firstRental?.endDate && firstRental.endDate >= start
+      ? firstRental.endDate
+      : plusDaysISO(start, 1);
+    setCartDates(start, end);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hydrated, hasRentals]);
+
+  const effectiveStart = cartStartDate || tomorrow;
+  const effectiveEnd = cartEndDate || plusDaysISO(effectiveStart, 1);
+  const cartDays = useMemo(
+    () => daysBetween(effectiveStart, effectiveEnd),
+    [effectiveStart, effectiveEnd],
+  );
+
+  const startInvalid = hasRentals && !isTomorrowOrLater(effectiveStart);
+  const endInvalid = hasRentals && effectiveEnd < effectiveStart;
+
   const rows = useMemo(() => {
     return items.map((it) => {
       const equipment = cfg.equipment.find((e) => e.id === it.equipmentId);
       if (!equipment) return null;
       if (it.kind === 'rent') {
-        const days = daysBetween(it.startDate || '', it.endDate || '');
+        // Use global cart dates for rentals.
+        const days = daysBetween(effectiveStart, effectiveEnd);
         const rp = calculateRentalPrice(equipment, days);
         return {
           cart: it,
@@ -47,7 +100,7 @@ export default function CartPage() {
         days: 0,
       };
     }).filter((r): r is NonNullable<typeof r> => r !== null);
-  }, [items]);
+  }, [items, effectiveStart, effectiveEnd]);
 
   const rentalSubtotal = rows
     .filter((r) => r.cart.kind === 'rent')
@@ -58,16 +111,7 @@ export default function CartPage() {
   const depositTotal = rows.reduce((sum, r) => sum + r.deposit, 0);
   const grandTotal = rentalSubtotal + buySubtotal + (rows.length > 0 ? deliveryPrice : 0);
 
-  const hasInvalidDates = useMemo(() => {
-    const todayISO = new Date().toISOString().slice(0, 10);
-    return rows.some((r) => {
-      if (r.cart.kind !== 'rent') return false;
-      if (!r.cart.startDate || !r.cart.endDate) return true;
-      if (r.cart.startDate < todayISO) return true;
-      if (r.cart.endDate < r.cart.startDate) return true;
-      return r.days <= 0;
-    });
-  }, [rows]);
+  const hasInvalidDates = hasRentals && (startInvalid || endInvalid || cartDays <= 0);
 
   if (!hydrated) {
     return (
@@ -96,7 +140,7 @@ export default function CartPage() {
     <section className="container-page py-12">
       <h1 className="text-3xl md:text-4xl">Your cart</h1>
       <p className="mt-2 text-sm text-slate-700">
-        Review items, pick your delivery city, then continue to checkout.
+        Review items, set your rental dates and delivery city, then continue to checkout.
       </p>
 
       <div className="mt-8 grid lg:grid-cols-[1.4fr_1fr] gap-8 items-start">
@@ -122,58 +166,6 @@ export default function CartPage() {
                   Remove
                 </button>
               </div>
-
-              {r.cart.kind === 'rent' && (() => {
-                const todayISO = new Date().toISOString().slice(0, 10);
-                const startInvalid =
-                  !r.cart.startDate ||
-                  r.cart.startDate < todayISO;
-                const endInvalid =
-                  !r.cart.endDate ||
-                  (r.cart.startDate && r.cart.endDate < r.cart.startDate);
-                return (
-                  <div className="mt-4">
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700">Start</label>
-                        <input
-                          type="date"
-                          value={r.cart.startDate || ''}
-                          min={todayISO}
-                          onChange={(e) => {
-                            const v = e.target.value;
-                            const curEnd = r.cart.endDate || '';
-                            updateItem(r.cart.equipmentId, r.cart.kind, {
-                              startDate: v,
-                              endDate: curEnd && curEnd < v ? v : curEnd,
-                            });
-                          }}
-                          className={`mt-1 w-full rounded-md border px-2 py-2 text-sm ${startInvalid ? 'border-red-400' : 'border-slate-300'}`}
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700">End</label>
-                        <input
-                          type="date"
-                          value={r.cart.endDate || ''}
-                          min={r.cart.startDate || todayISO}
-                          onChange={(e) =>
-                            updateItem(r.cart.equipmentId, r.cart.kind, { endDate: e.target.value })
-                          }
-                          className={`mt-1 w-full rounded-md border px-2 py-2 text-sm ${endInvalid ? 'border-red-400' : 'border-slate-300'}`}
-                        />
-                      </div>
-                    </div>
-                    {(startInvalid || endInvalid) && (
-                      <p className="mt-2 text-xs text-red-700">
-                        {startInvalid
-                          ? 'Pick a start date today or later.'
-                          : 'End date must be on or after the start date.'}
-                      </p>
-                    )}
-                  </div>
-                );
-              })()}
 
               <div className="mt-4 flex items-end justify-between gap-4">
                 <div>
@@ -235,6 +227,50 @@ export default function CartPage() {
             </select>
           </div>
 
+          {hasRentals && (
+            <div className="mt-4">
+              <label className="block text-xs font-semibold text-slate-700">Rental dates</label>
+              <div className="mt-1 grid grid-cols-2 gap-2">
+                <input
+                  type="date"
+                  aria-label="Rental start date"
+                  value={effectiveStart}
+                  min={tomorrow}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    const newEnd = effectiveEnd < v ? v : effectiveEnd;
+                    setCartDates(v, newEnd);
+                  }}
+                  className={`rounded-md border px-2 py-2 text-sm ${startInvalid ? 'border-red-400' : 'border-slate-300'}`}
+                />
+                <input
+                  type="date"
+                  aria-label="Rental end date"
+                  value={effectiveEnd}
+                  min={effectiveStart}
+                  onChange={(e) => setCartDates(effectiveStart, e.target.value)}
+                  className={`rounded-md border px-2 py-2 text-sm ${endInvalid ? 'border-red-400' : 'border-slate-300'}`}
+                />
+              </div>
+              <p className="mt-1 text-xs text-slate-600">
+                Days: <strong>{cartDays}</strong>
+              </p>
+              {startInvalid && (
+                <p className="mt-1 text-xs text-red-700">{START_DATE_ERROR}</p>
+              )}
+              {!startInvalid && endInvalid && (
+                <p className="mt-1 text-xs text-red-700">
+                  End date must be on or after the start date.
+                </p>
+              )}
+              {!startInvalid && !endInvalid && cartDays <= 0 && (
+                <p className="mt-1 text-xs text-red-700">
+                  Rental must be at least one day.
+                </p>
+              )}
+            </div>
+          )}
+
           <dl className="mt-5 space-y-2 text-sm">
             {rentalSubtotal > 0 && (
               <div className="flex justify-between">
@@ -274,7 +310,7 @@ export default function CartPage() {
           </button>
           {hasInvalidDates && (
             <p className="mt-2 text-xs text-red-700">
-              Fix the rental date errors above before you can check out.
+              Fix the rental dates above before you can check out.
             </p>
           )}
           <p className="mt-3 text-xs text-slate-600">

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import type { EquipmentItem, CityPage } from '@/lib/config';
 import { useCart } from './CartContext';
 import { calculateRentalPrice, daysBetween, formatMoney } from '@/lib/pricing';
+import { tomorrowISO, plusDaysISO, START_DATE_ERROR } from '@/lib/dates';
 
 type Props = {
   item: EquipmentItem;
@@ -12,16 +13,6 @@ type Props = {
   defaultMode?: 'rent' | 'buy';
   defaultCity?: string;
 };
-
-function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function plusDaysISO(iso: string, days: number): string {
-  const d = new Date(iso + 'T00:00:00Z');
-  d.setUTCDate(d.getUTCDate() + days);
-  return d.toISOString().slice(0, 10);
-}
 
 export function AddToCartForm({ item, cities, defaultMode, defaultCity }: Props) {
   const router = useRouter();
@@ -35,9 +26,9 @@ export function AddToCartForm({ item, cities, defaultMode, defaultCity }: Props)
   const [buyCondition, setBuyCondition] = useState<'new' | 'used'>(
     item.pricing.buyNew != null ? 'new' : 'used',
   );
-  const today = todayISO();
-  const [startDate, setStartDate] = useState<string>(today);
-  const [endDate, setEndDate] = useState<string>(plusDaysISO(today, 1));
+  const tomorrow = tomorrowISO();
+  const [startDate, setStartDate] = useState<string>(tomorrow);
+  const [endDate, setEndDate] = useState<string>(plusDaysISO(tomorrow, 1));
   const [city, setCityLocal] = useState<string>(defaultCity || cities[0]?.slug || '');
   const [qty, setQty] = useState<number>(1);
   const [added, setAdded] = useState<boolean>(false);
@@ -58,9 +49,12 @@ export function AddToCartForm({ item, cities, defaultMode, defaultCity }: Props)
   const lineTotal =
     mode === 'rent' ? (price?.total ?? 0) * qty : buyUnit * qty;
 
+  const startDateInvalid = mode === 'rent' && startDate < tomorrow;
+
   function handleAdd() {
     if (mode === 'rent') {
       if (!startDate || !endDate || days <= 0) return;
+      if (startDate < tomorrow) return;
       addItem({
         equipmentId: item.id,
         kind: 'rent',
@@ -125,7 +119,7 @@ export function AddToCartForm({ item, cities, defaultMode, defaultCity }: Props)
               <input
                 type="date"
                 value={startDate}
-                min={today}
+                min={tomorrow}
                 onChange={(e) => {
                   const v = e.target.value;
                   setStartDate(v);
@@ -228,15 +222,20 @@ export function AddToCartForm({ item, cities, defaultMode, defaultCity }: Props)
       </div>
 
       {!added ? (
-        <button
-          type="button"
-          onClick={handleAdd}
-          className="btn-primary w-full mt-4"
-          disabled={mode === 'rent' && days <= 0}
-          data-event={`add_to_cart_${item.id}`}
-        >
-          Add to cart
-        </button>
+        <>
+          {startDateInvalid && (
+            <p className="mt-3 text-xs text-red-700">{START_DATE_ERROR}</p>
+          )}
+          <button
+            type="button"
+            onClick={handleAdd}
+            className="btn-primary w-full mt-4"
+            disabled={mode === 'rent' && (days <= 0 || startDateInvalid)}
+            data-event={`add_to_cart_${item.id}`}
+          >
+            Add to cart
+          </button>
+        </>
       ) : (
         <div className="mt-4 space-y-2">
           <p className="rounded-md bg-green-50 border border-green-200 p-3 text-sm text-green-900">
