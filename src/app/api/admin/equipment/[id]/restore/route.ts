@@ -2,8 +2,10 @@ export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { requireAdminRole } from '@/lib/require-role';
 import { createServiceClient } from '@/lib/supabase/service';
+import { getSiteConfigLive } from '@/lib/config';
 
 // POST /api/admin/equipment/[id]/restore — undoes a cycle-10 soft delete.
 // For SEED items: removes the equipment_redirects row and sets overrides.visible=true
@@ -37,6 +39,26 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+  }
+
+  // Cycle 10: invalidate cached pages so the restored item is immediately
+  // visible on /rent, /buy, and its own detail pages.
+  try {
+    const cfg = await getSiteConfigLive();
+    const cities = cfg.cityPages.cities.map((c) => c.slug);
+    revalidatePath(`/equipment/${params.id}`);
+    for (const slug of cities) {
+      revalidatePath(`/equipment/${params.id}/${slug}`);
+    }
+    revalidatePath('/rent');
+    revalidatePath('/buy');
+    for (const slug of cities) {
+      revalidatePath(`/drying-water-damage/${slug}`);
+      revalidatePath(`/inverter-generators/${slug}`);
+      revalidatePath(`/construction-heaters/${slug}`);
+    }
+  } catch {
+    // revalidatePath failures are non-fatal
   }
 
   return NextResponse.json({ ok: true });

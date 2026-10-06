@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { requireAdminRole } from '@/lib/require-role';
 import { createServiceClient } from '@/lib/supabase/service';
 import { getSiteConfigLive, getEquipmentById } from '@/lib/config';
@@ -78,6 +79,21 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     console.error('[admin equipment PATCH] upsert failed:', error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  // Cycle 10: invalidate ISR caches so edits (long-form content, pricing,
+  // name) appear immediately on the public site.
+  try {
+    revalidatePath(`/equipment/${params.id}`);
+    const cities = cfg.cityPages.cities.map((c) => c.slug);
+    for (const slug of cities) {
+      revalidatePath(`/equipment/${params.id}/${slug}`);
+    }
+    revalidatePath('/rent');
+    revalidatePath('/buy');
+  } catch {
+    // revalidatePath failures are non-fatal
+  }
+
   return NextResponse.json({ ok: true });
 }
 
@@ -154,6 +170,25 @@ export async function DELETE(_req: NextRequest, { params }: { params: { id: stri
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+  }
+
+  // Cycle 10: invalidate the ISR cache for every path that could render this
+  // item so the stale HTML doesn't keep returning 200. Base + per-city routes.
+  try {
+    revalidatePath(`/equipment/${params.id}`);
+    const cities = cfg.cityPages.cities.map((c) => c.slug);
+    for (const slug of cities) {
+      revalidatePath(`/equipment/${params.id}/${slug}`);
+    }
+    revalidatePath('/rent');
+    revalidatePath('/buy');
+    for (const slug of cities) {
+      revalidatePath(`/drying-water-damage/${slug}`);
+      revalidatePath(`/inverter-generators/${slug}`);
+      revalidatePath(`/construction-heaters/${slug}`);
+    }
+  } catch {
+    // revalidatePath failures are non-fatal
   }
 
   return NextResponse.json({ ok: true, redirect_to: target });
