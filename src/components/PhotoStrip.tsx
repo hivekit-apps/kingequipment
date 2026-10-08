@@ -1,20 +1,30 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { getSiteConfig, allPhotos, visibleEquipment } from '@/lib/config';
+import { getSiteConfig, allPhotos, visibleEquipment, type SiteConfig } from '@/lib/config';
 
 /**
  * Responsive photo grid. 2x2 on mobile, 4x1 on desktop.
- * Per-photo display ~150-200px mobile / ~280-320px desktop.
- * Aspect-[3/4] preserves portrait orientation of authentic in-action shots
- * (less aggressive crop than aspect-square).
  *
- * Default behaviour: picks one representative photo per category so the
- * strip reads as a rotating "what we deliver" showcase, not a flat gallery.
+ * Default behaviour: picks one representative photo per populated category
+ * so the strip reads as a rotating "what we deliver" showcase. All data is
+ * sourced from the merged catalog (admin overrides + custom SKUs win over
+ * seed), so edits in the admin propagate here within the ISR window.
+ *
+ * The caller can optionally pass `cfg` (the already-fetched
+ * `getSiteConfigDynamic()` result) to avoid a second trip to Supabase.
  */
-export function PhotoStrip({ limit, machineId }: { limit?: number; machineId?: string }) {
-  const cfg = getSiteConfig();
+export function PhotoStrip({
+  limit,
+  machineId,
+  cfg,
+}: {
+  limit?: number;
+  machineId?: string;
+  cfg?: SiteConfig;
+}) {
+  const siteCfg = cfg ?? getSiteConfig();
   if (machineId) {
-    const source = cfg.equipment.find((e) => e.id === machineId)?.photos ?? [];
+    const source = siteCfg.equipment.find((e) => e.id === machineId)?.photos ?? [];
     const photos = typeof limit === 'number' ? source.slice(0, limit) : source;
     return (
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -35,9 +45,9 @@ export function PhotoStrip({ limit, machineId }: { limit?: number; machineId?: s
   }
 
   // Category-rotation mode: one representative item per populated category.
-  const equipment = visibleEquipment(cfg);
+  const equipment = visibleEquipment(siteCfg);
   const perCategory: { id: string; src: string; alt: string; name: string; categoryName: string; categorySlug: string }[] = [];
-  for (const cat of cfg.categories) {
+  for (const cat of siteCfg.categories) {
     const item = equipment.find((e) => e.category === cat.slug && e.photos.length > 0);
     if (item) {
       perCategory.push({
@@ -51,9 +61,9 @@ export function PhotoStrip({ limit, machineId }: { limit?: number; machineId?: s
     }
   }
   const limited = typeof limit === 'number' ? perCategory.slice(0, limit) : perCategory;
-  // Fallback to allPhotos if (somehow) no categories matched — keeps the component robust.
+  // Fallback to allPhotos if (somehow) no categories matched.
   if (limited.length === 0) {
-    const photos = allPhotos(cfg).slice(0, 4);
+    const photos = allPhotos(siteCfg).slice(0, 4);
     return (
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {photos.map((p) => (

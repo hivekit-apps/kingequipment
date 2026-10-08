@@ -1,11 +1,21 @@
 import Link from 'next/link';
-import Image from 'next/image';
-import { getSiteConfig, cityPageUrl, visibleEquipment, classLabel, rentableByCategory } from '@/lib/config';
+import {
+  getSiteConfigDynamic,
+  cityPageUrl,
+  visibleEquipment,
+  rentableByCategory,
+} from '@/lib/config';
+import { EquipmentCard } from '@/components/EquipmentCard';
 import { PhotoStrip } from '@/components/PhotoStrip';
 import { HeroPhoto } from '@/components/HeroPhoto';
 
-export default function HomePage() {
-  const cfg = getSiteConfig();
+// ISR: revalidate every 60s so admin equipment edits (overrides, custom SKUs,
+// photos, prices, descriptions) propagate to the home page without a redeploy.
+// Matches the cadence used on /rent, /buy, /equipment/[id], etc.
+export const revalidate = 60;
+
+export default async function HomePage() {
+  const cfg = await getSiteConfigDynamic();
   const equipment = visibleEquipment(cfg);
   const grouped = rentableByCategory(cfg);
   return (
@@ -21,8 +31,8 @@ export default function HomePage() {
               Local owner-operator. {cfg.pricing.deliveryNote}
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
-              <Link href="/equipment" className="btn-primary text-lg" data-event="hero_shop_click">
-                Browse equipment
+              <Link href="/rent" className="btn-primary text-lg" data-event="hero_rent_click">
+                Browse rentals
               </Link>
               <Link href="/service-area" className="btn-secondary text-lg bg-transparent text-white border-white hover:bg-slate-800" data-event="hero_area_click">
                 Delivery pricing by city
@@ -30,12 +40,12 @@ export default function HomePage() {
             </div>
           </div>
           <div>
-            <HeroPhoto />
+            <HeroPhoto cfg={cfg} />
           </div>
         </div>
       </section>
 
-      {/* Equipment preview */}
+      {/* Equipment preview — same cards as /rent and /buy (merged admin + seed catalog) */}
       <section className="bg-white">
         <div className="container-page py-12">
           <h2 className="text-2xl md:text-3xl">Our rental &amp; sales catalog</h2>
@@ -44,50 +54,16 @@ export default function HomePage() {
           </p>
           <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {equipment.map((item) => (
-              <div key={item.id} className="rounded-lg border border-slate-200 p-5 flex flex-col">
-                {item.photos[0] && (
-                  <div className="relative w-full aspect-square overflow-hidden rounded-md bg-white mb-4">
-                    <Image
-                      src={item.photos[0].src}
-                      alt={item.photos[0].alt}
-                      fill
-                      sizes="(max-width: 640px) 100vw, 33vw"
-                      className="object-contain"
-                    />
-                  </div>
-                )}
-                <p className="text-xs uppercase tracking-wide text-brand-orange font-bold">
-                  {classLabel(item.class)}
-                </p>
-                <h3 className="mt-1 text-lg font-bold text-slate-950">{item.shortName}</h3>
-                <p className="mt-2 text-sm text-slate-700 flex-1">{item.tagline}</p>
-                <p className="mt-3 text-sm font-semibold">{item.displayRate}</p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {item.availability.includes('rent') && (
-                    <Link
-                      href={`/equipment/${item.id}`}
-                      className="inline-block btn-primary text-xs px-3 py-2 min-h-[40px]"
-                      data-event={`home_rent_${item.id}`}
-                    >
-                      Rent
-                    </Link>
-                  )}
-                  {item.availability.includes('buy') && (
-                    <Link
-                      href={`/equipment/${item.id}?mode=buy`}
-                      className="inline-block btn-secondary text-xs px-3 py-2 min-h-[40px]"
-                      data-event={`home_buy_${item.id}`}
-                    >
-                      Buy
-                    </Link>
-                  )}
-                </div>
-              </div>
+              <EquipmentCard key={item.id} item={item} mode="both" />
             ))}
           </div>
           <p className="mt-8 text-sm text-slate-700">
-            <Link href="/equipment" className="underline font-semibold">
-              See full catalog &amp; place an order
+            <Link href="/rent" className="underline font-semibold">
+              See full rental catalog
+            </Link>
+            {' · '}
+            <Link href="/buy" className="underline font-semibold">
+              Shop used equipment
             </Link>
           </p>
         </div>
@@ -182,9 +158,9 @@ export default function HomePage() {
       {/* Photos (mobile reveal) */}
       <section className="bg-white md:hidden">
         <div className="container-page py-12">
-          <h2 className="text-2xl">Recent jobs</h2>
+          <h2 className="text-2xl">What we deliver</h2>
           <div className="mt-6">
-            <PhotoStrip />
+            <PhotoStrip cfg={cfg} />
           </div>
         </div>
       </section>
@@ -236,7 +212,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA — link to /equipment */}
+      {/* CTA — link to /rent */}
       <section id="cta" className="bg-slate-950 text-white scroll-mt-16">
         <div className="container-page py-12 md:py-16 text-center">
           <h2 className="text-2xl md:text-3xl">Ready to order?</h2>
@@ -245,7 +221,7 @@ export default function HomePage() {
             we&apos;ll confirm delivery details within a few hours during business hours.
           </p>
           <div className="mt-8">
-            <Link href="/equipment" className="btn-primary text-lg" data-event="cta_shop_click">
+            <Link href="/rent" className="btn-primary text-lg" data-event="cta_rent_click">
               Browse the catalog
             </Link>
           </div>
